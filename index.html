@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What is Data Science?  An Introduction</title>
+<!-- <link rel="preconnect" href="https://fonts.googleapis.com"> -->
+<!-- <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"> -->
+<style>
+/* ── reset & tokens ─────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#04070f;
+  --surface:#080e1c;
+  --card:#0b1425;
+  --chalk:#e8f4f0;
+  --dim:#6a8fa8;
+  --accent:#00d4aa;
+  --orange:#ff8c42;
+  --pink:#e85d8a;
+  --blue:#4da6ff;
+  --yellow:#ffd166;
+  --grid:rgba(0,212,170,0.06);
+  --ff-display:'Syne',sans-serif;
+  --ff-body:'Instrument Serif',serif;
+  --ff-mono:'DM Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--chalk);
+  font-family:var(--ff-body);
+  font-size:18px;
+  line-height:1.7;
+  overflow-x:hidden;
+}
+
+/* ── noise texture overlay ──────────────────────────────────── */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;opacity:.6;
+}
+
+/* ── grid bg ────────────────────────────────────────────────── */
+body::after{
+  content:'';position:fixed;inset:0;
+  background-image:
+    linear-gradient(var(--grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:60px 60px;
+  pointer-events:none;z-index:0;
+}
+
+/* ── nav ────────────────────────────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 48px;
+  background:rgba(4,7,15,0.8);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(0,212,170,0.12);
+}
+.nav-logo{
+  font-family:var(--ff-display);font-weight:800;font-size:14px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--accent);
+}
+.nav-links{display:flex;gap:32px;}
+.nav-links a{
+  font-family:var(--ff-mono);font-size:12px;color:var(--dim);
+  text-decoration:none;letter-spacing:.06em;
+  transition:color .2s;
+}
+.nav-links a:hover{color:var(--accent);}
+.nav-tag{
+  font-family:var(--ff-mono);font-size:11px;
+  color:var(--accent);border:1px solid var(--accent);
+  padding:4px 12px;border-radius:2px;letter-spacing:.06em;
+}
+
+/* ── hero ───────────────────────────────────────────────────── */
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  position:relative;padding:120px 48px 80px;
+  text-align:center;z-index:1;
+}
+.hero-eyebrow{
+  font-family:var(--ff-mono);font-size:12px;
+  color:var(--accent);letter-spacing:.16em;text-transform:uppercase;
+  border:1px solid rgba(0,212,170,0.3);padding:6px 20px;
+  border-radius:2px;margin-bottom:32px;
+  animation:fadeUp .8s ease both;
+}
+.hero h1{
+  font-family:var(--ff-display);font-weight:800;
+  font-size:clamp(48px,9vw,96px);
+  line-height:1;letter-spacing:-.02em;
+  animation:fadeUp .9s .1s ease both;
+}
+.hero h1 em{
+  font-style:normal;color:var(--accent);
+  position:relative;display:inline-block;
+}
+.hero h1 em::after{
+  content:'';position:absolute;bottom:-4px;left:0;right:0;
+  height:3px;background:var(--accent);border-radius:2px;
+  animation:scaleX 1s .8s ease both;transform-origin:left;
+}
+.hero-sub{
+  font-family:var(--ff-body);font-style:italic;
+  font-size:clamp(16px,2.2vw,22px);color:var(--dim);
+  max-width:560px;margin:28px auto 0;
+  animation:fadeUp .9s .2s ease both;
+}
+.hero-venn{
+  margin:64px auto 0;width:100%;max-width:560px;
+  animation:fadeUp 1s .4s ease both;
+}
+.scroll-hint{
+  position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
+  font-family:var(--ff-mono);font-size:11px;color:var(--dim);
+  letter-spacing:.1em;display:flex;flex-direction:column;align-items:center;gap:8px;
+  animation:fadeUp 1s .8s ease both;
+}
+.scroll-arrow{
+  width:1px;height:40px;background:linear-gradient(var(--accent),transparent);
+  animation:scrollPulse 2s 1.5s infinite;
+}
+
+/* ── sections ───────────────────────────────────────────────── */
+section{position:relative;z-index:1;padding:100px 48px;}
+.section-inner{max-width:1100px;margin:0 auto;}
+
+.section-label{
+  font-family:var(--ff-mono);font-size:11px;color:var(--accent);
+  letter-spacing:.16em;text-transform:uppercase;
+  display:flex;align-items:center;gap:12px;margin-bottom:20px;
+}
+.section-label::before{content:'';width:32px;height:1px;background:var(--accent);}
+
+h2{
+  font-family:var(--ff-display);font-weight:700;
+  font-size:clamp(30px,5vw,52px);line-height:1.1;
+  letter-spacing:-.02em;margin-bottom:48px;
+}
+
+/* ── venn svg animation ─────────────────────────────────────── */
+.venn-circle{
+  fill:none;stroke-width:2;
+  stroke-dasharray:1000;stroke-dashoffset:1000;
+  animation:drawCircle 2s ease forwards;
+}
+.vc-cs{stroke:var(--blue);animation-delay:.2s}
+.vc-math{stroke:var(--orange);animation-delay:.6s}
+.vc-biz{stroke:var(--pink);animation-delay:1s}
+.venn-label{opacity:0;animation:fadeIn .6s ease forwards;}
+.vl1{animation-delay:1.4s}.vl2{animation-delay:1.6s}.vl3{animation-delay:1.8s}
+.venn-center{opacity:0;animation:fadeIn .8s 2.2s ease forwards;}
+
+/* ── pipeline cards ─────────────────────────────────────────── */
+.pipeline{display:flex;gap:0;align-items:stretch;overflow:hidden;border-radius:8px;}
+.pipe-step{
+  flex:1;padding:32px 24px;position:relative;
+  border-right:1px solid rgba(255,255,255,0.06);
+  background:var(--card);
+  opacity:0;
+  transition:background .3s;
+}
+.pipe-step:last-child{border-right:none;}
+.pipe-step:hover{background:#0f1e35;}
+.pipe-step.visible{animation:fadeUp .6s ease forwards;}
+.pipe-step::after{
+  content:'→';position:absolute;right:-14px;top:50%;transform:translateY(-50%);
+  color:var(--accent);font-size:16px;z-index:2;
+  opacity:1;
+}
+.pipe-step:last-child::after{display:none;}
+.pipe-num{
+  font-family:var(--ff-mono);font-size:11px;color:var(--accent);
+  letter-spacing:.1em;margin-bottom:12px;
+}
+.pipe-icon{font-size:28px;margin-bottom:16px;display:block;}
+.pipe-title{
+  font-family:var(--ff-display);font-weight:700;font-size:15px;
+  margin-bottom:8px;line-height:1.2;
+}
+.pipe-desc{font-family:var(--ff-mono);font-size:11px;color:var(--dim);line-height:1.6;}
+
+/* ── animated drawing board ─────────────────────────────────── */
+.lightboard{
+  background:var(--card);border:1px solid rgba(0,212,170,0.15);
+  border-radius:8px;padding:48px;
+  position:relative;overflow:hidden;
+}
+.lightboard::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    0deg,transparent,transparent 29px,rgba(0,212,170,0.04) 29px,rgba(0,212,170,0.04) 30px),
+    repeating-linear-gradient(
+    90deg,transparent,transparent 29px,rgba(0,212,170,0.04) 29px,rgba(0,212,170,0.04) 30px);
+}
+.lb-title{
+  font-family:var(--ff-mono);font-size:11px;color:var(--accent);
+  letter-spacing:.12em;text-transform:uppercase;
+  position:absolute;top:20px;left:24px;
+}
+.lb-svg{display:block;width:100%;height:auto;position:relative;z-index:1;}
+
+/* ── skill cards grid ───────────────────────────────────────── */
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;}
+.skill-card{
+  background:var(--card);border:1px solid rgba(255,255,255,0.06);
+  border-radius:8px;padding:28px 24px;
+  opacity:0;
+  transition:border-color .3s,transform .3s;
+}
+.skill-card.visible{animation:fadeUp .6s ease forwards;}
+.skill-card:hover{
+  border-color:rgba(0,212,170,0.3);
+  transform:translateY(-4px);
+}
+.sc-tag{
+  font-family:var(--ff-mono);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;padding:3px 10px;border-radius:2px;
+  margin-bottom:16px;display:inline-block;
+}
+.sc-tag.cs  {background:rgba(77,166,255,.15);color:var(--blue);}
+.sc-tag.math{background:rgba(255,140,66,.15);color:var(--orange);}
+.sc-tag.biz {background:rgba(232,93,138,.15);color:var(--pink);}
+.sc-tag.ml  {background:rgba(0,212,170,.15); color:var(--accent);}
+.sc-tag.viz {background:rgba(255,209,102,.15);color:var(--yellow);}
+.skill-card h3{
+  font-family:var(--ff-display);font-weight:700;font-size:17px;
+  margin-bottom:8px;line-height:1.3;
+}
+.skill-card p{font-family:var(--ff-mono);font-size:12px;color:var(--dim);line-height:1.6;}
+.sc-bar{
+  height:3px;background:rgba(255,255,255,0.06);
+  border-radius:2px;margin-top:20px;overflow:hidden;
+}
+.sc-fill{height:100%;border-radius:2px;width:0;transition:width 1.2s ease;}
+
+/* ── stats row ──────────────────────────────────────────────── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,0.06);}
+.stat{
+  background:var(--surface);padding:48px 32px;text-align:center;
+}
+.stat-num{
+  font-family:var(--ff-display);font-weight:800;
+  font-size:clamp(36px,5vw,64px);color:var(--accent);
+  display:block;line-height:1;margin-bottom:8px;
+}
+.stat-label{font-family:var(--ff-mono);font-size:12px;color:var(--dim);letter-spacing:.06em;}
+
+/* ── quote block ────────────────────────────────────────────── */
+.quote-block{
+  border-left:3px solid var(--accent);padding:32px 40px;
+  background:var(--card);border-radius:0 8px 8px 0;
+  margin:64px 0;
+}
+.quote-block blockquote{
+  font-family:var(--ff-body);font-style:italic;
+  font-size:clamp(20px,3vw,28px);line-height:1.5;
+  color:var(--chalk);margin-bottom:16px;
+}
+.quote-attr{font-family:var(--ff-mono);font-size:12px;color:var(--dim);}
+
+/* ── CTA ────────────────────────────────────────────────────── */
+.cta-section{
+  text-align:center;padding:120px 48px;
+  background:var(--surface);
+  border-top:1px solid rgba(0,212,170,0.1);
+}
+.cta-section h2{margin-bottom:16px;}
+.cta-section p{
+  font-family:var(--ff-mono);font-size:13px;color:var(--dim);
+  max-width:440px;margin:0 auto 48px;line-height:1.7;
+}
+.btn-group{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+.btn-primary{
+  font-family:var(--ff-mono);font-size:13px;letter-spacing:.08em;
+  background:var(--accent);color:#04070f;
+  padding:14px 36px;border-radius:2px;text-decoration:none;
+  font-weight:400;transition:opacity .2s,transform .15s;display:inline-block;
+}
+.btn-primary:hover{opacity:.85;transform:translateY(-2px);}
+.btn-outline{
+  font-family:var(--ff-mono);font-size:13px;letter-spacing:.08em;
+  border:1px solid rgba(0,212,170,0.4);color:var(--accent);
+  padding:14px 36px;border-radius:2px;text-decoration:none;
+  transition:all .2s;display:inline-block;
+}
+.btn-outline:hover{background:rgba(0,212,170,.1);transform:translateY(-2px);}
+
+/* ── footer ─────────────────────────────────────────────────── */
+footer{
+  padding:40px 48px;
+  display:flex;justify-content:space-between;align-items:center;
+  border-top:1px solid rgba(255,255,255,.06);
+  font-family:var(--ff-mono);font-size:11px;color:var(--dim);
+}
+footer a{color:var(--accent);text-decoration:none;}
+
+/* ── keyframes ──────────────────────────────────────────────── */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(24px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes drawCircle{
+  to{stroke-dashoffset:0}
+}
+@keyframes scaleX{
+  from{transform:scaleX(0)}to{transform:scaleX(1)}
+}
+@keyframes scrollPulse{
+  0%,100%{opacity:.3;transform:scaleY(.8)}
+  50%{opacity:1;transform:scaleY(1)}
+}
+@keyframes drawPath{
+  to{stroke-dashoffset:0}
+}
+@keyframes floatDot{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-6px)}
+}
+@keyframes countUp{
+  from{opacity:0}to{opacity:1}
+}
+
+/* ── responsive ─────────────────────────────────────────────── */
+@media(max-width:768px){
+  nav{padding:14px 20px;}
+  .nav-links{display:none;}
+  section{padding:70px 20px;}
+  .hero{padding:100px 20px 60px;}
+  .pipeline{flex-direction:column;}
+  .pipe-step::after{content:'↓';right:auto;left:50%;top:auto;bottom:-14px;}
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .lightboard{padding:24px;}
+  footer{flex-direction:column;gap:12px;text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">DS · 72</div>
+  <div class="nav-links">
+    <a href="#what">What is DS</a>
+    <a href="#pipeline">Pipeline</a>
+    <a href="#skills">Skills</a>
+    <a href="#modules">Modules</a>
+  </div>
+  <span class="nav-tag">v1.0 · 2025</span>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">72-Hour Curriculum</div>
+  <h1>Data<br><em>Science</em><br>Decoded.</h1>
+  <p class="hero-sub">The convergence of Computer Science, Mathematics, and Business Expertise — visualised, step by step.</p>
+
+  <!-- Animated Venn Diagram -->
+  <div class="hero-venn">
+    <svg class="lb-svg" viewBox="0 0 560 320" xmlns="http://www.w3.org/2000/svg">
+      <!-- CS circle -->
+      <circle class="venn-circle vc-cs" cx="210" cy="145" r="130"/>
+      <!-- Math circle -->
+      <circle class="venn-circle vc-math" cx="350" cy="145" r="130"/>
+      <!-- Business circle -->
+      <circle class="venn-circle vc-biz" cx="280" cy="240" r="130"/>
+
+      <!-- Labels outer -->
+      <text class="venn-label vl1" x="130" y="90" fill="#4da6ff" font-family="'Syne',sans-serif" font-weight="700" font-size="15" text-anchor="middle">Computer</text>
+      <text class="venn-label vl1" x="130" y="108" fill="#4da6ff" font-family="'Syne',sans-serif" font-weight="700" font-size="15" text-anchor="middle">Science</text>
+      <text class="venn-label vl2" x="430" y="90" fill="#ff8c42" font-family="'Syne',sans-serif" font-weight="700" font-size="15" text-anchor="middle">Mathematics</text>
+      <text class="venn-label vl3" x="280" y="340" fill="#e85d8a" font-family="'Syne',sans-serif" font-weight="700" font-size="15" text-anchor="middle">Business Expertise</text>
+
+      <!-- Intersection labels -->
+      <text class="venn-center" x="250" y="128" fill="#a0c8e8" font-family="'DM Mono',monospace" font-size="10" text-anchor="middle">Machine</text>
+      <text class="venn-center" x="250" y="140" fill="#a0c8e8" font-family="'DM Mono',monospace" font-size="10" text-anchor="middle">Learning</text>
+      <text class="venn-center" x="310" y="128" fill="#ffc08a" font-family="'DM Mono',monospace" font-size="10" text-anchor="middle">Statistical</text>
+      <text class="venn-center" x="310" y="140" fill="#ffc08a" font-family="'DM Mono',monospace" font-size="10" text-anchor="middle">Modelling</text>
+      <text class="venn-center" x="240" y="215" fill="#f0a0c0" font-family="'DM Mono',monospace" font-size="10" text-anchor="middle">Data</text>
+      <text class="venn-center" x="240" y="227" fill="#f0a0c0" font-family="'DM Mono',monospace" font-size="10" text-anchor="middle">Engineering</text>
+      <text class="venn-center" x="320" y="215" fill="#f0a0c0" font-family="'DM Mono',monospace" font-size="10" text-anchor="middle">Business</text>
+      <text class="venn-center" x="320" y="227" fill="#f0a0c0" font-family="'DM Mono',monospace" font-size="10" text-anchor="middle">Analytics</text>
+
+      <!-- Center: DATA SCIENCE -->
+      <circle class="venn-center" cx="280" cy="178" r="38" fill="rgba(0,212,170,0.15)" stroke="#00d4aa" stroke-width="1.5"/>
+      <text class="venn-center" x="280" y="174" fill="#00d4aa" font-family="'Syne',sans-serif" font-weight="800" font-size="11" text-anchor="middle">DATA</text>
+      <text class="venn-center" x="280" y="188" fill="#00d4aa" font-family="'Syne',sans-serif" font-weight="800" font-size="11" text-anchor="middle">SCIENCE</text>
+    </svg>
+  </div>
+
+  <div class="scroll-hint">
+    <span>scroll to explore</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</div>
+
+<!-- WHAT IS DATA SCIENCE -->
+<section id="what">
+  <div class="section-inner">
+    <div class="section-label">01 / The Core Idea</div>
+    <h2>Turning raw data<br>into <em style="color:var(--accent);font-style:normal;">actionable insight</em></h2>
+
+    <div class="quote-block">
+      <blockquote>"Data Science is what happens when Computer Science, Mathematics, and Business Expertise collide — and the result is the ability to predict, diagnose, and solve real-world problems."</blockquote>
+      <span class="quote-attr">— Luv Aggarwal, Data Solution Engineer</span>
+    </div>
+
+    <!-- Lightboard-style animated drawing -->
+    <div class="lightboard">
+      <span class="lb-title">// lightboard breakdown</span>
+      <svg class="lb-svg" id="lb-svg" viewBox="0 0 860 340" xmlns="http://www.w3.org/2000/svg">
+        <!-- Flow arrow line -->
+        <path id="flow-line" d="M60 170 L800 170" stroke="rgba(0,212,170,0.2)" stroke-width="1" stroke-dasharray="4 4"/>
+
+        <!-- Step 1: Raw Data -->
+        <g id="lb-s1" style="opacity:0">
+          <rect x="20" y="120" width="100" height="100" rx="4" fill="rgba(77,166,255,0.1)" stroke="#4da6ff" stroke-width="1.5"/>
+          <text x="70" y="158" fill="#4da6ff" font-family="'DM Mono',monospace" font-size="10" text-anchor="middle">Raw</text>
+          <text x="70" y="172" fill="#4da6ff" font-family="'DM Mono',monospace" font-size="10" text-anchor="middle">Data</text>
+          <!-- noise lines inside -->
+          <line x1="36" y1="198" x2="104" y2="198" stroke="#4da6ff" stroke-width="1" opacity=".4"/>
+          <line x1="36" y1="208" x2="80" y2="208" stroke="#4da6ff" stroke-width="1" opacity=".3"/>
+          <line x1="36" y1="218" x2="95" y2="218" stroke="#4da6ff" stroke-width="1" opacity=".4"/>
+        </g>
+
+        <!-- Arrow 1 -->
+        <path id="arr1" d="M124 170 L164 170" stroke="#00d4aa" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="60" stroke-dashoffset="60"/>
+
+        <!-- Step 2: Data Mining -->
+        <g id="lb-s2" style="opacity:0">
+          <rect x="164" y="120" width="110" height="100" rx="4" fill="rgba(255,140,66,0.1)" stroke="#ff8c42" stroke-width="1.5"/>
+          <text x="219" y="155" fill="#ff8c42" font-family="'DM Mono',monospace" font-size="10" text-anchor="middle">Data</text>
+          <text x="219" y="169" fill="#ff8c42" font-family="'DM Mono',monospace" font-size="10" text-anchor="middle">Mining</text>
+          <circle cx="219" cy="198" r="12" fill="none" stroke="#ff8c42" stroke-width="1" opacity=".5"/>
+          <circle cx="219" cy="198" r="6"  fill="#ff8c42" opacity=".3"/>
+          <text x="219" y="222" fill="#ff8c42" font-family="'DM Mono',monospace" font-size="8" text-anchor="middle" opacity=".6">extract patterns</text>
+        </g>
+
+        <!-- Arrow 2 -->
+        <path id="arr2" d="M278 170 L318 170" stroke="#00d4aa" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="60" stroke-dashoffset="60"/>
+
+        <!-- Step 3: Cleaning -->
+        <g id="lb-s3" style="opacity:0">
+          <rect x="318" y="120" width="110" height="100" rx="4" fill="rgba(232,93,138,0.1)" stroke="#e85d8a" stroke-width="1.5"/>
+          <text x="373" y="155" fill="#e85d8a" font-family="'DM Mono',monospace" font-size="10" text-anchor="middle">Data</text>
+          <text x="373" y="169" fill="#e85d8a" font-family="'DM Mono',monospace" font-size="10" text-anchor="middle">Cleaning</text>
+          <!-- X marks for bad data -->
+          <text x="345" y="202" fill="#e85d8a" font-family="'DM Mono',monospace" font-size="9" opacity=".5">✗ null</text>
+          <text x="345" y="215" fill="#e85d8a" font-family="'DM Mono',monospace" font-size="9" opacity=".5">✗ outlier</text>
+          <text x="345" y="228" fill="#00d4aa" font-family="'DM Mono',monospace" font-size="9" opacity=".8">✓ clean</text>
+        </g>
+
+        <!-- Arrow 3 -->
+        <path id="arr3" d="M432 170 L472 170" stroke="#00d4aa" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="60" stroke-dashoffset="60"/>
+
+        <!-- Step 4: ML -->
+        <g id="lb-s4" style="opacity:0">
+          <rect x="472" y="120" width="110" height="100" rx="4" fill="rgba(0,212,170,0.1)" stroke="#00d4aa" stroke-width="1.5"/>
+          <text x="527" y="155" fill="#00d4aa" font-family="'DM Mono',monospace" font-size="10" text-anchor="middle">Machine</text>
+          <text x="527" y="169" fill="#00d4aa" font-family="'DM Mono',monospace" font-size="10" text-anchor="middle">Learning</text>
+          <!-- simple neural net dots -->
+          <circle cx="500" cy="200" r="5" fill="#00d4aa" opacity=".5"/>
+          <circle cx="500" cy="215" r="5" fill="#00d4aa" opacity=".5"/>
+          <circle cx="519" cy="207" r="5" fill="#00d4aa" opacity=".7"/>
+          <circle cx="538" cy="200" r="5" fill="#00d4aa" opacity=".5"/>
+          <circle cx="538" cy="215" r="5" fill="#00d4aa" opacity=".5"/>
+          <line x1="505" y1="200" x2="514" y2="207" stroke="#00d4aa" stroke-width=".8" opacity=".4"/>
+          <line x1="505" y1="215" x2="514" y2="207" stroke="#00d4aa" stroke-width=".8" opacity=".4"/>
+          <line x1="524" y1="207" x2="533" y2="200" stroke="#00d4aa" stroke-width=".8" opacity=".4"/>
+          <line x1="524" y1="207" x2="533" y2="215" stroke="#00d4aa" stroke-width=".8" opacity=".4"/>
+        </g>
+
+        <!-- Arrow 4 -->
+        <path id="arr4" d="M586 170 L626 170" stroke="#00d4aa" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="60" stroke-dashoffset="60"/>
+
+        <!-- Step 5: Insight -->
+        <g id="lb-s5" style="opacity:0">
+          <rect x="626" y="100" width="120" height="140" rx="4" fill="rgba(255,209,102,0.1)" stroke="#ffd166" stroke-width="2"/>
+          <text x="686" y="138" fill="#ffd166" font-family="'Syne',sans-serif" font-weight="700" font-size="12" text-anchor="middle">Actionable</text>
+          <text x="686" y="154" fill="#ffd166" font-family="'Syne',sans-serif" font-weight="700" font-size="12" text-anchor="middle">Insight</text>
+          <!-- bar chart mini -->
+          <rect x="648" y="215" width="10" height="15" fill="#ffd166" opacity=".5"/>
+          <rect x="662" y="205" width="10" height="25" fill="#ffd166" opacity=".6"/>
+          <rect x="676" y="195" width="10" height="35" fill="#ffd166" opacity=".7"/>
+          <rect x="690" y="188" width="10" height="42" fill="#ffd166" opacity=".9"/>
+          <rect x="704" y="200" width="10" height="30" fill="#ffd166" opacity=".6"/>
+          <line x1="645" y1="232" x2="718" y2="232" stroke="#ffd166" stroke-width=".8" opacity=".4"/>
+        </g>
+
+        <!-- Arrow marker def -->
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#00d4aa"/>
+          </marker>
+        </defs>
+
+        <!-- Annotation: predict -->
+        <g id="lb-ann" style="opacity:0">
+          <line x1="686" y1="92" x2="686" y2="72" stroke="#ffd166" stroke-width="1" stroke-dasharray="3 2"/>
+          <text x="686" y="66" fill="#ffd166" font-family="'DM Mono',monospace" font-size="10" text-anchor="middle">predict · diagnose · solve</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- PIPELINE -->
+<section id="pipeline" style="background:var(--surface);border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);">
+  <div class="section-inner">
+    <div class="section-label">02 / The Pipeline</div>
+    <h2>Every data science project<br>follows a <em style="color:var(--orange);font-style:normal;">5-stage flow</em></h2>
+
+    <div class="pipeline" id="pipeline">
+      <div class="pipe-step" data-delay="0">
+        <div class="pipe-num">01</div>
+        <span class="pipe-icon">🗄️</span>
+        <div class="pipe-title">Data<br>Collection</div>
+        <div class="pipe-desc">APIs, scraping, SQL databases, surveys, IoT sensors — raw material from the real world.</div>
+      </div>
+      <div class="pipe-step" data-delay="100">
+        <div class="pipe-num">02</div>
+        <span class="pipe-icon">🔍</span>
+        <div class="pipe-title">Data<br>Mining & EDA</div>
+        <div class="pipe-desc">Explore distributions, uncover hidden patterns, detect correlations and anomalies.</div>
+      </div>
+      <div class="pipe-step" data-delay="200">
+        <div class="pipe-num">03</div>
+        <span class="pipe-icon">🧹</span>
+        <div class="pipe-title">Data<br>Cleaning</div>
+        <div class="pipe-desc">Remove noise, fill gaps, fix outliers. Clean data is the #1 predictor of model quality.</div>
+      </div>
+      <div class="pipe-step" data-delay="300">
+        <div class="pipe-num">04</div>
+        <span class="pipe-icon">🤖</span>
+        <div class="pipe-title">Machine<br>Learning</div>
+        <div class="pipe-desc">Train models — regression, classification, clustering, deep learning — to predict outcomes.</div>
+      </div>
+      <div class="pipe-step" data-delay="400">
+        <div class="pipe-num">05</div>
+        <span class="pipe-icon">📊</span>
+        <div class="pipe-title">Visualise &amp;<br>Deploy</div>
+        <div class="pipe-desc">Communicate insight through charts, dashboards, and production APIs that businesses act on.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section style="padding:0">
+  <div class="stats">
+    <div class="stat">
+      <span class="stat-num" data-target="72">0</span>
+      <span class="stat-label">hours of curriculum</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num" data-target="8">0</span>
+      <span class="stat-label">core modules</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num" data-target="27">0</span>
+      <span class="stat-label">hands-on sessions</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num" data-target="6">0</span>
+      <span class="stat-label">live case studies</span>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-inner">
+    <div class="section-label">03 / What You Will Master</div>
+    <h2>Skills that span <em style="color:var(--pink);font-style:normal;">three disciplines</em></h2>
+
+    <div class="skills-grid" id="skills-grid">
+      <div class="skill-card" data-delay="0">
+        <span class="sc-tag cs">Computer Science</span>
+        <h3>Python & Programming</h3>
+        <p>NumPy, Pandas, OOP, APIs, file I/O, web scraping. The coding backbone of every data pipeline.</p>
+        <div class="sc-bar"><div class="sc-fill" data-w="90" style="background:var(--blue)"></div></div>
+      </div>
+      <div class="skill-card" data-delay="80">
+        <span class="sc-tag math">Mathematics</span>
+        <h3>Statistics & Probability</h3>
+        <p>Distributions, hypothesis testing, correlation, Bayesian reasoning — the language of data.</p>
+        <div class="sc-bar"><div class="sc-fill" data-w="80" style="background:var(--orange)"></div></div>
+      </div>
+      <div class="skill-card" data-delay="160">
+        <span class="sc-tag ml">Machine Learning</span>
+        <h3>Supervised & Unsupervised</h3>
+        <p>Regression, classification, clustering, gradient boosting, neural networks, transfer learning.</p>
+        <div class="sc-bar"><div class="sc-fill" data-w="85" style="background:var(--accent)"></div></div>
+      </div>
+      <div class="skill-card" data-delay="240">
+        <span class="sc-tag viz">Visualization</span>
+        <h3>Data Storytelling</h3>
+        <p>Matplotlib, Seaborn, Plotly dashboards — turning numbers into narratives that drive decisions.</p>
+        <div class="sc-bar"><div class="sc-fill" data-w="75" style="background:var(--yellow)"></div></div>
+      </div>
+      <div class="skill-card" data-delay="320">
+        <span class="sc-tag biz">Business</span>
+        <h3>Problem Framing</h3>
+        <p>Translating vague business questions into precise data problems. The most underrated DS skill.</p>
+        <div class="sc-bar"><div class="sc-fill" data-w="70" style="background:var(--pink)"></div></div>
+      </div>
+      <div class="skill-card" data-delay="400">
+        <span class="sc-tag cs">Deployment</span>
+        <h3>MLOps & Production</h3>
+        <p>Flask APIs, Docker, CI/CD pipelines, model serialisation. From notebook to the real world.</p>
+        <div class="sc-bar"><div class="sc-fill" data-w="65" style="background:var(--blue)"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODULES -->
+<section id="modules" style="background:var(--surface);border-top:1px solid rgba(255,255,255,0.05);">
+  <div class="section-inner">
+    <div class="section-label">04 / Course Structure</div>
+    <h2>8 modules. 72 hours.<br><em style="color:var(--accent);font-style:normal;">One complete journey.</em></h2>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;" id="mod-grid">
+      <!-- modules dynamically inserted -->
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section" id="cta">
+  <div class="section-label" style="justify-content:center;margin-bottom:20px;">05 / Get Started</div>
+  <h2>Ready to become a<br><em style="color:var(--accent);font-style:normal;">Data Scientist?</em></h2>
+  <p>Open the lesson tracker, pick your first session, and begin. Every expert was once a complete beginner.</p>
+  <div class="btn-group">
+    <a href="./module_1.html" class="btn-primary">Open Lesson Tracker →</a>
+  </div>
+</div>
+
+<footer>
+  <span>DS · 72-Hour Curriculum · 2025</span>
+  <span>Inspired by <a href="https://www.youtube.com/watch?v=RBSUwFGa6Fk" target="_blank">What is Data Science?</a></span>
+  <span>Faculty Edition · v1.0</span>
+</footer>
+
+<script>
+/* ── Intersection Observer animations ── */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+
+    /* pipeline steps */
+    if (e.target.id === 'pipeline') {
+      e.target.querySelectorAll('.pipe-step').forEach((s, i) => {
+        setTimeout(() => {
+          s.style.animationDelay = s.dataset.delay + 'ms';
+          s.classList.add('visible');
+        }, parseInt(s.dataset.delay));
+      });
+    }
+
+    /* skill cards */
+    if (e.target.id === 'skills-grid') {
+      e.target.querySelectorAll('.skill-card').forEach(s => {
+        setTimeout(() => {
+          s.classList.add('visible');
+          setTimeout(() => {
+            s.querySelector('.sc-fill').style.width = s.querySelector('.sc-fill').dataset.w + '%';
+          }, 400);
+        }, parseInt(s.dataset.delay));
+      });
+    }
+
+    /* lightboard drawing */
+    if (e.target.id === 'lb-svg') {
+      const seq = [
+        {id:'lb-s1', delay:200},
+        {id:'arr1', delay:700},
+        {id:'lb-s2', delay:900},
+        {id:'arr2', delay:1400},
+        {id:'lb-s3', delay:1600},
+        {id:'arr3', delay:2100},
+        {id:'lb-s4', delay:2300},
+        {id:'arr4', delay:2800},
+        {id:'lb-s5', delay:3000},
+        {id:'lb-ann',delay:3600},
+      ];
+      seq.forEach(({id, delay}) => {
+        setTimeout(() => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.style.transition = 'opacity .5s ease';
+          el.style.opacity = '1';
+          if (el.tagName === 'path') {
+            el.style.strokeDashoffset = '0';
+            el.style.transition = 'stroke-dashoffset .4s ease, opacity .3s';
+          }
+        }, delay);
+      });
+    }
+
+    /* stat counters */
+    if (e.target.classList.contains('stats')) {
+      e.target.querySelectorAll('[data-target]').forEach(el => {
+        const target = parseInt(el.dataset.target);
+        let current = 0;
+        const duration = 1200;
+        const step = target / (duration / 16);
+        const timer = setInterval(() => {
+          current = Math.min(current + step, target);
+          el.textContent = Math.round(current);
+          if (current >= target) clearInterval(timer);
+        }, 16);
+      });
+    }
+
+    io.unobserve(e.target);
+  });
+}, { threshold: 0.2 });
+
+document.getElementById('pipeline') && io.observe(document.getElementById('pipeline'));
+document.getElementById('skills-grid') && io.observe(document.getElementById('skills-grid'));
+document.getElementById('lb-svg') && io.observe(document.getElementById('lb-svg'));
+document.querySelector('.stats') && io.observe(document.querySelector('.stats'));
+
+/* ── Module cards ── */
+const MODS = [
+  {n:1, name:"Python & Data Foundations", hrs:15, color:"#4da6ff", icon:"🐍"},
+  {n:2, name:"Data Collection & Storage",  hrs:6,  color:"#ff8c42", icon:"🗄️"},
+  {n:3, name:"EDA & Visualization",         hrs:9,  color:"#e85d8a", icon:"📊"},
+  {n:4, name:"Supervised Learning",         hrs:18, color:"#00d4aa", icon:"🤖"},
+  {n:5, name:"Unsupervised & Advanced ML",  hrs:9,  color:"#a78bfa", icon:"🔮"},
+  {n:6, name:"Deep Learning",               hrs:6,  color:"#ffd166", icon:"🧠"},
+  {n:7, name:"Deployment & MLOps",          hrs:6,  color:"#f0abfc", icon:"🚀"},
+  {n:8, name:"Capstone Project",            hrs:6,  color:"#ff6b6b", icon:"🏆"},
+];
+const grid = document.getElementById('mod-grid');
+MODS.forEach((m, i) => {
+  const pct = Math.round(m.hrs / 72 * 100);
+  const card = document.createElement('div');
+  card.style.cssText = `
+    background:#0b1425;border:1px solid rgba(255,255,255,0.06);
+    border-radius:8px;padding:24px;
+    opacity:0;animation:fadeUp .6s ${i*70}ms ease forwards;
+    border-left:3px solid ${m.color};
+    transition:transform .2s;
+  `;
+  card.onmouseenter = () => card.style.transform = 'translateY(-3px)';
+  card.onmouseleave = () => card.style.transform = '';
+  card.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px;">
+      <span style="font-family:'DM Mono',monospace;font-size:10px;color:${m.color};letter-spacing:.1em;">MOD ${String(m.n).padStart(2,'0')}</span>
+      <span style="font-size:20px;">${m.icon}</span>
+    </div>
+    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:6px;line-height:1.3;color:#e8f4f0;">${m.name}</div>
+    <div style="font-family:'DM Mono',monospace;font-size:11px;color:#6a8fa8;margin-bottom:16px;">${m.hrs} hours</div>
+    <div style="height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;">
+      <div style="height:100%;border-radius:2px;background:${m.color};width:0;transition:width 1s ${300+i*80}ms ease;" class="mod-bar" data-w="${pct}"></div>
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:10px;color:${m.color};margin-top:6px;text-align:right;">${pct}% of 72h</div>
+  `;
+  grid.appendChild(card);
+});
+
+const modIO = new IntersectionObserver(e => {
+  if (e[0].isIntersecting) {
+    document.querySelectorAll('.mod-bar').forEach(b => {
+      b.style.width = b.dataset.w + '%';
+    });
+    modIO.disconnect();
+  }
+}, {threshold: 0.2});
+modIO.observe(grid);
+
+/* ── Nav scroll highlight ── */
+window.addEventListener('scroll', () => {
+  const links = document.querySelectorAll('.nav-links a');
+  const sections = ['what','pipeline','skills','modules'];
+  let active = '';
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top < 200) active = id;
+  });
+  links.forEach(l => {
+    l.style.color = l.getAttribute('href') === '#'+active ? 'var(--accent)' : '';
+  });
+});
+</script>
+</body>
+</html>
