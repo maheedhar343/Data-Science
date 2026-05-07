@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Module 1 — Python & Data Foundations | Data Science</title>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<style>
+:root{
+  --navy:#0f1f3d;
+  --navy2:#162849;
+  --navy3:#1e3560;
+  --accent:#f4a017;
+  --accent2:#e05c1a;
+  --green:#2ecc71;
+  --teal:#1abc9c;
+  --blue:#3498db;
+  --purple:#9b59b6;
+  --red:#e74c3c;
+  --sidebar-w:290px;
+  --body-font:'Merriweather',Georgia,serif;
+  --ui-font:'Outfit',sans-serif;
+  --code-font:'JetBrains Mono',monospace;
+  --text:#1a1a2e;
+  --text-light:#4a5568;
+  --border:#e2e8f0;
+  --bg:#fafbff;
+  --card:#ffffff;
+  --tag-bg:#eef2ff;
+  --tag-color:#4338ca;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--body-font);background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:16px;line-height:1.8}
+
+/* ── SIDEBAR ── */
+#sidebar{
+  position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;
+  background:var(--navy);overflow-y:auto;z-index:100;
+  display:flex;flex-direction:column;
+  scrollbar-width:thin;scrollbar-color:var(--navy3) transparent;
+}
+#sidebar::-webkit-scrollbar{width:4px}
+#sidebar::-webkit-scrollbar-thumb{background:var(--navy3);border-radius:4px}
+
+.sidebar-brand{padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sidebar-brand .badge{
+  font-family:var(--ui-font);font-size:10px;font-weight:700;letter-spacing:2px;
+  color:var(--accent);text-transform:uppercase;margin-bottom:8px;display:block;
+}
+.sidebar-brand h2{font-family:var(--ui-font);color:#fff;font-size:15px;font-weight:600;line-height:1.4}
+
+.sidebar-progress{padding:16px 24px;border-bottom:1px solid rgba(255,255,255,.08)}
+.progress-label{font-family:var(--ui-font);font-size:11px;color:rgba(255,255,255,.45);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.progress-bar-bg{height:4px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden}
+.progress-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .5s ease}
+
+.nav-section{padding:16px 0}
+.nav-section-title{
+  font-family:var(--ui-font);font-size:10px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:rgba(255,255,255,.3);
+  padding:0 24px 8px;
+}
+.nav-item{
+  display:block;padding:9px 24px;
+  font-family:var(--ui-font);font-size:13px;color:rgba(255,255,255,.6);
+  text-decoration:none;border-left:3px solid transparent;
+  transition:all .2s;cursor:pointer;
+}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.05);border-left-color:rgba(255,255,255,.2)}
+.nav-item.active{color:#fff;background:rgba(244,160,23,.1);border-left-color:var(--accent)}
+.nav-item .hours{float:right;font-size:11px;color:rgba(255,255,255,.3)}
+.nav-item .session-num{
+  display:inline-block;width:20px;height:20px;border-radius:4px;
+  background:rgba(255,255,255,.08);text-align:center;line-height:20px;
+  font-size:10px;margin-right:8px;font-weight:700;
+}
+.nav-item.active .session-num{background:var(--accent);color:var(--navy)}
+
+/* ── MAIN CONTENT ── */
+#main{margin-left:var(--sidebar-w);flex:1;min-height:100vh}
+
+.hero{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy3) 60%,#2a4a8a 100%);
+  padding:70px 64px 60px;color:#fff;position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;right:-100px;top:-100px;
+  width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(244,160,23,.15) 0%,transparent 70%);
+}
+.hero::after{
+  content:'01';position:absolute;right:60px;bottom:-30px;
+  font-family:var(--ui-font);font-size:200px;font-weight:800;
+  color:rgba(255,255,255,.04);line-height:1;letter-spacing:-10px;
+}
+.hero-tag{
+  font-family:var(--ui-font);font-size:11px;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:var(--accent);margin-bottom:16px;display:block;
+}
+.hero h1{font-family:var(--ui-font);font-size:42px;font-weight:800;line-height:1.1;margin-bottom:16px}
+.hero p{font-size:16px;color:rgba(255,255,255,.7);max-width:580px;font-family:var(--ui-font);font-weight:300;line-height:1.7}
+.hero-meta{display:flex;gap:32px;margin-top:32px}
+.hero-meta-item{font-family:var(--ui-font)}
+.hero-meta-item .val{font-size:28px;font-weight:700;color:var(--accent);display:block}
+.hero-meta-item .lab{font-size:12px;color:rgba(255,255,255,.5);letter-spacing:1px;text-transform:uppercase}
+
+.content-area{max-width:820px;padding:56px 64px}
+
+/* ── SESSION HEADER ── */
+.session-header{
+  display:flex;align-items:flex-start;gap:20px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:28px 32px;margin-bottom:40px;
+  box-shadow:0 2px 12px rgba(0,0,0,.04);
+  border-left:5px solid var(--accent);
+}
+.session-num-big{
+  font-family:var(--ui-font);font-size:11px;font-weight:700;letter-spacing:2px;
+  color:var(--accent2);text-transform:uppercase;background:#fff5f0;
+  border:1px solid #fecba1;border-radius:8px;padding:6px 12px;white-space:nowrap;
+  margin-top:2px;
+}
+.session-info h2{font-family:var(--ui-font);font-size:22px;font-weight:700;margin-bottom:6px;color:var(--navy)}
+.session-info p{font-size:14px;color:var(--text-light);font-family:var(--ui-font);line-height:1.6}
+.session-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.tag{
+  font-family:var(--ui-font);font-size:11px;font-weight:600;
+  padding:3px 10px;border-radius:20px;letter-spacing:.3px;
+}
+.tag-blue{background:#eff6ff;color:#1d4ed8}
+.tag-green{background:#f0fdf4;color:#166534}
+.tag-purple{background:#faf5ff;color:#7e22ce}
+.tag-orange{background:#fff7ed;color:#c2410c}
+
+/* ── SECTION HEADINGS ── */
+.section-title{
+  font-family:var(--ui-font);font-size:11px;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:var(--accent2);margin-bottom:12px;margin-top:52px;
+  display:flex;align-items:center;gap:10px;
+}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+h3.topic{
+  font-family:var(--ui-font);font-size:21px;font-weight:700;
+  color:var(--navy);margin-bottom:12px;margin-top:32px;
+  display:flex;align-items:center;gap:10px;
+}
+h3.topic .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0}
+h4.subtopic{
+  font-family:var(--ui-font);font-size:16px;font-weight:600;
+  color:var(--navy2);margin:24px 0 10px;padding-left:14px;
+  border-left:3px solid var(--teal);
+}
+
+p.body{margin-bottom:14px;color:var(--text);line-height:1.9;font-size:15.5px}
+p.body + p.body{margin-top:0}
+
+/* ── CODE ── */
+.code-block{
+  margin:20px 0;border-radius:12px;overflow:hidden;
+  box-shadow:0 4px 20px rgba(0,0,0,.12);
+}
+.code-header{
+  background:#1a2332;padding:10px 18px;display:flex;
+  align-items:center;justify-content:space-between;
+}
+.code-header .lang{
+  font-family:var(--ui-font);font-size:11px;font-weight:600;
+  letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);
+}
+.code-header .dots{display:flex;gap:6px}
+.code-header .dots span{width:12px;height:12px;border-radius:50%}
+.code-header .dots span:nth-child(1){background:#ff5f57}
+.code-header .dots span:nth-child(2){background:#febc2e}
+.code-header .dots span:nth-child(3){background:#28c840}
+.code-block pre{margin:0!important;border-radius:0!important}
+.code-block pre code{font-family:var(--code-font)!important;font-size:13.5px!important;line-height:1.7!important}
+
+/* Output box */
+.output-box{
+  background:#f1f5f0;border:1px solid #c3e6cb;border-radius:0 0 10px 10px;
+  padding:14px 18px;font-family:var(--code-font);font-size:13px;
+  color:#155724;line-height:1.7;margin-top:-4px;
+}
+.output-box .out-label{
+  font-family:var(--ui-font);font-size:10px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:#6c757d;margin-bottom:8px;display:block;
+}
+
+/* ── CALLOUT BOXES ── */
+.callout{
+  border-radius:12px;padding:18px 22px;margin:20px 0;
+  display:flex;gap:14px;align-items:flex-start;
+}
+.callout-icon{font-size:20px;flex-shrink:0;margin-top:2px}
+.callout-body{font-family:var(--ui-font);font-size:14px;line-height:1.7}
+.callout-body strong{display:block;margin-bottom:4px;font-size:14px}
+.callout.info{background:#eff6ff;border:1px solid #bfdbfe}
+.callout.info .callout-body{color:#1e40af}
+.callout.tip{background:#f0fdf4;border:1px solid #bbf7d0}
+.callout.tip .callout-body{color:#166534}
+.callout.warn{background:#fffbeb;border:1px solid #fde68a}
+.callout.warn .callout-body{color:#92400e}
+.callout.important{background:#fdf4ff;border:1px solid #e9d5ff}
+.callout.important .callout-body{color:#6b21a8}
+
+/* ── COMPARISON TABLE ── */
+.compare-table{width:100%;border-collapse:collapse;margin:20px 0;font-family:var(--ui-font);font-size:14px}
+.compare-table th{background:var(--navy);color:#fff;padding:12px 16px;text-align:left;font-weight:600;font-size:13px}
+.compare-table td{padding:11px 16px;border-bottom:1px solid var(--border)}
+.compare-table tr:nth-child(even) td{background:#f8faff}
+.compare-table tr:hover td{background:#eef2ff}
+
+/* ── CONCEPT GRID ── */
+.concept-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
+.concept-card{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:18px;transition:box-shadow .2s;
+}
+.concept-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.concept-card .icon{font-size:24px;margin-bottom:8px}
+.concept-card h4{font-family:var(--ui-font);font-size:14px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.concept-card p{font-family:var(--ui-font);font-size:13px;color:var(--text-light);line-height:1.5}
+
+/* ── STEP FLOW ── */
+.step-flow{margin:20px 0}
+.step-item{display:flex;gap:16px;margin-bottom:16px}
+.step-badge{
+  flex-shrink:0;width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;font-family:var(--ui-font);font-weight:700;font-size:13px;
+  display:flex;align-items:center;justify-content:center;margin-top:2px;
+}
+.step-content h4{font-family:var(--ui-font);font-size:15px;font-weight:600;color:var(--navy);margin-bottom:4px}
+.step-content p{font-family:var(--ui-font);font-size:13.5px;color:var(--text-light);line-height:1.6}
+
+/* ── DIVIDER ── */
+.session-divider{
+  height:2px;background:linear-gradient(90deg,var(--accent),transparent);
+  margin:60px 0;border-radius:2px;
+}
+
+/* ── LAB SECTION ── */
+.lab-banner{
+  background:linear-gradient(135deg,var(--navy) 0%,#1a3a6e 100%);
+  border-radius:16px;padding:32px;margin-bottom:32px;color:#fff;
+  border:1px solid rgba(244,160,23,.3);
+}
+.lab-banner .lab-tag{
+  font-family:var(--ui-font);font-size:10px;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:var(--accent);margin-bottom:12px;display:block;
+}
+.lab-banner h2{font-family:var(--ui-font);font-size:26px;font-weight:800;margin-bottom:8px}
+.lab-banner p{font-size:14px;color:rgba(255,255,255,.7);font-family:var(--ui-font)}
+.lab-objectives{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px;
+}
+.lab-obj-item{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  border-radius:8px;padding:12px 14px;
+  font-family:var(--ui-font);font-size:13px;color:rgba(255,255,255,.8);
+  display:flex;align-items:center;gap:8px;
+}
+.lab-obj-item::before{content:'✓';color:var(--accent);font-weight:700}
+
+/* ── QUIZ SECTION ── */
+.quiz-card{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:24px;margin:20px 0;
+}
+.quiz-card h4{font-family:var(--ui-font);font-size:15px;font-weight:700;color:var(--navy);margin-bottom:16px}
+.quiz-q{font-family:var(--ui-font);font-size:14px;color:var(--text);margin-bottom:10px;line-height:1.6}
+.quiz-option{
+  padding:10px 14px;border:1px solid var(--border);border-radius:8px;
+  font-family:var(--ui-font);font-size:13.5px;cursor:pointer;margin-bottom:6px;
+  transition:all .2s;display:flex;align-items:center;gap:10px;
+}
+.quiz-option:hover{background:#f0f4ff;border-color:#a5b4fc}
+.quiz-option.correct{background:#f0fdf4;border-color:#86efac;color:#166534}
+.quiz-option.wrong{background:#fef2f2;border-color:#fca5a5;color:#991b1b}
+.quiz-option .opt-letter{
+  width:24px;height:24px;border-radius:50%;background:var(--tag-bg);
+  text-align:center;line-height:24px;font-size:12px;font-weight:700;flex-shrink:0;color:var(--tag-color)
+}
+
+/* ── FOOTER ── */
+.module-footer{
+  margin-top:60px;padding:32px;background:var(--navy);border-radius:16px;
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--ui-font);color:rgba(255,255,255,.6);font-size:13px;
+}
+.module-footer .next-btn{
+  background:var(--accent);color:var(--navy);font-family:var(--ui-font);
+  font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;
+  text-decoration:none;transition:opacity .2s;
+}
+.module-footer .next-btn:hover{opacity:.85}
+
+@media(max-width:900px){
+  #sidebar{display:none}
+  #main{margin-left:0}
+  .content-area{padding:32px 24px}
+  .hero{padding:40px 24px}
+  .hero h1{font-size:28px}
+  .concept-grid,.lab-objectives{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ SIDEBAR ══════════════════ -->
+<nav id="sidebar">
+  <div class="sidebar-brand">
+    <span class="badge">Data Science · 72h</span>
+    <h2>Module 1 — Python & Data Foundations</h2>
+  </div>
+  <div class="sidebar-progress">
+    <div class="progress-label">Reading Progress</div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Sessions (15 Hours)</div>
+    <a class="nav-item active" href="#session1"><span class="session-num">S1</span>Python Essentials<span class="hours">3h</span></a>
+    <a class="nav-item" href="#session2"><span class="session-num">S2</span>OOP Essentials<span class="hours">2h</span></a>
+    <a class="nav-item" href="#session3"><span class="session-num">S3</span>NumPy + Pandas<span class="hours">3h</span></a>
+    <a class="nav-item" href="#session4"><span class="session-num">S4</span>Data Cleaning<span class="hours">3h</span></a>
+    <a class="nav-item" href="#session5"><span class="session-num">S5</span>File I/O & APIs<span class="hours">2h</span></a>
+    <a class="nav-item" href="#session6"><span class="session-num">S6</span>Hands-On Lab<span class="hours">2h</span></a>
+  </div>
+  <div class="nav-section" style="margin-top:auto;border-top:1px solid rgba(255,255,255,.08);padding-top:16px">
+    <div class="nav-section-title">Quick Jump</div>
+    <a class="nav-item" href="#variables">Variables & Types</a>
+    <a class="nav-item" href="#control">Control Flow</a>
+    <a class="nav-item" href="#functions">Functions</a>
+    <a class="nav-item" href="#collections">Collections</a>
+    <a class="nav-item" href="#oop">OOP Concepts</a>
+    <a class="nav-item" href="#numpy">NumPy</a>
+    <a class="nav-item" href="#pandas">Pandas</a>
+    <a class="nav-item" href="#cleaning">Data Cleaning</a>
+    <a class="nav-item" href="#fileio">File I/O</a>
+    <a class="nav-item" href="#apis">APIs</a>
+    <a class="nav-item" href="#lab">Lab Project</a>
+  </div>
+</nav>
+
+<!-- ══════════════════ MAIN ══════════════════ -->
+<div id="main">
+
+  <!-- Hero -->
+  <div class="hero">
+    <span class="hero-tag">Module 1 of 8</span>
+    <h1>Python & Data<br>Foundations</h1>
+    <p>Build your complete toolkit — from Python basics to real data wrangling. By the end of this module you will be fully equipped to load, clean, and explore any dataset.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span class="val">15</span><span class="lab">Total Hours</span></div>
+      <div class="hero-meta-item"><span class="val">6</span><span class="lab">Sessions</span></div>
+      <div class="hero-meta-item"><span class="val">1</span><span class="lab">Lab Project</span></div>
+    </div>
+  </div>
+
+  <div class="content-area">
+
+  <!-- ═══════════════════════════════════════
+       SESSION 1 — PYTHON ESSENTIALS
+  ════════════════════════════════════════ -->
+  <div id="session1">
+    <div class="session-header">
+      <div class="session-num-big">Session 1 · 3 Hours</div>
+      <div class="session-info">
+        <h2>Python Essentials</h2>
+        <p>Syntax, Variables, Data Types, Control Flow, Functions &amp; Collections</p>
+        <div class="session-tags">
+          <span class="tag tag-blue">Variables</span>
+          <span class="tag tag-blue">Control Flow</span>
+          <span class="tag tag-green">Functions</span>
+          <span class="tag tag-purple">Collections</span>
+          <span class="tag tag-orange">Comprehensions</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1.1 Variables -->
+    <div id="variables">
+      <div class="section-title">1.1 Variables &amp; Data Types</div>
+      <h3 class="topic"><span class="dot"></span>What is a Variable?</h3>
+      <p class="body">A variable is a named container that stores data in memory. Python is <em>dynamically typed</em> — you do not declare a type; Python infers it automatically from the value you assign.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python"># Basic variable assignment
+name    = "Priya"          # str  — text
+age     = 25               # int  — whole number
+gpa     = 8.7              # float — decimal
+is_pass = True             # bool — True or False
+nothing = None             # NoneType — absence of value
+
+# Check the type
+print(type(name))          # <class 'str'>
+print(type(age))           # <class 'int'>
+print(type(gpa))           # <class 'float'>
+
+# Type conversion (casting)
+age_str = str(age)         # 25 → "25"
+gpa_int = int(gpa)         # 8.7 → 8  (truncates, does NOT round)
+marks   = float("96.5")    # "96.5" → 96.5</code></pre>
+      </div>
+
+      <h4 class="subtopic">Python's Core Data Types at a Glance</h4>
+      <table class="compare-table">
+        <tr><th>Type</th><th>Example</th><th>Mutable?</th><th>Use Case</th></tr>
+        <tr><td><code>int</code></td><td><code>42, -7, 0</code></td><td>No</td><td>Counts, indices</td></tr>
+        <tr><td><code>float</code></td><td><code>3.14, -0.5</code></td><td>No</td><td>Measurements, prices</td></tr>
+        <tr><td><code>str</code></td><td><code>"hello"</code></td><td>No</td><td>Text, labels</td></tr>
+        <tr><td><code>bool</code></td><td><code>True, False</code></td><td>No</td><td>Flags, conditions</td></tr>
+        <tr><td><code>list</code></td><td><code>[1, 2, 3]</code></td><td><strong>Yes</strong></td><td>Ordered collections</td></tr>
+        <tr><td><code>dict</code></td><td><code>{"key": "val"}</code></td><td><strong>Yes</strong></td><td>Key-value mapping</td></tr>
+        <tr><td><code>tuple</code></td><td><code>(1, 2, 3)</code></td><td>No</td><td>Fixed records</td></tr>
+        <tr><td><code>set</code></td><td><code>{1, 2, 3}</code></td><td><strong>Yes</strong></td><td>Unique items</td></tr>
+      </table>
+
+      <h4 class="subtopic">String Operations</h4>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python">name = "data science"
+
+# Common string methods
+print(name.upper())          # DATA SCIENCE
+print(name.title())          # Data Science
+print(name.split(" "))       # ['data', 'science']
+print(name.replace("data","applied data"))  # applied data science
+print(len(name))             # 12
+
+# f-strings (modern string formatting — always prefer this)
+score = 94.5
+msg = f"Student scored {score:.1f}%"
+print(msg)                   # Student scored 94.5%
+
+# Slicing  [start : stop : step]
+s = "Python"
+print(s[0])     # P
+print(s[-1])    # n
+print(s[1:4])   # yth
+print(s[::-1])  # nohtyP  (reversed)</code></pre>
+      </div>
+    </div>
+
+    <!-- 1.2 Control Flow -->
+    <div id="control">
+      <div class="section-title">1.2 Control Flow</div>
+      <h3 class="topic"><span class="dot"></span>Conditionals — if / elif / else</h3>
+      <p class="body">Python uses indentation (4 spaces) to define code blocks — there are no curly braces. Every colon at the end of a statement opens a new indented block.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python">marks = 72
+
+if marks >= 90:
+    grade = "A+"
+elif marks >= 80:
+    grade = "A"
+elif marks >= 70:
+    grade = "B"
+elif marks >= 60:
+    grade = "C"
+else:
+    grade = "Fail"
+
+print(f"Grade: {grade}")    # Grade: B
+
+# One-liner conditional (ternary)
+result = "Pass" if marks >= 50 else "Fail"
+print(result)               # Pass</code></pre>
+      </div>
+
+      <h3 class="topic"><span class="dot"></span>Loops — for &amp; while</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python"># ── for loop ──────────────────────────────────────
+fruits = ["apple", "banana", "mango"]
+
+for fruit in fruits:
+    print(fruit.upper())
+# APPLE  BANANA  MANGO
+
+# range(start, stop, step)
+for i in range(1, 6):
+    print(i, end=" ")       # 1 2 3 4 5
+
+# enumerate — get index + value together
+for idx, fruit in enumerate(fruits, start=1):
+    print(f"{idx}. {fruit}")
+# 1. apple   2. banana   3. mango
+
+# ── while loop ────────────────────────────────────
+count = 0
+while count < 3:
+    print(f"Count is {count}")
+    count += 1              # ALWAYS increment to avoid infinite loop
+
+# ── Loop control ──────────────────────────────────
+for n in range(1, 11):
+    if n == 4: continue     # skip 4
+    if n == 8: break        # stop at 8
+    print(n, end=" ")       # 1 2 3 5 6 7</code></pre>
+      </div>
+
+      <div class="callout tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <strong>Tip — Prefer <code>for</code> over <code>while</code></strong>
+          Use <code>for</code> loops whenever you know the number of iterations or are iterating over a collection. Reserve <code>while</code> for cases where the stop condition is dynamic (e.g., waiting for user input, convergence checks).
+        </div>
+      </div>
+    </div>
+
+    <!-- 1.3 Functions -->
+    <div id="functions">
+      <div class="section-title">1.3 Functions</div>
+      <h3 class="topic"><span class="dot"></span>Defining and Calling Functions</h3>
+      <p class="body">Functions let you reuse code and keep your programs readable. In data science, well-named functions make your analysis pipelines self-documenting.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python"># Basic function
+def greet(name):
+    return f"Hello, {name}!"
+
+print(greet("Rahul"))       # Hello, Rahul!
+
+# Default parameters
+def power(base, exp=2):
+    return base ** exp
+
+print(power(3))             # 9   (uses default exp=2)
+print(power(3, 3))          # 27
+
+# Multiple return values (returned as tuple)
+def stats(numbers):
+    total   = sum(numbers)
+    average = total / len(numbers)
+    return total, average
+
+t, avg = stats([10, 20, 30, 40])
+print(f"Total: {t}, Average: {avg}")   # Total: 100, Average: 25.0
+
+# *args — variable number of positional arguments
+def add_all(*args):
+    return sum(args)
+
+print(add_all(1, 2, 3, 4, 5))   # 15
+
+# **kwargs — variable keyword arguments
+def student_info(**kwargs):
+    for key, value in kwargs.items():
+        print(f"  {key}: {value}")
+
+student_info(name="Aisha", age=22, city="Kochi")</code></pre>
+      </div>
+
+      <h4 class="subtopic">Lambda Functions (Anonymous Functions)</h4>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python"># lambda syntax: lambda arguments: expression
+square = lambda x: x ** 2
+print(square(5))            # 25
+
+# Most useful with map(), filter(), sorted()
+numbers = [3, 1, 4, 1, 5, 9, 2, 6]
+
+squared = list(map(lambda x: x**2, numbers))
+# [9, 1, 16, 1, 25, 81, 4, 36]
+
+evens   = list(filter(lambda x: x % 2 == 0, numbers))
+# [4, 2, 6]
+
+sorted_desc = sorted(numbers, key=lambda x: -x)
+# [9, 6, 5, 4, 3, 2, 1, 1]</code></pre>
+      </div>
+    </div>
+
+    <!-- 1.4 Collections -->
+    <div id="collections">
+      <div class="section-title">1.4 Collections</div>
+
+      <h3 class="topic"><span class="dot"></span>Lists</h3>
+      <p class="body">Lists are ordered, mutable sequences — the most used collection in Python. Think of them as a dynamic array.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python">scores = [88, 92, 75, 60, 95]
+
+# Indexing (0-based from left, -1 from right)
+print(scores[0])        # 88
+print(scores[-1])       # 95
+print(scores[1:4])      # [92, 75, 60]
+
+# Modification
+scores.append(85)       # add to end
+scores.insert(0, 100)   # insert at index 0
+scores.remove(60)       # remove first occurrence of 60
+popped = scores.pop()   # removes & returns last element
+
+# Useful methods
+print(max(scores))      # highest
+print(min(scores))      # lowest
+print(sorted(scores))   # sorted copy (original unchanged)
+scores.sort()           # sorts IN-PLACE
+print(scores.count(88)) # how many times 88 appears</code></pre>
+      </div>
+
+      <h3 class="topic"><span class="dot"></span>Dictionaries</h3>
+      <p class="body">Dictionaries store key-value pairs. Keys must be unique and immutable (usually strings or numbers). Dictionaries are your primary data structure for structured records — think of each dictionary as a single row in a table.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python">student = {
+    "name" : "Mehul",
+    "age"  : 21,
+    "marks": {"math": 90, "ds": 88, "stats": 76}
+}
+
+# Accessing values
+print(student["name"])                    # Mehul
+print(student.get("gpa", "Not found"))   # Not found (safe access)
+print(student["marks"]["ds"])            # 88
+
+# Modification
+student["city"] = "Mumbai"              # add new key
+student["age"] = 22                     # update existing
+
+# Iteration
+for key, value in student.items():
+    print(f"{key}: {value}")
+
+# Useful methods
+print(student.keys())                   # dict_keys([...])
+print(student.values())                 # dict_values([...])
+
+# Dictionary from two lists
+names  = ["Alice", "Bob", "Carol"]
+grades = [85, 90, 78]
+report = dict(zip(names, grades))
+# {'Alice': 85, 'Bob': 90, 'Carol': 78}</code></pre>
+      </div>
+
+      <h3 class="topic"><span class="dot"></span>Tuples &amp; Sets</h3>
+      <div class="concept-grid">
+        <div class="concept-card">
+          <div class="icon">📌</div>
+          <h4>Tuple — Immutable Sequence</h4>
+          <p>Like a list but cannot be changed after creation. Great for fixed data like coordinates, RGB values, or database records.</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">🔵</div>
+          <h4>Set — Unique Unordered Items</h4>
+          <p>Automatically removes duplicates. Supports fast membership testing and mathematical set operations (union, intersection, difference).</p>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python"># ── Tuples ────────────────────────────────────────
+point = (12.5, 8.3)         # latitude, longitude
+x, y  = point               # tuple unpacking
+# point[0] = 15             # ❌ TypeError: 'tuple' is immutable
+
+# ── Sets ──────────────────────────────────────────
+categories_a = {"Sports", "Tech", "Music", "Tech"}   # duplicates auto-removed
+categories_b = {"Health", "Tech", "Finance"}
+
+print(categories_a)          # {'Sports', 'Tech', 'Music'}  (order varies)
+print(categories_a | categories_b)  # Union
+print(categories_a & categories_b)  # Intersection: {'Tech'}
+print(categories_a - categories_b)  # Difference:   {'Sports','Music'}
+
+# Fast membership test — O(1) vs O(n) for list
+big_set  = set(range(1_000_000))
+print(999_999 in big_set)    # True — instant</code></pre>
+      </div>
+
+      <h3 class="topic"><span class="dot"></span>Comprehensions</h3>
+      <p class="body">Comprehensions are Pythonic one-liners that build lists, sets, and dictionaries concisely. They replace many <code>for</code> loops with cleaner, faster code — a staple in data science scripts.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python">numbers = range(1, 11)       # 1 to 10
+
+# ── List Comprehension  [expression  for item in iterable  if condition] ──
+squares    = [x**2 for x in numbers]
+# [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+
+even_sq    = [x**2 for x in numbers if x % 2 == 0]
+# [4, 16, 36, 64, 100]
+
+# Cleaning text — real-world use
+raw = ["  Alice ", "BOB", "", "carol  "]
+clean = [name.strip().title() for name in raw if name.strip()]
+# ['Alice', 'Bob', 'Carol']
+
+# ── Dict Comprehension  {key: value  for item in iterable} ──
+word_lengths = {word: len(word) for word in ["python","pandas","numpy"]}
+# {'python': 6, 'pandas': 6, 'numpy': 5}
+
+# ── Set Comprehension ──
+unique_lengths = {len(word) for word in ["cat","dog","elephant","ant"]}
+# {3, 8}  (unique lengths only)</code></pre>
+      </div>
+
+      <div class="callout important">
+        <span class="callout-icon">⭐</span>
+        <div class="callout-body">
+          <strong>When to use Comprehensions vs regular loops</strong>
+          Use comprehensions when building a new collection from an existing one with a clear one-step transformation. Use regular <code>for</code> loops when the body is complex (multiple statements, nested conditions, side effects). Readability always wins.
+        </div>
+      </div>
+    </div>
+  </div><!-- /session1 -->
+
+  <div class="session-divider"></div>
+
+  <!-- ═══════════════════════════════════════
+       SESSION 2 — OOP ESSENTIALS
+  ════════════════════════════════════════ -->
+  <div id="session2">
+    <div class="session-header">
+      <div class="session-num-big">Session 2 · 2 Hours</div>
+      <div class="session-info">
+        <h2>OOP Essentials</h2>
+        <p>Classes, Objects, Inheritance &amp; Encapsulation — the building blocks of Sklearn</p>
+        <div class="session-tags">
+          <span class="tag tag-purple">Classes</span>
+          <span class="tag tag-purple">Objects</span>
+          <span class="tag tag-blue">Inheritance</span>
+          <span class="tag tag-orange">Encapsulation</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="oop">
+      <div class="callout info">
+        <span class="callout-icon">🔍</span>
+        <div class="callout-body">
+          <strong>Why OOP matters in Data Science</strong>
+          Every Sklearn model you use is an object: <code>LinearRegression()</code>, <code>RandomForestClassifier()</code>. Understanding classes lets you read documentation confidently, write custom transformers, and debug unexpected behaviour.
+        </div>
+      </div>
+
+      <div class="section-title">2.1 Classes &amp; Objects</div>
+      <h3 class="topic"><span class="dot"></span>Defining a Class</h3>
+      <p class="body">A <strong>class</strong> is a blueprint. An <strong>object</strong> is a specific instance built from that blueprint. The <code>__init__</code> method is the constructor — it runs automatically when you create a new object.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python">class Student:
+    # Class attribute — shared by ALL instances
+    institution = "Data Science Institute"
+
+    # __init__ is the constructor; 'self' refers to the instance
+    def __init__(self, name, age, marks):
+        # Instance attributes — unique to each object
+        self.name  = name
+        self.age   = age
+        self.marks = marks
+
+    # Instance method
+    def grade(self):
+        if self.marks >= 90:
+            return "A+"
+        elif self.marks >= 75:
+            return "A"
+        else:
+            return "B"
+
+    # Special method — controls print() output
+    def __repr__(self):
+        return f"Student(name='{self.name}', marks={self.marks})"
+
+
+# ── Creating objects (instances) ──
+s1 = Student("Priya",  21, 92)
+s2 = Student("Arjun",  23, 78)
+
+print(s1.grade())                # A+
+print(s2.grade())                # A
+print(s1.institution)            # Data Science Institute
+print(s2)                        # Student(name='Arjun', marks=78)</code></pre>
+      </div>
+
+      <div class="section-title">2.2 Inheritance</div>
+      <h3 class="topic"><span class="dot"></span>Extending Classes</h3>
+      <p class="body">Inheritance lets a child class reuse and extend the behaviour of a parent class. This is exactly how Sklearn builds <code>DecisionTreeClassifier</code> on top of a generic <code>BaseEstimator</code>.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python">class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age  = age
+
+    def introduce(self):
+        return f"Hi, I'm {self.name}, age {self.age}."
+
+
+class DataScientist(Person):           # inherits from Person
+    def __init__(self, name, age, specialty):
+        super().__init__(name, age)    # call parent constructor
+        self.specialty = specialty
+
+    # Override parent method
+    def introduce(self):
+        base = super().introduce()
+        return f"{base} I specialise in {self.specialty}."
+
+    def fit(self, data):
+        return f"{self.name} is fitting a model on {len(data)} rows."
+
+
+ds = DataScientist("Neha", 28, "NLP")
+print(ds.introduce())
+# Hi, I'm Neha, age 28. I specialise in NLP.
+
+print(ds.fit([1, 2, 3, 4, 5]))
+# Neha is fitting a model on 5 rows.</code></pre>
+      </div>
+
+      <div class="section-title">2.3 Encapsulation</div>
+      <h3 class="topic"><span class="dot"></span>Protecting Data</h3>
+      <p class="body">Encapsulation hides internal details and exposes only what is necessary. In Python, a single underscore <code>_attr</code> signals "internal use" and a double underscore <code>__attr</code> triggers name-mangling for stronger protection.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python">class BankAccount:
+    def __init__(self, owner, balance):
+        self.owner    = owner
+        self.__balance = balance      # private — cannot access directly
+
+    def deposit(self, amount):
+        if amount > 0:
+            self.__balance += amount
+
+    def withdraw(self, amount):
+        if 0 < amount <= self.__balance:
+            self.__balance -= amount
+            return amount
+        raise ValueError("Insufficient funds")
+
+    # Getter — controlled read access
+    @property
+    def balance(self):
+        return round(self.__balance, 2)
+
+
+acc = BankAccount("Rohit", 5000)
+acc.deposit(1000)
+print(acc.balance)          # 6000
+
+# acc.__balance              # ❌ AttributeError
+# But you CAN access via:   acc._BankAccount__balance  (avoid this)</code></pre>
+      </div>
+    </div>
+  </div><!-- /session2 -->
+
+  <div class="session-divider"></div>
+
+  <!-- ═══════════════════════════════════════
+       SESSION 3 — NUMPY + PANDAS
+  ════════════════════════════════════════ -->
+  <div id="session3">
+    <div class="session-header">
+      <div class="session-num-big">Session 3 · 3 Hours</div>
+      <div class="session-info">
+        <h2>NumPy + Pandas</h2>
+        <p>Arrays, Vectorized Operations, DataFrames, Indexing, Merging, GroupBy &amp; Aggregation</p>
+        <div class="session-tags">
+          <span class="tag tag-blue">NumPy</span>
+          <span class="tag tag-green">Pandas</span>
+          <span class="tag tag-orange">GroupBy</span>
+          <span class="tag tag-purple">Merging</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="numpy">
+      <div class="section-title">3.1 NumPy — Numerical Computing</div>
+      <h3 class="topic"><span class="dot"></span>Why NumPy?</h3>
+      <p class="body">A Python list is slow for numerical operations — each element is a Python object with overhead. NumPy stores data in a contiguous block of typed memory, enabling vectorized operations that are 50–100× faster without any loops.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python">import numpy as np
+
+# ── Creating arrays ───────────────────────────────
+a = np.array([1, 2, 3, 4, 5])
+print(a.dtype)          # int64
+print(a.shape)          # (5,)
+
+# Useful constructors
+zeros  = np.zeros((3, 4))       # 3×4 matrix of 0.0
+ones   = np.ones((2, 3))        # 2×3 matrix of 1.0
+rng    = np.arange(0, 20, 2)    # [0, 2, 4, 6, ... 18]
+linsp  = np.linspace(0, 1, 5)   # [0.0, 0.25, 0.5, 0.75, 1.0]
+rand   = np.random.seed(42); np.random.rand(3, 3)  # random 3×3
+
+# ── Vectorized Operations (NO loops needed!) ──────
+prices  = np.array([100, 200, 150, 300, 250])
+tax_rate = 0.18
+
+# Applies to every element simultaneously
+prices_with_tax = prices * (1 + tax_rate)
+print(prices_with_tax)   # [118. 236. 177. 354. 295.]
+
+discount_mask = prices > 200
+print(prices[discount_mask])  # [300 250]  — boolean indexing</code></pre>
+      </div>
+
+      <h4 class="subtopic">2D Arrays (Matrices)</h4>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python"># ── 2D array: rows × columns ──────────────────────
+marks = np.array([
+    [85, 90, 78],   # Student 0: Math, Science, English
+    [72, 88, 91],   # Student 1
+    [95, 60, 85],   # Student 2
+])
+
+print(marks.shape)          # (3, 3) — 3 students × 3 subjects
+
+# Indexing [row, col]
+print(marks[0, 1])          # 90 — Student 0, Science
+print(marks[:, 0])          # [85 72 95] — all students, Math column
+print(marks[1, :])          # [72 88 91] — Student 1, all subjects
+
+# Axis-wise stats
+print(marks.mean(axis=0))   # [84.  79.3 84.7] — per-subject average
+print(marks.mean(axis=1))   # [84.3 83.7 80. ] — per-student average
+print(marks.max())          # 95 — overall max
+
+# Reshaping
+flat = marks.flatten()      # 1D: [85 90 78 72 88 91 95 60 85]
+mat  = np.arange(12).reshape(3, 4)  # 3 rows, 4 cols</code></pre>
+      </div>
+    </div>
+
+    <div id="pandas">
+      <div class="section-title">3.2 Pandas — Data Analysis</div>
+      <h3 class="topic"><span class="dot"></span>Series &amp; DataFrames</h3>
+      <p class="body">A <strong>Series</strong> is a labelled 1D array. A <strong>DataFrame</strong> is a labelled 2D table — your primary data structure for any tabular dataset. Think of it as an Excel sheet with Python superpowers.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python">import pandas as pd
+
+# ── Creating a DataFrame ──────────────────────────
+data = {
+    "name"    : ["Alice", "Bob", "Carol", "David", "Eve"],
+    "age"     : [24, 30, 27, 22, 35],
+    "city"    : ["Mumbai", "Delhi", "Pune", "Mumbai", "Delhi"],
+    "salary"  : [55000, 80000, 65000, 48000, 92000],
+    "dept"    : ["DS", "ML", "DS", "DS", "ML"],
+}
+df = pd.DataFrame(data)
+print(df)
+
+# ── Quick inspection ──────────────────────────────
+df.head(3)          # first 3 rows
+df.tail(2)          # last 2 rows
+df.shape            # (5, 5)  rows × columns
+df.dtypes           # data type of each column
+df.info()           # non-null counts + dtypes
+df.describe()       # count, mean, std, min, quartiles, max</code></pre>
+      </div>
+      <div class="output-box">
+        <span class="out-label">Output — df.describe() (numeric columns only)</span>
+         age        salary
+count  5.00000     5.000000
+mean  27.60000  68000.000000
+std    4.93288  18166.222...
+min   22.00000  48000.000000
+25%   24.00000  55000.000000
+50%   27.00000  65000.000000
+75%   30.00000  80000.000000
+max   35.00000  92000.000000
+      </div>
+
+      <h4 class="subtopic">Selecting Data — loc vs iloc</h4>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python"># Select columns
+df["name"]                  # Series — single column
+df[["name", "salary"]]      # DataFrame — multiple columns
+
+# ── loc  — label/condition based ──────────────────
+df.loc[0]                   # row with INDEX LABEL 0
+df.loc[0, "name"]           # single cell: "Alice"
+df.loc[df["salary"] > 60000, ["name", "salary"]]
+#      name  salary
+# 1     Bob   80000
+# 2   Carol   65000
+# 4     Eve   92000
+
+# ── iloc — integer position based ─────────────────
+df.iloc[0]                  # first row (by position)
+df.iloc[0:3, 1:4]           # rows 0-2, cols 1-3
+
+# ── Boolean filtering ──────────────────────────────
+ds_team  = df[df["dept"] == "DS"]
+mumbai_ds = df[(df["city"] == "Mumbai") & (df["dept"] == "DS")]
+high_sal  = df[df["salary"].between(60000, 85000)]</code></pre>
+      </div>
+
+      <h4 class="subtopic">Adding, Removing &amp; Modifying Columns</h4>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python"># Add new column
+df["annual_salary"] = df["salary"] * 12
+df["senior"]        = df["age"] > 28
+
+# Modify using apply()
+df["name_upper"]    = df["name"].apply(lambda x: x.upper())
+
+# Rename columns
+df.rename(columns={"dept": "department"}, inplace=True)
+
+# Drop columns / rows
+df.drop(columns=["name_upper"], inplace=True)
+df.drop(index=[3], inplace=True)     # remove row with index 3
+
+# Sort
+df.sort_values("salary", ascending=False, inplace=True)</code></pre>
+      </div>
+
+      <h4 class="subtopic">Merging DataFrames</h4>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python">employees = pd.DataFrame({
+    "emp_id": [1, 2, 3, 4],
+    "name"  : ["Alice", "Bob", "Carol", "David"],
+    "dept_id": [10, 20, 10, 30]
+})
+
+departments = pd.DataFrame({
+    "dept_id": [10, 20, 40],
+    "dept_name": ["Data Science", "ML", "Finance"]
+})
+
+# INNER JOIN — only matching rows
+inner = pd.merge(employees, departments, on="dept_id", how="inner")
+# Alice, Bob, Carol get dept_name; David dropped (dept_id=30 not in departments)
+
+# LEFT JOIN — all employees, NaN for non-matching depts
+left  = pd.merge(employees, departments, on="dept_id", how="left")
+
+# Concatenation (stack rows)
+combined = pd.concat([employees, employees], ignore_index=True)</code></pre>
+      </div>
+
+      <h4 class="subtopic">GroupBy &amp; Aggregation</h4>
+      <p class="body">GroupBy is the Pandas equivalent of SQL's <code>GROUP BY</code>. It splits data into groups, applies an aggregation function, and combines the results.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python">df = pd.DataFrame({
+    "city"  : ["Mumbai","Delhi","Mumbai","Delhi","Pune"],
+    "dept"  : ["DS","ML","DS","DS","ML"],
+    "salary": [55000, 80000, 65000, 48000, 92000],
+    "age"   : [24, 30, 27, 22, 35]
+})
+
+# Single column group
+dept_stats = df.groupby("dept")["salary"].mean()
+# dept
+# DS    56000.0
+# ML    86000.0
+
+# Multiple aggregations at once
+summary = df.groupby("city").agg(
+    avg_salary = ("salary", "mean"),
+    max_age    = ("age",    "max"),
+    headcount  = ("salary", "count")
+)
+print(summary)
+#         avg_salary  max_age  headcount
+# city
+# Delhi        64000       30          2
+# Mumbai       60000       27          2
+# Pune         92000       35          1
+
+# Group by multiple columns
+df.groupby(["city", "dept"])["salary"].sum()</code></pre>
+      </div>
+    </div>
+  </div><!-- /session3 -->
+
+  <div class="session-divider"></div>
+
+  <!-- ═══════════════════════════════════════
+       SESSION 4 — DATA CLEANING
+  ════════════════════════════════════════ -->
+  <div id="session4">
+    <div class="session-header">
+      <div class="session-num-big">Session 4 · 3 Hours</div>
+      <div class="session-info">
+        <h2>Data Cleaning</h2>
+        <p>Missing Values, Duplicates, Outliers &amp; Type Conversion</p>
+        <div class="session-tags">
+          <span class="tag tag-orange">Missing Values</span>
+          <span class="tag tag-red">Outliers</span>
+          <span class="tag tag-blue">Duplicates</span>
+          <span class="tag tag-green">Type Casting</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="cleaning">
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <strong>The 80/20 Rule of Data Science</strong>
+          In practice, 70–80% of a data scientist's time is spent cleaning and preparing data. Clean data is the single most important factor for model accuracy.
+        </div>
+      </div>
+
+      <div class="section-title">4.1 Missing Values</div>
+      <h3 class="topic"><span class="dot"></span>Detecting Missing Data</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python">import pandas as pd
+import numpy as np
+
+df = pd.DataFrame({
+    "name"  : ["Alice", "Bob",  "Carol", "David", "Eve"],
+    "age"   : [24,      np.nan, 27,      np.nan,  35],
+    "salary": [55000,   80000,  np.nan,  48000,   92000],
+    "city"  : ["Mumbai","Delhi",np.nan,  "Pune",   "Delhi"],
+})
+
+# Detection
+print(df.isnull())              # boolean mask
+print(df.isnull().sum())        # missing count per column
+print(df.isnull().sum() / len(df) * 100)  # missing % per column
+
+# age      2  → 40%
+# salary   1  → 20%
+# city     1  → 20%</code></pre>
+      </div>
+
+      <h4 class="subtopic">Strategies for Handling Missing Data</h4>
+      <div class="step-flow">
+        <div class="step-item">
+          <div class="step-badge">1</div>
+          <div class="step-content">
+            <h4>Drop — when missingness is &gt;50% or random</h4>
+            <p>Remove entire rows or columns when data is too sparse to be useful.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-badge">2</div>
+          <div class="step-content">
+            <h4>Fill with statistic — numerical columns</h4>
+            <p>Use mean (normally distributed data) or median (skewed data / outliers present).</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-badge">3</div>
+          <div class="step-content">
+            <h4>Fill with mode / constant — categorical columns</h4>
+            <p>Use the most frequent value or a meaningful placeholder like "Unknown".</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-badge">4</div>
+          <div class="step-content">
+            <h4>Forward/Backward fill — time-series data</h4>
+            <p>Propagate the last valid value forward or the next valid value backward.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python"># ── Drop ──────────────────────────────────────────
+df.dropna(inplace=True)                   # drop any row with NaN
+df.dropna(subset=["salary"], inplace=True)# drop only if salary is NaN
+df.dropna(thresh=3, inplace=True)         # keep rows with ≥3 non-NaN
+
+# ── Fill — Numerical ──────────────────────────────
+mean_age   = df["age"].mean()
+median_sal = df["salary"].median()
+
+df["age"]   .fillna(mean_age,    inplace=True)
+df["salary"].fillna(median_sal,  inplace=True)
+
+# ── Fill — Categorical ────────────────────────────
+mode_city = df["city"].mode()[0]
+df["city"].fillna(mode_city, inplace=True)
+df["city"].fillna("Unknown", inplace=True)  # or constant
+
+# ── Forward / Backward fill (time-series) ─────────
+df["price"].fillna(method="ffill", inplace=True)  # forward fill
+df["price"].fillna(method="bfill", inplace=True)  # backward fill
+
+# ── Interpolation ─────────────────────────────────
+df["temperature"] = df["temperature"].interpolate(method="linear")</code></pre>
+      </div>
+
+      <div class="section-title">4.2 Duplicates</div>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python">df = pd.DataFrame({
+    "id"    : [1, 2, 2, 3, 4, 4],
+    "name"  : ["A","B","B","C","D","D"],
+    "salary": [50,60,60,70,80,80]
+})
+
+# Detection
+print(df.duplicated().sum())            # 2 fully duplicated rows
+print(df.duplicated(subset=["name"]))   # check only specific columns
+
+# Removal
+df.drop_duplicates(inplace=True)                    # keep first occurrence
+df.drop_duplicates(subset=["id"], keep="last")      # keep last by id
+df.drop_duplicates(subset=["name"], keep=False)     # drop ALL occurrences</code></pre>
+      </div>
+
+      <div class="section-title">4.3 Outlier Detection &amp; Treatment</div>
+      <h3 class="topic"><span class="dot"></span>IQR Method (Robust — Recommended)</h3>
+      <p class="body">The Inter-Quartile Range method is robust to extreme values and works well for most real-world datasets without assuming any distribution.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python">import numpy as np
+
+salary = df["salary"]
+
+Q1  = salary.quantile(0.25)     # 25th percentile
+Q3  = salary.quantile(0.75)     # 75th percentile
+IQR = Q3 - Q1
+
+lower_fence = Q1 - 1.5 * IQR
+upper_fence = Q3 + 1.5 * IQR
+
+# Detect outliers
+outliers = df[(salary < lower_fence) | (salary > upper_fence)]
+print(f"Outliers found: {len(outliers)}")
+
+# Treatment Options:
+# 1. Remove outliers
+df_clean = df[(salary >= lower_fence) & (salary <= upper_fence)]
+
+# 2. Cap / Winsorize (best for ML — preserves row count)
+df["salary_capped"] = salary.clip(lower=lower_fence, upper=upper_fence)</code></pre>
+      </div>
+
+      <h3 class="topic"><span class="dot"></span>Z-Score Method (Normal Distributions)</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python">from scipy import stats
+
+z_scores = np.abs(stats.zscore(df["salary"]))
+# Threshold of 3 → values more than 3 std deviations from mean
+outlier_mask = z_scores > 3
+df_clean = df[~outlier_mask]
+print(f"Removed {outlier_mask.sum()} outliers")</code></pre>
+      </div>
+
+      <table class="compare-table">
+        <tr><th>Method</th><th>Best For</th><th>Assumes Normal Dist?</th><th>Threshold</th></tr>
+        <tr><td>IQR</td><td>Skewed data, general use</td><td>No</td><td>Q1−1.5×IQR to Q3+1.5×IQR</td></tr>
+        <tr><td>Z-Score</td><td>Normally distributed data</td><td>Yes</td><td>|z| &gt; 3</td></tr>
+        <tr><td>Visual (boxplot)</td><td>Exploratory, quick check</td><td>No</td><td>N/A</td></tr>
+      </table>
+
+      <div class="section-title">4.4 Type Conversion</div>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python">df = pd.DataFrame({
+    "date"    : ["2024-01-15", "2024-02-20", "2024-03-05"],
+    "price"   : ["₹1,200", "₹3,500", "₹800"],
+    "in_stock": ["Yes", "No", "Yes"],
+    "qty"     : ["10", "25", "5"],
+})
+
+# ── String → Integer ──────────────────────────────
+df["qty"] = df["qty"].astype(int)
+
+# ── String → Float (clean currency first) ─────────
+df["price"] = (df["price"]
+    .str.replace("₹", "", regex=False)
+    .str.replace(",", "", regex=False)
+    .astype(float))
+
+# ── String → Datetime ─────────────────────────────
+df["date"] = pd.to_datetime(df["date"])
+df["month"] = df["date"].dt.month
+df["year"]  = df["date"].dt.year
+df["dow"]   = df["date"].dt.day_name()   # Monday, Tuesday...
+
+# ── Boolean encoding ──────────────────────────────
+df["in_stock"] = df["in_stock"].map({"Yes": True, "No": False})
+
+# ── Categorical (saves memory for low-cardinality text) ──
+df["category"] = df["category"].astype("category")</code></pre>
+      </div>
+    </div>
+  </div><!-- /session4 -->
+
+  <div class="session-divider"></div>
+
+  <!-- ═══════════════════════════════════════
+       SESSION 5 — FILE I/O & APIs
+  ════════════════════════════════════════ -->
+  <div id="session5">
+    <div class="session-header">
+      <div class="session-num-big">Session 5 · 2 Hours</div>
+      <div class="session-info">
+        <h2>File I/O &amp; APIs</h2>
+        <p>Reading &amp; Writing CSV, JSON, Excel + Making HTTP Requests with the Requests Library</p>
+        <div class="session-tags">
+          <span class="tag tag-blue">CSV</span>
+          <span class="tag tag-green">JSON</span>
+          <span class="tag tag-purple">Excel</span>
+          <span class="tag tag-orange">REST APIs</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="fileio">
+      <div class="section-title">5.1 File I/O with Pandas</div>
+      <h3 class="topic"><span class="dot"></span>CSV — Most Common Format</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python">import pandas as pd
+
+# ── Reading ────────────────────────────────────────
+df = pd.read_csv("sales.csv")
+df = pd.read_csv("sales.csv", index_col="id")      # set column as index
+df = pd.read_csv("sales.csv", usecols=["name","price"])  # select columns
+df = pd.read_csv("sales.csv", nrows=1000)          # first 1000 rows only
+df = pd.read_csv("data.csv",  encoding="utf-8")    # specify encoding
+df = pd.read_csv("data.csv",  na_values=["N/A", "-", "NA", ""])
+
+# ── Writing ────────────────────────────────────────
+df.to_csv("output.csv", index=False)   # index=False → don't write index col
+df.to_csv("output.csv", columns=["name","price"])  # save only these columns</code></pre>
+      </div>
+
+      <h3 class="topic"><span class="dot"></span>JSON</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python">import json
+import pandas as pd
+
+# ── Python's json module ───────────────────────────
+with open("data.json", "r") as f:
+    data = json.load(f)              # JSON → Python dict/list
+
+with open("output.json", "w") as f:
+    json.dump(data, f, indent=2)     # Python dict/list → JSON file
+
+# String ↔ JSON
+json_str = json.dumps({"name": "Alice", "age": 25}, indent=2)
+obj       = json.loads(json_str)
+
+# ── Pandas with JSON ───────────────────────────────
+df = pd.read_json("data.json")                          # flat JSON
+df = pd.json_normalize(data["records"])  # nested JSON → flat DataFrame
+
+df.to_json("output.json", orient="records", indent=2)</code></pre>
+      </div>
+
+      <h3 class="topic"><span class="dot"></span>Excel</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python"># Requires: pip install openpyxl
+
+# ── Reading ────────────────────────────────────────
+df = pd.read_excel("sales.xlsx")
+df = pd.read_excel("sales.xlsx", sheet_name="Q1_Data")   # specific sheet
+df = pd.read_excel("sales.xlsx", sheet_name=0)            # first sheet
+
+# Read all sheets at once → dict of DataFrames
+all_sheets = pd.read_excel("sales.xlsx", sheet_name=None)
+q1 = all_sheets["Q1_Data"]
+
+# ── Writing ────────────────────────────────────────
+df.to_excel("output.xlsx", index=False)
+
+# Write multiple sheets
+with pd.ExcelWriter("report.xlsx", engine="openpyxl") as writer:
+    df_q1.to_excel(writer, sheet_name="Q1", index=False)
+    df_q2.to_excel(writer, sheet_name="Q2", index=False)
+    df_q3.to_excel(writer, sheet_name="Q3", index=False)</code></pre>
+      </div>
+    </div>
+
+    <div id="apis">
+      <div class="section-title">5.2 REST APIs with the Requests Library</div>
+      <h3 class="topic"><span class="dot"></span>What is a REST API?</h3>
+      <p class="body">An API (Application Programming Interface) is a gateway to retrieve live data from web services. As a data scientist, you'll fetch weather data, financial data, social media feeds, and more through REST APIs using HTTP methods.</p>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <div class="icon">📥</div>
+          <h4>GET</h4>
+          <p>Retrieve data from a server. Used 90% of the time in data science to fetch datasets.</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">📤</div>
+          <h4>POST</h4>
+          <p>Send data to a server (e.g., submit a form, call an ML model endpoint).</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">🔑</div>
+          <h4>Headers</h4>
+          <p>Metadata sent with every request — most commonly an Authorization/API key.</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">📊</div>
+          <h4>Status Codes</h4>
+          <p>200 OK, 201 Created, 400 Bad Request, 401 Unauthorized, 404 Not Found, 500 Server Error.</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python">import requests
+import pandas as pd
+
+# ── Basic GET Request ──────────────────────────────
+url = "https://jsonplaceholder.typicode.com/users"
+response = requests.get(url)
+
+print(response.status_code)   # 200
+print(response.headers["Content-Type"])  # application/json
+
+data = response.json()         # parse JSON response → Python list/dict
+df   = pd.DataFrame(data)
+print(df[["id", "name", "email"]].head())
+
+# ── GET with Query Parameters ──────────────────────
+url    = "https://api.exchangerate.host/latest"
+params = {"base": "INR", "symbols": "USD,EUR,GBP"}
+response = requests.get(url, params=params, timeout=10)
+rates = response.json()["rates"]
+print(rates)                   # {'USD': 0.012, 'EUR': 0.011, 'GBP': 0.0095}
+
+# ── API Key Authentication ─────────────────────────
+API_KEY = "your_api_key_here"
+headers = {"Authorization": f"Bearer {API_KEY}"}
+
+response = requests.get(
+    "https://api.example.com/data",
+    headers=headers,
+    params={"limit": 100}
+)
+
+# ── POST Request — calling an ML endpoint ─────────
+payload  = {"features": [1.5, 2.3, 0.8, 4.1]}
+response = requests.post(
+    "https://your-model-api.com/predict",
+    json=payload,
+    headers={"Content-Type": "application/json"}
+)
+prediction = response.json()["prediction"]</code></pre>
+      </div>
+
+      <h4 class="subtopic">Error Handling &amp; Best Practices</h4>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python">import requests
+import time
+
+def fetch_with_retry(url, max_retries=3, delay=2):
+    """Robust API call with retry logic."""
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()   # raises exception for 4xx/5xx
+            return response.json()
+        except requests.exceptions.Timeout:
+            print(f"Timeout. Retry {attempt+1}/{max_retries}")
+            time.sleep(delay)
+        except requests.exceptions.HTTPError as e:
+            print(f"HTTP Error: {e}")
+            break
+        except requests.exceptions.ConnectionError:
+            print("Network unavailable")
+            break
+    return None
+
+# Paginated API — fetch multiple pages
+all_results = []
+for page in range(1, 6):           # pages 1 to 5
+    url  = f"https://api.example.com/data?page={page}&limit=100"
+    data = fetch_with_retry(url)
+    if data:
+        all_results.extend(data["items"])
+    time.sleep(0.5)                 # be polite — respect rate limits
+
+df = pd.DataFrame(all_results)</code></pre>
+      </div>
+    </div>
+  </div><!-- /session5 -->
+
+  <div class="session-divider"></div>
+
+  <!-- ═══════════════════════════════════════
+       SESSION 6 — HANDS-ON LAB
+  ════════════════════════════════════════ -->
+  <div id="session6">
+    <div class="lab-banner">
+      <span class="lab-tag">Session 6 · 2 Hours · Mini Project</span>
+      <h2>🧪 Hands-On Lab: Retail Sales Analysis</h2>
+      <p>Apply everything from Module 1 to a real-world retail dataset. You will load, clean, explore, and summarise sales data — producing a clean analytical report.</p>
+      <div class="lab-objectives">
+        <div class="lab-obj-item">Load & inspect a multi-format dataset</div>
+        <div class="lab-obj-item">Fix missing values & data types</div>
+        <div class="lab-obj-item">Remove duplicates & cap outliers</div>
+        <div class="lab-obj-item">Derive new columns (revenue, profit %)</div>
+        <div class="lab-obj-item">GroupBy aggregations by category & region</div>
+        <div class="lab-obj-item">Export clean report to CSV + Excel</div>
+      </div>
+    </div>
+
+    <div id="lab">
+      <div class="section-title">Step 1 — Load &amp; Inspect</div>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python">import pandas as pd
+import numpy as np
+
+# Load the dataset
+df = pd.read_csv("retail_sales.csv", parse_dates=["order_date"])
+
+print("Shape:", df.shape)
+print("\nColumn types:\n", df.dtypes)
+print("\nFirst look:\n", df.head())
+print("\nMissing values:\n", df.isnull().sum())
+print("\nBasic stats:\n", df.describe())</code></pre>
+      </div>
+
+      <div class="section-title">Step 2 — Data Cleaning Pipeline</div>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python">def clean_retail_data(df):
+    """
+    Complete cleaning pipeline for retail sales data.
+    Returns a cleaned copy of the DataFrame.
+    """
+    df = df.copy()
+
+    # 1. Remove exact duplicates
+    before = len(df)
+    df.drop_duplicates(inplace=True)
+    print(f"Duplicates removed: {before - len(df)}")
+
+    # 2. Fix column names (lowercase, no spaces)
+    df.columns = df.columns.str.strip().str.lower().str.replace(" ", "_")
+
+    # 3. Type conversion
+    df["order_date"]  = pd.to_datetime(df["order_date"], errors="coerce")
+    df["price"]       = pd.to_numeric(df["price"],       errors="coerce")
+    df["quantity"]    = pd.to_numeric(df["quantity"],     errors="coerce")
+
+    # 4. Handle missing values
+    df["category"].fillna("Unknown", inplace=True)
+    df["region"]  .fillna(df["region"].mode()[0], inplace=True)
+    df["price"]   .fillna(df["price"].median(),   inplace=True)
+    df["quantity"].fillna(1, inplace=True)
+
+    # 5. Cap price outliers using IQR
+    Q1, Q3 = df["price"].quantile([0.25, 0.75])
+    IQR    = Q3 - Q1
+    df["price"] = df["price"].clip(lower=Q1 - 1.5*IQR,
+                                    upper=Q3 + 1.5*IQR)
+
+    print(f"Clean dataset shape: {df.shape}")
+    return df
+
+df = clean_retail_data(df)</code></pre>
+      </div>
+
+      <div class="section-title">Step 3 — Feature Engineering</div>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python"># Derive useful columns for analysis
+df["revenue"]    = df["price"] * df["quantity"]
+df["profit"]     = df["revenue"] - (df["cost"] * df["quantity"])
+df["profit_pct"] = (df["profit"] / df["revenue"] * 100).round(2)
+
+# Time-based features
+df["year"]       = df["order_date"].dt.year
+df["month"]      = df["order_date"].dt.month
+df["month_name"] = df["order_date"].dt.month_name()
+df["quarter"]    = df["order_date"].dt.quarter
+df["day_of_week"]= df["order_date"].dt.day_name()
+
+# Categorise order size
+df["order_size"] = pd.cut(
+    df["quantity"],
+    bins=[0, 5, 20, 50, float("inf")],
+    labels=["Small", "Medium", "Large", "Bulk"]
+)</code></pre>
+      </div>
+
+      <div class="section-title">Step 4 — Analysis &amp; Aggregation</div>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python"># ── Revenue by Category ───────────────────────────
+category_summary = df.groupby("category").agg(
+    total_revenue = ("revenue",    "sum"),
+    avg_price     = ("price",      "mean"),
+    total_orders  = ("order_id",   "count"),
+    avg_profit_pct= ("profit_pct", "mean")
+).round(2).sort_values("total_revenue", ascending=False)
+
+print("═══ Revenue by Category ═══")
+print(category_summary)
+
+# ── Monthly Trend ─────────────────────────────────
+monthly = (df.groupby(["year", "month_name"])["revenue"]
+             .sum()
+             .reset_index()
+             .rename(columns={"revenue": "monthly_revenue"}))
+
+# ── Top 10 Products ───────────────────────────────
+top_products = (df.groupby("product_name")["revenue"]
+                  .sum()
+                  .nlargest(10)
+                  .reset_index())
+
+# ── Regional Performance ──────────────────────────
+region_perf = df.groupby("region").agg(
+    revenue       = ("revenue", "sum"),
+    avg_profit_pct= ("profit_pct", "mean"),
+    orders        = ("order_id", "count")
+).sort_values("revenue", ascending=False)
+
+print("\n═══ Regional Performance ═══")
+print(region_perf)</code></pre>
+      </div>
+
+      <div class="section-title">Step 5 — Export Report</div>
+      <div class="code-block">
+        <div class="code-header"><span class="dots"><span></span><span></span><span></span></span><span class="lang">Python</span></div>
+        <pre><code class="language-python"># ── Save clean data as CSV ────────────────────────
+df.to_csv("retail_sales_clean.csv", index=False)
+print("✓ Clean dataset saved.")
+
+# ── Save multi-sheet Excel report ─────────────────
+with pd.ExcelWriter("retail_analysis_report.xlsx",
+                    engine="openpyxl") as writer:
+
+    df.to_excel(writer,
+                sheet_name="Clean_Data",  index=False)
+
+    category_summary.to_excel(writer,
+                sheet_name="Category_Summary")
+
+    monthly.to_excel(writer,
+                sheet_name="Monthly_Trend",    index=False)
+
+    top_products.to_excel(writer,
+                sheet_name="Top_10_Products",  index=False)
+
+    region_perf.to_excel(writer,
+                sheet_name="Regional_Performance")
+
+print("✓ Excel report saved: retail_analysis_report.xlsx")
+
+# ── Summary print ─────────────────────────────────
+print("\n" + "═"*45)
+print("      RETAIL SALES — EXECUTIVE SUMMARY")
+print("═"*45)
+print(f"  Total Revenue  : ₹{df['revenue'].sum():>12,.0f}")
+print(f"  Total Orders   : {len(df):>12,}")
+print(f"  Avg Profit %   : {df['profit_pct'].mean():>12.1f}%")
+print(f"  Top Category   : {category_summary.index[0]:>12}")
+print(f"  Top Region     : {region_perf.index[0]:>12}")
+print("═"*45)</code></pre>
+      </div>
+      <div class="output-box">
+        <span class="out-label">Expected Output</span>
+══════════════════════════════════════════════════
+      RETAIL SALES — EXECUTIVE SUMMARY
+══════════════════════════════════════════════════
+  Total Revenue  :  ₹    14,82,350
+  Total Orders   :          2,847
+  Avg Profit %   :          23.4%
+  Top Category   :    Electronics
+  Top Region     :          South
+══════════════════════════════════════════════════
+✓ Clean dataset saved.
+✓ Excel report saved: retail_analysis_report.xlsx
+      </div>
+
+      <!-- Quiz -->
+      <div class="section-title" style="margin-top:48px">Module 1 — Quick Review</div>
+      <div class="quiz-card">
+        <h4>🧠 Check Your Understanding</h4>
+
+        <div class="quiz-q">Q1. You have a salary column with 35% missing values and significant skew. What is the best imputation strategy?</div>
+        <div class="quiz-option" onclick="answer(this, false)"><span class="opt-letter">A</span>Fill with mean — it's the most common statistic</div>
+        <div class="quiz-option" onclick="answer(this, true)"><span class="opt-letter">B</span>Fill with median — robust to skew and outliers</div>
+        <div class="quiz-option" onclick="answer(this, false)"><span class="opt-letter">C</span>Drop all rows — 35% is acceptable to lose</div>
+        <div class="quiz-option" onclick="answer(this, false)"><span class="opt-letter">D</span>Fill with 0 — numeric columns should not be None</div>
+
+        <div class="quiz-q" style="margin-top:20px">Q2. What does <code>df.loc[df["age"] > 25, "salary"]</code> return?</div>
+        <div class="quiz-option" onclick="answer(this, false)"><span class="opt-letter">A</span>Rows where salary > 25</div>
+        <div class="quiz-option" onclick="answer(this, true)"><span class="opt-letter">B</span>The salary column for rows where age > 25</div>
+        <div class="quiz-option" onclick="answer(this, false)"><span class="opt-letter">C</span>All columns for rows where age > 25</div>
+        <div class="quiz-option" onclick="answer(this, false)"><span class="opt-letter">D</span>An error — loc only takes integer indices</div>
+
+        <div class="quiz-q" style="margin-top:20px">Q3. Which is faster for checking <code>x in collection</code>?</div>
+        <div class="quiz-option" onclick="answer(this, false)"><span class="opt-letter">A</span>A Python list — ordered and indexed</div>
+        <div class="quiz-option" onclick="answer(this, true)"><span class="opt-letter">B</span>A Python set — O(1) hash-based lookup</div>
+        <div class="quiz-option" onclick="answer(this, false)"><span class="opt-letter">C</span>A tuple — immutable so faster to search</div>
+        <div class="quiz-option" onclick="answer(this, false)"><span class="opt-letter">D</span>A dict — it also has O(1) lookup</div>
+      </div>
+
+    </div>
+  </div><!-- /session6 -->
+
+  <!-- Footer -->
+  <div class="module-footer">
+    <div>
+      <div style="color:#fff;font-weight:600;font-size:14px">Module 1 Complete</div>
+      <div>15 hours · 6 sessions · 1 project</div>
+    </div>
+    <a class="next-btn" href="./module_2.html">Next → Module 2: Data Collection &amp; Storage ›</a>
+  </div>
+
+  </div><!-- /content-area -->
+</div><!-- /main -->
+
+<script>
+// ── Syntax Highlighting ────────────────────────────
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("pre code").forEach(el => {
+    hljs.highlightElement(el);
+  });
+});
+
+// ── Reading Progress Bar ──────────────────────────
+window.addEventListener("scroll", () => {
+  const doc = document.documentElement;
+  const pct = (doc.scrollTop / (doc.scrollHeight - doc.clientHeight)) * 100;
+  document.getElementById("progressFill").style.width = pct + "%";
+});
+
+// ── Active Nav Highlight (Intersection Observer) ──
+const sections = document.querySelectorAll("[id]");
+const navLinks = document.querySelectorAll(".nav-item");
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove("active"));
+      const match = document.querySelector(`.nav-item[href="#${entry.target.id}"]`);
+      if (match) match.classList.add("active");
+    }
+  });
+}, { threshold: 0.3 });
+
+sections.forEach(s => observer.observe(s));
+
+// ── Quiz Logic ────────────────────────────────────
+function answer(el, correct) {
+  const siblings = el.parentElement.querySelectorAll(".quiz-option");
+  siblings.forEach(s => s.style.pointerEvents = "none");
+  if (correct) {
+    el.classList.add("correct");
+    el.innerHTML += ' <strong style="margin-left:8px">✓ Correct!</strong>';
+  } else {
+    el.classList.add("wrong");
+    el.innerHTML += ' <strong style="margin-left:8px">✗ Try again</strong>';
+    siblings.forEach(s => {
+      if (s.getAttribute("onclick").includes("true")) {
+        setTimeout(() => s.classList.add("correct"), 400);
+      }
+    });
+  }
+}
+</script>
+</body>
+</html>

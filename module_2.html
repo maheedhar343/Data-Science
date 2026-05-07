@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Module 2 — Data Collection & Storage | Data Science</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/sql.min.js"></script>
+<style>
+:root{
+  --forest:#0d2818;
+  --forest2:#13381f;
+  --forest3:#1a4a28;
+  --teal:#00897b;
+  --teal-light:#4db6ac;
+  --amber:#ffab00;
+  --amber2:#ff6f00;
+  --coral:#ef5350;
+  --sky:#29b6f6;
+  --mint:#69f0ae;
+  --sidebar-w:300px;
+  --body-font:'Lora',Georgia,serif;
+  --ui-font:'Sora',sans-serif;
+  --code-font:'IBM Plex Mono',monospace;
+  --text:#1b2a1e;
+  --text-muted:#4a6350;
+  --border:#d4e8d4;
+  --bg:#f5fbf5;
+  --card:#ffffff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--body-font);background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+
+/* ── SIDEBAR ────────────────────────────────── */
+#sidebar{
+  position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;
+  background:var(--forest);overflow-y:auto;z-index:100;
+  display:flex;flex-direction:column;
+  scrollbar-width:thin;scrollbar-color:var(--forest3) transparent;
+}
+#sidebar::-webkit-scrollbar{width:3px}
+#sidebar::-webkit-scrollbar-thumb{background:var(--forest3)}
+
+.sb-brand{padding:26px 22px 18px;border-bottom:1px solid rgba(255,255,255,.07)}
+.sb-mod-badge{
+  font-family:var(--ui-font);font-size:9px;font-weight:700;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--mint);margin-bottom:6px;display:block;
+}
+.sb-brand h2{font-family:var(--ui-font);color:#fff;font-size:14px;font-weight:600;line-height:1.4}
+
+.sb-progress{padding:14px 22px 18px;border-bottom:1px solid rgba(255,255,255,.07)}
+.sb-prog-label{font-family:var(--ui-font);font-size:10px;color:rgba(255,255,255,.35);
+  letter-spacing:1px;text-transform:uppercase;margin-bottom:7px}
+.sb-prog-track{height:3px;background:rgba(255,255,255,.08);border-radius:3px}
+.sb-prog-fill{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--mint));
+  border-radius:3px;transition:width .4s ease}
+
+.sb-section{padding:14px 0 4px}
+.sb-sec-title{
+  font-family:var(--ui-font);font-size:9px;font-weight:700;letter-spacing:1.8px;
+  text-transform:uppercase;color:rgba(255,255,255,.25);padding:0 22px 6px;
+}
+.sb-link{
+  display:flex;align-items:center;gap:10px;padding:8px 22px;
+  font-family:var(--ui-font);font-size:12.5px;color:rgba(255,255,255,.55);
+  text-decoration:none;border-left:2px solid transparent;transition:all .18s;cursor:pointer;
+}
+.sb-link:hover{color:#fff;background:rgba(255,255,255,.04);border-left-color:rgba(255,255,255,.15)}
+.sb-link.active{color:#fff;background:rgba(0,137,123,.18);border-left-color:var(--teal)}
+.sb-link .num{
+  width:18px;height:18px;border-radius:3px;background:rgba(255,255,255,.07);
+  text-align:center;line-height:18px;font-size:9px;font-weight:700;flex-shrink:0;
+}
+.sb-link.active .num{background:var(--teal);color:#fff}
+.sb-link .hrs{margin-left:auto;font-size:10px;color:rgba(255,255,255,.25)}
+
+.project-thread-sb{
+  margin:12px 14px;background:rgba(0,137,123,.15);border:1px solid rgba(0,137,123,.3);
+  border-radius:10px;padding:12px 14px;
+}
+.project-thread-sb .pt-label{
+  font-family:var(--ui-font);font-size:9px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--teal-light);margin-bottom:5px;display:block;
+}
+.project-thread-sb p{font-family:var(--ui-font);font-size:11.5px;color:rgba(255,255,255,.6);line-height:1.5}
+
+/* ── MAIN ────────────────────────────────────── */
+#main{margin-left:var(--sidebar-w);flex:1}
+
+/* Hero */
+.hero{
+  background:linear-gradient(135deg,var(--forest) 0%,var(--forest3) 55%,#1b5e3a 100%);
+  padding:64px 60px 52px;color:#fff;position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;left:-80px;bottom:-80px;width:400px;height:400px;
+  border-radius:50%;background:radial-gradient(circle,rgba(0,137,123,.2) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero::after{
+  content:'02';position:absolute;right:48px;top:10px;
+  font-family:var(--ui-font);font-size:180px;font-weight:800;
+  color:rgba(255,255,255,.035);line-height:1;letter-spacing:-8px;pointer-events:none;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--ui-font);font-size:10px;font-weight:700;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--mint);margin-bottom:14px;
+}
+.hero-eyebrow::before{content:'';width:24px;height:2px;background:var(--mint);border-radius:2px}
+.hero h1{font-family:var(--ui-font);font-size:40px;font-weight:800;line-height:1.1;margin-bottom:14px}
+.hero-sub{font-size:15px;color:rgba(255,255,255,.65);font-family:var(--ui-font);
+  font-weight:300;max-width:560px;line-height:1.7}
+.hero-stats{display:flex;gap:40px;margin-top:32px}
+.hero-stat .v{font-family:var(--ui-font);font-size:30px;font-weight:800;color:var(--amber)}
+.hero-stat .l{font-family:var(--ui-font);font-size:10px;letter-spacing:1.5px;
+  text-transform:uppercase;color:rgba(255,255,255,.4);margin-top:2px}
+
+/* Project thread banner */
+.project-thread{
+  background:linear-gradient(135deg,#0a2218 0%,#0e2f1f 100%);
+  border-top:1px solid rgba(0,137,123,.3);border-bottom:1px solid rgba(0,137,123,.3);
+  padding:22px 60px;display:flex;align-items:center;gap:20px;
+}
+.pt-icon{font-size:28px}
+.pt-label-text{font-family:var(--ui-font);font-size:9px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--teal-light);margin-bottom:4px}
+.pt-title{font-family:var(--ui-font);font-size:15px;font-weight:600;color:#fff}
+.pt-desc{font-family:var(--ui-font);font-size:12.5px;color:rgba(255,255,255,.5);margin-top:2px}
+.pt-pills{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;justify-content:flex-end}
+.pt-pill{
+  font-family:var(--ui-font);font-size:10px;font-weight:600;padding:4px 10px;
+  border-radius:20px;background:rgba(0,137,123,.2);border:1px solid rgba(0,137,123,.4);
+  color:var(--teal-light);white-space:nowrap;
+}
+
+/* Content */
+.content{max-width:820px;padding:52px 60px}
+
+/* Session header */
+.session-hdr{
+  display:flex;gap:18px;align-items:flex-start;
+  background:var(--card);border:1px solid var(--border);
+  border-left:4px solid var(--teal);border-radius:14px;
+  padding:26px 28px;margin-bottom:36px;
+  box-shadow:0 2px 10px rgba(0,100,80,.06);
+}
+.s-badge{
+  flex-shrink:0;font-family:var(--ui-font);font-size:10px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;
+  background:#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9;
+  border-radius:6px;padding:5px 10px;margin-top:3px;white-space:nowrap;
+}
+.s-info h2{font-family:var(--ui-font);font-size:21px;font-weight:700;color:var(--forest);margin-bottom:5px}
+.s-info p{font-family:var(--ui-font);font-size:13.5px;color:var(--text-muted);line-height:1.5}
+.s-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tag{font-family:var(--ui-font);font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:20px}
+.tg{background:#e0f2f1;color:#00695c}
+.tb{background:#e3f2fd;color:#1565c0}
+.to{background:#fff3e0;color:#bf360c}
+.tp{background:#f3e5f5;color:#6a1b9a}
+
+/* Section label */
+.sec-label{
+  font-family:var(--ui-font);font-size:9.5px;font-weight:700;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--teal);display:flex;align-items:center;gap:10px;
+  margin:44px 0 12px;
+}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Topic heading */
+h3.topic{
+  font-family:var(--ui-font);font-size:20px;font-weight:700;color:var(--forest);
+  margin-bottom:10px;display:flex;align-items:center;gap:10px;
+}
+h3.topic .dot{width:7px;height:7px;border-radius:50%;background:var(--amber);flex-shrink:0}
+h4.sub{
+  font-family:var(--ui-font);font-size:15px;font-weight:600;color:var(--forest2);
+  margin:22px 0 8px;padding-left:12px;border-left:3px solid var(--teal-light);
+}
+
+p.body{margin-bottom:13px;line-height:1.9;font-size:15.5px;color:var(--text)}
+
+/* Explanation box — before each code block */
+.explain{
+  background:#f0f9f4;border:1px solid #c8e6c9;border-left:3px solid var(--teal);
+  border-radius:0 8px 0 0;padding:11px 16px;
+  font-family:var(--ui-font);font-size:13px;color:#2e5a35;line-height:1.6;
+  margin-bottom:0;
+}
+.explain strong{color:var(--forest);font-weight:600}
+
+/* Code block */
+.code-block{margin-bottom:20px}
+.code-hdr{
+  background:#1a1b2e;padding:9px 16px;border-radius:10px 10px 0 0;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.code-hdr .dots{display:flex;gap:5px}
+.code-hdr .dots span{width:11px;height:11px;border-radius:50%}
+.code-hdr .dots span:nth-child(1){background:#ff5f57}
+.code-hdr .dots span:nth-child(2){background:#febc2e}
+.code-hdr .dots span:nth-child(3){background:#28c840}
+.code-hdr .lang-badge{
+  font-family:var(--ui-font);font-size:10px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--teal-light);
+}
+.code-block pre{margin:0!important;border-radius:0 0 10px 10px!important}
+.code-block pre code{font-family:var(--code-font)!important;font-size:13px!important;line-height:1.75!important}
+.code-block.with-explain pre{border-radius:0 0 10px 10px!important}
+
+/* Output */
+.output{
+  background:#111b14;border:1px solid #1e3323;border-top:none;
+  border-radius:0 0 10px 10px;padding:13px 17px;
+  font-family:var(--code-font);font-size:12.5px;color:#69f0ae;
+  line-height:1.7;margin-bottom:20px;
+}
+.output .out-label{
+  font-family:var(--ui-font);font-size:9px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:rgba(105,240,174,.4);margin-bottom:7px;display:block;
+}
+
+/* Callouts */
+.callout{border-radius:10px;padding:16px 20px;margin:18px 0;display:flex;gap:13px;align-items:flex-start}
+.callout-icon{font-size:19px;flex-shrink:0;margin-top:1px}
+.callout-body{font-family:var(--ui-font);font-size:13.5px;line-height:1.7}
+.callout-body strong{display:block;font-size:13.5px;margin-bottom:3px}
+.ci{background:#e3f2fd;border:1px solid #90caf9}.ci .callout-body{color:#0d47a1}
+.ct{background:#e8f5e9;border:1px solid #a5d6a7}.ct .callout-body{color:#1b5e20}
+.cw{background:#fff8e1;border:1px solid #ffe082}.cw .callout-body{color:#e65100}
+.cp{background:#fce4ec;border:1px solid #f48fb1}.cp .callout-body{color:#880e4f}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse;margin:18px 0;font-family:var(--ui-font);font-size:13px}
+.tbl th{background:var(--forest);color:#fff;padding:11px 14px;text-align:left;font-weight:600}
+.tbl td{padding:10px 14px;border-bottom:1px solid var(--border)}
+.tbl tr:nth-child(even) td{background:#f0faf2}
+.tbl tr:hover td{background:#e8f5e9}
+.tbl code{font-family:var(--code-font);font-size:12px;background:#f0f4f8;
+  padding:1px 5px;border-radius:3px;color:#c62828}
+
+/* Flow steps */
+.flow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+.flow-item{
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+  padding:16px;display:flex;gap:12px;
+}
+.flow-num{
+  flex-shrink:0;width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,var(--teal),var(--teal-light));
+  color:#fff;font-family:var(--ui-font);font-weight:700;font-size:12px;
+  display:flex;align-items:center;justify-content:center;margin-top:1px;
+}
+.flow-content h4{font-family:var(--ui-font);font-size:13.5px;font-weight:600;color:var(--forest);margin-bottom:3px}
+.flow-content p{font-family:var(--ui-font);font-size:12px;color:var(--text-muted);line-height:1.5}
+
+/* Concept grid */
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.ccard{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px}
+.ccard .icon{font-size:22px;margin-bottom:7px}
+.ccard h4{font-family:var(--ui-font);font-size:13.5px;font-weight:700;color:var(--forest);margin-bottom:4px}
+.ccard p{font-family:var(--ui-font);font-size:12.5px;color:var(--text-muted);line-height:1.5}
+
+/* Inline annotation */
+.annotation{
+  display:flex;align-items:flex-start;gap:10px;
+  background:#fffde7;border-left:3px solid var(--amber);border-radius:0 6px 6px 0;
+  padding:10px 14px;margin:6px 0 18px;
+}
+.annotation .ann-icon{font-size:15px;flex-shrink:0}
+.annotation p{font-family:var(--ui-font);font-size:12.5px;color:#4e3400;line-height:1.6}
+
+/* Session divider */
+.divider{
+  height:2px;background:linear-gradient(90deg,var(--teal),var(--mint),transparent);
+  margin:56px 0;border-radius:2px;
+}
+
+/* SQL keywords styling */
+.kw{color:#81d4fa;font-weight:600}
+
+/* Project section */
+.proj-banner{
+  background:linear-gradient(135deg,var(--forest) 0%,#0e3020 100%);
+  border-radius:16px;padding:30px 32px;color:#fff;
+  border:1px solid rgba(0,137,123,.35);margin-bottom:28px;
+}
+.proj-banner .proj-tag{
+  font-family:var(--ui-font);font-size:9px;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:var(--mint);display:block;margin-bottom:10px;
+}
+.proj-banner h2{font-family:var(--ui-font);font-size:26px;font-weight:800;margin-bottom:8px}
+.proj-banner .proj-sub{
+  font-family:var(--ui-font);font-size:13px;color:rgba(255,255,255,.6);line-height:1.6;margin-bottom:20px;
+}
+.proj-goals{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.proj-goal{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  border-radius:8px;padding:11px 13px;
+  font-family:var(--ui-font);font-size:12px;color:rgba(255,255,255,.75);
+  display:flex;align-items:center;gap:8px;
+}
+.proj-goal::before{content:'→';color:var(--mint);font-weight:700}
+
+/* Architecture diagram */
+.arch{
+  background:var(--forest);border-radius:12px;padding:24px;margin:20px 0;
+  display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;
+}
+.arch-box{
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);
+  border-radius:8px;padding:12px 16px;text-align:center;min-width:120px;
+}
+.arch-box .ab-icon{font-size:22px;margin-bottom:5px}
+.arch-box .ab-name{font-family:var(--ui-font);font-size:11px;font-weight:700;
+  color:#fff;letter-spacing:.5px}
+.arch-box .ab-tech{font-family:var(--ui-font);font-size:10px;color:rgba(255,255,255,.4)}
+.arch-arrow{font-size:22px;color:var(--teal);padding:0 10px;flex-shrink:0}
+
+/* Quiz */
+.quiz-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;margin:18px 0}
+.quiz-card h4{font-family:var(--ui-font);font-size:15px;font-weight:700;color:var(--forest);margin-bottom:14px}
+.quiz-q{font-family:var(--ui-font);font-size:13.5px;color:var(--text);margin:14px 0 8px;line-height:1.6}
+.quiz-opt{
+  padding:9px 13px;border:1px solid var(--border);border-radius:7px;
+  font-family:var(--ui-font);font-size:13px;cursor:pointer;margin-bottom:5px;
+  transition:all .18s;display:flex;align-items:center;gap:9px;
+}
+.quiz-opt:hover{background:#e8f5e9;border-color:#a5d6a7}
+.quiz-opt.correct{background:#e8f5e9;border-color:#66bb6a;color:#1b5e20}
+.quiz-opt.wrong{background:#fce4ec;border-color:#ef9a9a;color:#b71c1c}
+.opt-l{width:22px;height:22px;border-radius:50%;background:#e8f5e9;
+  text-align:center;line-height:22px;font-size:11px;font-weight:700;flex-shrink:0;color:#2e7d32}
+
+/* Module footer */
+.mod-footer{
+  margin-top:56px;padding:28px 32px;background:var(--forest);border-radius:14px;
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--ui-font);color:rgba(255,255,255,.5);font-size:13px;
+}
+.mod-footer .nxt{
+  background:var(--teal);color:#fff;font-family:var(--ui-font);font-size:13px;
+  font-weight:700;padding:11px 22px;border-radius:7px;text-decoration:none;
+  transition:background .18s;
+}
+.mod-footer .nxt:hover{background:var(--teal-light)}
+
+@media(max-width:900px){
+  #sidebar{display:none}
+  #main{margin-left:0}
+  .content{padding:28px 20px}
+  .hero{padding:36px 20px}
+  .project-thread{padding:18px 20px;flex-wrap:wrap}
+  .flow,.cgrid,.proj-goals{grid-template-columns:1fr}
+  .arch{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+<nav id="sidebar">
+  <div class="sb-brand">
+    <span class="sb-mod-badge">Data Science · 72h · Module 2 of 8</span>
+    <h2>Data Collection &amp; Storage</h2>
+  </div>
+  <div class="sb-progress">
+    <div class="sb-prog-label">Reading Progress</div>
+    <div class="sb-prog-track"><div class="sb-prog-fill" id="progFill"></div></div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-sec-title">Sessions — 6 Hours</div>
+    <a class="sb-link active" href="#session7"><span class="num">S7</span>Web Scraping &amp; APIs<span class="hrs">3h</span></a>
+    <a class="sb-link" href="#session8"><span class="num">S8</span>SQL &amp; ETL Basics<span class="hrs">3h</span></a>
+    <a class="sb-link" href="#project"><span class="num">★</span>Module Project<span class="hrs">Lab</span></a>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-sec-title">Topics</div>
+    <a class="sb-link" href="#html-structure">HTML Structure</a>
+    <a class="sb-link" href="#beautifulsoup">BeautifulSoup Basics</a>
+    <a class="sb-link" href="#scraping-job">Scraping Job Listings</a>
+    <a class="sb-link" href="#rest-api">REST API + JSON</a>
+    <a class="sb-link" href="#rate-limit">Auth &amp; Rate Limiting</a>
+    <a class="sb-link" href="#sqlite">SQLite with Python</a>
+    <a class="sb-link" href="#sql-queries">SQL Queries</a>
+    <a class="sb-link" href="#joins">JOINs</a>
+    <a class="sb-link" href="#etl">ETL Pipeline Intro</a>
+  </div>
+
+  <div style="padding:0 0 16px">
+    <div class="project-thread-sb">
+      <span class="pt-label">🏗 Project Thread</span>
+      <p>India Tech Job Market Analyser — built piece by piece across both sessions.</p>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<div id="main">
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-eyebrow">Module 2</div>
+  <h1>Data Collection<br>&amp; Storage</h1>
+  <p class="hero-sub">Gather data from the web and APIs, then store and query it efficiently. By the end you will have a fully automated pipeline that collects, stores, and analyses Indian tech job listings.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="v">6</div><div class="l">Hours</div></div>
+    <div class="hero-stat"><div class="v">2</div><div class="l">Sessions</div></div>
+    <div class="hero-stat"><div class="v">1</div><div class="l">Pipeline</div></div>
+  </div>
+</div>
+
+<!-- Project thread strip -->
+<div class="project-thread">
+  <div class="pt-icon">🏗</div>
+  <div>
+    <div class="pt-label-text">Module Project Thread</div>
+    <div class="pt-title">India Tech Job Market Analyser</div>
+    <div class="pt-desc">Scrape Naukri-style listings → parse with BS4 → fetch salaries via API → store in SQLite → run SQL insights</div>
+  </div>
+  <div class="pt-pills">
+    <span class="pt-pill">BeautifulSoup</span>
+    <span class="pt-pill">Requests</span>
+    <span class="pt-pill">SQLite</span>
+    <span class="pt-pill">Pandas</span>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ═══════════════════════════════════════════════
+     SESSION 7 — WEB SCRAPING & APIS
+════════════════════════════════════════════════ -->
+<div id="session7">
+  <div class="session-hdr">
+    <div class="s-badge">Session 7 · 3 Hours</div>
+    <div class="s-info">
+      <h2>Web Scraping &amp; REST APIs</h2>
+      <p>Extract structured data from web pages using BeautifulSoup, then fetch live data through JSON APIs.</p>
+      <div class="s-tags">
+        <span class="tag tg">BeautifulSoup</span>
+        <span class="tag tb">Requests</span>
+        <span class="tag to">JSON Parsing</span>
+        <span class="tag tp">Rate Limiting</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7.1 HTML Structure -->
+  <div id="html-structure">
+    <div class="sec-label">7.1 Understanding HTML — The Target</div>
+    <h3 class="topic"><span class="dot"></span>What Web Scrapers Read</h3>
+    <p class="body">Before scraping, you must understand HTML structure. Every webpage is a tree of nested tags. You navigate this tree to find the data you want. Here is a simplified job card from a Naukri-style board:</p>
+
+    <div class="explain">
+      <strong>Read this HTML carefully.</strong> A real job listing page repeats this structure hundreds of times — once per job. Your scraper's job is to extract the text inside each tag automatically.
+    </div>
+    <div class="code-block">
+      <div class="code-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-badge">HTML (Target Page)</span></div>
+      <pre><code class="language-html">&lt;div class="job-card"&gt;
+  &lt;h2 class="job-title"&gt;Data Scientist&lt;/h2&gt;
+  &lt;p  class="company"&gt;Infosys&lt;/p&gt;
+  &lt;span class="location"&gt;Bengaluru, Karnataka&lt;/span&gt;
+  &lt;span class="salary"&gt;₹12 – 18 LPA&lt;/span&gt;
+  &lt;ul class="skills"&gt;
+    &lt;li&gt;Python&lt;/li&gt;
+    &lt;li&gt;SQL&lt;/li&gt;
+    &lt;li&gt;Machine Learning&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+    </div>
+
+    <div class="callout ci">
+      <span class="callout-icon">🔍</span>
+      <div class="callout-body">
+        <strong>How to inspect any website</strong>
+        Right-click any element on a webpage → "Inspect Element" (Chrome/Firefox). The DevTools panel shows the exact HTML structure. Find the repeating container — that is what you iterate over.
+      </div>
+    </div>
+  </div>
+
+  <!-- 7.2 BeautifulSoup Basics -->
+  <div id="beautifulsoup">
+    <div class="sec-label">7.2 BeautifulSoup — Parsing HTML</div>
+    <h3 class="topic"><span class="dot"></span>Installing &amp; Creating a Soup Object</h3>
+
+    <div class="explain">
+      <strong>Step 1:</strong> Install the libraries. <strong>Step 2:</strong> Fetch the page HTML with <code>requests.get()</code>. <strong>Step 3:</strong> Parse it into a navigable tree with <code>BeautifulSoup</code>.
+    </div>
+    <div class="code-block">
+      <div class="code-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-badge">Python</span></div>
+      <pre><code class="language-python">pip install requests beautifulsoup4 lxml
+
+import requests
+from bs4 import BeautifulSoup
+
+url      = "https://example-job-board.in/jobs"
+response = requests.get(url, timeout=10)
+soup     = BeautifulSoup(response.text, "lxml")  # parse the HTML</code></pre>
+    </div>
+
+    <h4 class="sub">The Three Ways to Find Elements</h4>
+    <div class="explain">
+      <strong>Know these three methods.</strong> Together they cover 99% of all scraping tasks. Use <code>find()</code> for one element, <code>find_all()</code> for many, and <code>select()</code> for CSS selectors (most powerful).
+    </div>
+    <div class="code-block">
+      <div class="code-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-badge">Python</span></div>
+      <pre><code class="language-python"># find() — returns FIRST match (or None if not found)
+title = soup.find("h2", class_="job-title")
+print(title.text.strip())          # "Data Scientist"
+
+# find_all() — returns LIST of ALL matches
+all_cards = soup.find_all("div", class_="job-card")
+print(f"Found {len(all_cards)} jobs")   # Found 48 jobs
+
+# select() — CSS selector syntax (most flexible)
+titles    = soup.select("div.job-card h2.job-title")
+locations = soup.select("div.job-card span.location")</code></pre>
+    </div>
+
+    <h4 class="sub">Extracting Text, Attributes &amp; Nested Data</h4>
+    <div class="explain">
+      <strong>Three accessors:</strong> <code>.text</code> or <code>.get_text()</code> for visible text, <code>["attr"]</code> or <code>.get("attr")</code> for HTML attributes like href and src.
+    </div>
+    <div class="code-block">
+      <div class="code-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-badge">Python</span></div>
+      <pre><code class="language-python">card = soup.find("div", class_="job-card")
+
+# Text extraction
+title    = card.find("h2").get_text(strip=True)   # "Data Scientist"
+company  = card.find("p",    class_="company").text.strip()
+
+# Attribute extraction (links, image URLs)
+link_tag = card.find("a")
+url      = link_tag.get("href", "")               # safe — returns "" if missing
+
+# Nested list — skills
+skill_tags = card.select("ul.skills li")
+skills     = [li.get_text(strip=True) for li in skill_tags]
+# ['Python', 'SQL', 'Machine Learning']</code></pre>
+    </div>
+  </div>
+
+  <!-- 7.3 Scraping Job Listings -->
+  <div id="scraping-job">
+    <div class="sec-label">7.3 Project Step 1 — Scraping Indian Tech Jobs</div>
+    <h3 class="topic"><span class="dot"></span>Full Job Board Scraper</h3>
+    <p class="body">We now build the first piece of our project — a scraper that loops through multiple pages of a job board and collects all listings into a Pandas DataFrame.</p>
+
+    <div class="callout cw">
+      <span class="callout-icon">⚠️</span>
+      <div class="callout-body">
+        <strong>Always add a User-Agent header</strong>
+        Many websites block requests that look like bots (no browser headers). A simple User-Agent header mimics a browser and prevents most blocks.
+      </div>
+    </div>
+
+    <div class="explain">
+      <strong>Pattern: Outer loop = pages, Inner loop = job cards per page.</strong> Clean each field immediately before storing it.
+    </div>
+    <div class="code-block">
+      <div class="code-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-badge">Python</span></div>
+      <pre><code class="language-python">import requests, time, pandas as pd
+from bs4 import BeautifulSoup
+
+HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; DataScienceBot/1.0)"}
+BASE_URL = "https://example-job-board.in/data-science?page={}"
+
+def scrape_page(page_num):
+    """Scrape one page, return list of job dicts."""
+    url      = BASE_URL.format(page_num)
+    response = requests.get(url, headers=HEADERS, timeout=10)
+    soup     = BeautifulSoup(response.text, "lxml")
+    jobs     = []
+
+    for card in soup.find_all("div", class_="job-card"):
+        jobs.append({
+            "title"   : card.find("h2").get_text(strip=True),
+            "company" : card.find("p", class_="company").get_text(strip=True),
+            "city"    : card.find("span", class_="location").get_text(strip=True),
+            "salary"  : card.find("span", class_="salary").get_text(strip=True),
+            "skills"  : ", ".join(li.text for li in card.select("ul.skills li")),
+            "url"     : card.find("a").get("href", ""),
+        })
+    return jobs
+
+# ── Scrape 5 pages ───────────────────────────────
+all_jobs = []
+for page in range(1, 6):
+    all_jobs.extend(scrape_page(page))
+    time.sleep(1.5)          # pause between requests — polite scraping
+    print(f"Page {page} done — {len(all_jobs)} jobs so far")
+
+df = pd.DataFrame(all_jobs)
+print(df.shape)              # (240, 6) — 240 jobs, 6 columns</code></pre>
+    </div>
+
+    <h4 class="sub">Cleaning the Scraped Data</h4>
+    <div class="explain">
+      <strong>Raw scraped data is always messy.</strong> Salary is a string like "₹12 – 18 LPA". Extract the numeric range before storing.
+    </div>
+    <div class="code-block">
+      <div class="code-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-badge">Python</span></div>
+      <pre><code class="language-python">import re
+
+def parse_salary(salary_str):
+    """'₹12 – 18 LPA' → min=12, max=18, avg=15."""
+    nums = re.findall(r"\d+\.?\d*", salary_str)
+    if len(nums) >= 2:
+        lo, hi = float(nums[0]), float(nums[1])
+        return lo, hi, round((lo + hi) / 2, 1)
+    return None, None, None
+
+df[["sal_min","sal_max","sal_avg"]] = df["salary"].apply(
+    lambda s: pd.Series(parse_salary(s))
+)
+df["city"] = df["city"].str.split(",").str[0].str.strip()
+
+print(df[["title","company","city","sal_avg"]].head(3))</code></pre>
+    </div>
+    <div class="output">
+      <span class="out-label">Output</span>
+          title         company        city    sal_avg
+0  Data Scientist      Infosys   Bengaluru       15.0
+1  ML Engineer         Wipro       Hyderabad      13.5
+2  Python Developer    Zomato      Gurugram       11.0
+    </div>
+  </div>
+
+  <!-- 7.4 REST API -->
+  <div id="rest-api">
+    <div class="sec-label">7.4 REST APIs — Fetching Live Data</div>
+    <h3 class="topic"><span class="dot"></span>Project Step 2 — Fetch City Cost-of-Living via API</h3>
+    <p class="body">Salary means nothing without context. ₹12 LPA in Mumbai feels like ₹8 LPA — but ₹12 LPA in Jaipur is comfortable. We enrich our job data with city cost-of-living indices from a public API.</p>
+
+    <div class="explain">
+      <strong>API response is JSON.</strong> Parse it directly into a Python dict, then into a DataFrame using <code>pd.json_normalize()</code> for nested structures.
+    </div>
+    <div class="code-block">
+      <div class="code-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-badge">Python</span></div>
+      <pre><code class="language-python">import requests, pandas as pd
+
+def fetch_city_data(city):
+    """Fetch cost-of-living index for an Indian city."""
+    url      = f"https://api.costoflivingindex.in/v1/city/{city}"
+    response = requests.get(url, timeout=8)
+    if response.status_code != 200:
+        return {}
+    return response.json()   # e.g. {"city":"Mumbai","index":78.4,"rent_idx":92.1}
+
+# Build a lookup table for the cities in our dataset
+cities      = df["city"].unique()          # ['Bengaluru','Mumbai','Hyderabad',...]
+city_records = [fetch_city_data(c) for c in cities]
+
+city_df = pd.DataFrame(city_records)[["city", "index", "rent_idx"]]
+city_df.rename(columns={"index":"col_index"}, inplace=True)</code></pre>
+    </div>
+
+    <h4 class="sub">Enriching the Jobs Data</h4>
+    <div class="explain">
+      <strong>Merge the two DataFrames</strong> on the city column, then compute a <em>real-value salary</em> — salary adjusted for cost of living — so salaries across cities become comparable.
+    </div>
+    <div class="code-block">
+      <div class="code-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-badge">Python</span></div>
+      <pre><code class="language-python"># Left join — keep all jobs, add city COL index
+df = pd.merge(df, city_df, on="city", how="left")
+
+# Real-value salary: higher COL city → effectively lower purchasing power
+df["sal_real"] = (df["sal_avg"] / df["col_index"] * 100).round(2)
+
+print(df[["city","sal_avg","col_index","sal_real"]].head(4))</code></pre>
+    </div>
+    <div class="output">
+      <span class="out-label">Output</span>
+        city     sal_avg  col_index  sal_real
+0  Bengaluru     15.0       71.2      21.07
+1    Mumbai      13.5       78.4      17.22
+2 Hyderabad      13.5       65.8      20.52
+3   Gurugram      11.0       74.1      14.84
+    </div>
+
+    <div class="annotation">
+      <span class="ann-icon">💡</span>
+      <p><strong>Insight:</strong> A Bengaluru salary of ₹15 LPA has more purchasing power than a Mumbai salary of ₹13.5 LPA, even though Mumbai pays less — because Bengaluru's cost-of-living index is lower. This kind of enrichment turns raw numbers into actionable intelligence.</p>
+    </div>
+  </div>
+
+  <!-- 7.5 Rate Limiting & Auth -->
+  <div id="rate-limit">
+    <div class="sec-label">7.5 Authentication &amp; Rate Limiting</div>
+    <h3 class="topic"><span class="dot"></span>API Keys &amp; Polite Requests</h3>
+
+    <div class="cgrid">
+      <div class="ccard"><div class="icon">🔑</div><h4>API Key Auth</h4><p>Most data APIs (RapidAPI, data.gov.in, etc.) require a key sent in the request header.</p></div>
+      <div class="ccard"><div class="icon">⏱</div><h4>Rate Limits</h4><p>APIs restrict how many calls you can make per minute. Violating this gets your key blocked.</p></div>
+      <div class="ccard"><div class="icon">🔁</div><h4>Retry Logic</h4><p>Networks fail. Always wrap API calls in try-except with automatic retries and exponential backoff.</p></div>
+      <div class="ccard"><div class="icon">😴</div><h4>Polite Scraping</h4><p>Add <code>time.sleep(1)</code> between requests. It prevents server overload and reduces your block risk.</p></div>
+    </div>
+
+    <div class="explain">
+      <strong>Production-grade API caller</strong> — handles auth, rate limits, retries, and exponential backoff in one reusable function.
+    </div>
+    <div class="code-block">
+      <div class="code-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-badge">Python</span></div>
+      <pre><code class="language-python">import requests, time, os
+
+API_KEY = os.getenv("DATA_GOV_IN_KEY")  # store secrets in env vars, never hardcode
+
+def api_call(endpoint, params=None, retries=3):
+    headers = {
+        "api-key"    : API_KEY,
+        "User-Agent" : "IndiaJobAnalyser/1.0",
+    }
+    for attempt in range(retries):
+        try:
+            r = requests.get(endpoint, headers=headers,
+                             params=params, timeout=10)
+            r.raise_for_status()         # raises on 4xx / 5xx
+            return r.json()
+        except requests.exceptions.HTTPError as e:
+            if r.status_code == 429:     # 429 = Too Many Requests
+                wait = 2 ** attempt      # exponential backoff: 1s, 2s, 4s
+                print(f"Rate limited. Waiting {wait}s...")
+                time.sleep(wait)
+            else:
+                print(f"HTTP Error: {e}")
+                return None
+        except requests.exceptions.Timeout:
+            print(f"Timeout on attempt {attempt+1}")
+    return None</code></pre>
+    </div>
+  </div>
+</div><!-- /session7 -->
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════
+     SESSION 8 — SQL & ETL
+════════════════════════════════════════════════ -->
+<div id="session8">
+  <div class="session-hdr">
+    <div class="s-badge">Session 8 · 3 Hours</div>
+    <div class="s-info">
+      <h2>SQL &amp; ETL Basics</h2>
+      <p>Store scraped data in a database, query it with SQL, join tables, and build a simple ETL pipeline.</p>
+      <div class="s-tags">
+        <span class="tag tg">SQLite</span>
+        <span class="tag tb">SQL Queries</span>
+        <span class="tag to">JOINs</span>
+        <span class="tag tp">ETL</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8.1 SQLite -->
+  <div id="sqlite">
+    <div class="sec-label">8.1 SQLite — Your Pocket Database</div>
+    <h3 class="topic"><span class="dot"></span>Why SQLite for Data Science?</h3>
+    <p class="body">SQLite is a self-contained database stored in a single file. No server to configure, no passwords to set — perfect for local projects, ETL pipelines, and prototyping. Python's <code>sqlite3</code> module ships built-in.</p>
+
+    <div class="callout ct">
+      <span class="callout-icon">✅</span>
+      <div class="callout-body">
+        <strong>SQLite vs PostgreSQL — when to use which</strong>
+        Use <strong>SQLite</strong> for local projects, pipelines, scripts, or datasets under ~1GB. Use <strong>PostgreSQL</strong> when you need multi-user access, very large datasets, or advanced features like full-text search and JSON columns.
+      </div>
+    </div>
+
+    <div class="explain">
+      <strong>Four steps every time:</strong> Connect → Create table → Insert data → Query.
+    </div>
+    <div class="code-block">
+      <div class="code-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-badge">Python</span></div>
+      <pre><code class="language-python">import sqlite3, pandas as pd
+
+# Connect — creates the file if it doesn't exist
+conn = sqlite3.connect("india_jobs.db")
+cur  = conn.cursor()
+
+# Create table — define schema
+cur.execute("""
+    CREATE TABLE IF NOT EXISTS jobs (
+        id        INTEGER PRIMARY KEY AUTOINCREMENT,
+        title     TEXT    NOT NULL,
+        company   TEXT,
+        city      TEXT,
+        sal_avg   REAL,
+        sal_real  REAL,
+        skills    TEXT,
+        scraped_at TEXT  DEFAULT (date('now'))
+    )
+""")
+conn.commit()</code></pre>
+    </div>
+
+    <h4 class="sub">Loading the Scraped DataFrame into SQLite</h4>
+    <div class="explain">
+      <strong>Pandas <code>to_sql()</code></strong> writes an entire DataFrame to a table in one line — no manual INSERT loops needed.
+    </div>
+    <div class="code-block">
+      <div class="code-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-badge">Python</span></div>
+      <pre><code class="language-python"># Write DataFrame → SQLite (if_exists="append" adds to existing rows)
+df.to_sql("jobs", conn, if_exists="append", index=False)
+
+# Verify
+count = pd.read_sql("SELECT COUNT(*) AS total FROM jobs", conn)
+print(count)          # total: 240</code></pre>
+    </div>
+
+    <h4 class="sub">CRUD — Create, Read, Update, Delete</h4>
+    <div class="explain">
+      <strong>Always use parameterised queries</strong> (the <code>?</code> placeholder). Never format user input directly into a SQL string — that opens SQL injection vulnerabilities.
+    </div>
+    <div class="code-block">
+      <div class="code-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-badge">Python</span></div>
+      <pre><code class="language-python"># INSERT a single record — parameterised (safe ✓)
+cur.execute("""
+    INSERT INTO jobs (title, company, city, sal_avg, skills)
+    VALUES (?, ?, ?, ?, ?)
+""", ("Data Analyst", "HDFC Bank", "Mumbai", 9.5, "SQL, Excel, Power BI"))
+conn.commit()
+
+# UPDATE
+cur.execute("UPDATE jobs SET sal_avg = ? WHERE id = ?", (10.0, 241))
+conn.commit()
+
+# DELETE
+cur.execute("DELETE FROM jobs WHERE sal_avg IS NULL")
+conn.commit()</code></pre>
+    </div>
+  </div>
+
+  <!-- 8.2 SQL Queries -->
+  <div id="sql-queries">
+    <div class="sec-label">8.2 SQL Queries — Asking Questions of Your Data</div>
+    <h3 class="topic"><span class="dot"></span>SELECT, WHERE, ORDER BY, LIMIT</h3>
+
+    <div class="explain">
+      <strong>Every SQL query starts with SELECT.</strong> Read it as plain English: "Select [columns] from [table] where [condition] ordered by [column]."
+    </div>
+    <div class="code-block">
+      <div class="code-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-badge">SQL + Python</span></div>
+      <pre><code class="language-python">import pandas as pd
+
+# Top 5 highest paying Data Science roles in Bengaluru
+q = """
+    SELECT title, company, sal_avg
+    FROM   jobs
+    WHERE  city = 'Bengaluru'
+      AND  sal_avg IS NOT NULL
+    ORDER  BY sal_avg DESC
+    LIMIT  5
+"""
+print(pd.read_sql(q, conn))</code></pre>
+    </div>
+    <div class="output">
+      <span class="out-label">Output</span>
+               title             company   sal_avg
+0    Head of Data Science     Flipkart     32.0
+1    Principal Data Scientist  Meesho      28.5
+2    Lead ML Engineer          PhonePe     26.0
+3    Senior Data Scientist     Swiggy      24.0
+4    ML Platform Engineer      CRED        22.5
+    </div>
+
+    <h4 class="sub">Aggregate Functions — GROUP BY</h4>
+    <div class="explain">
+      <strong>GROUP BY</strong> collapses rows with the same value into one row, then applies an aggregate function (COUNT, AVG, SUM, MAX, MIN) to each group.
+    </div>
+    <div class="code-block">
+      <div class="code-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-badge">SQL + Python</span></div>
+      <pre><code class="language-python">q = """
+    SELECT   city,
+             COUNT(*)          AS total_jobs,
+             ROUND(AVG(sal_avg), 1) AS avg_salary_lpa,
+             ROUND(MAX(sal_avg), 1) AS max_salary_lpa
+    FROM     jobs
+    GROUP BY city
+    HAVING   COUNT(*) >= 10          -- only cities with 10+ listings
+    ORDER BY avg_salary_lpa DESC
+"""
+city_stats = pd.read_sql(q, conn)
+print(city_stats)</code></pre>
+    </div>
+    <div class="output">
+      <span class="out-label">Output</span>
+          city     total_jobs  avg_salary_lpa  max_salary_lpa
+0    Bengaluru       88          16.2            32.0
+1    Hyderabad       52          14.8            26.0
+2    Gurugram        41          14.1            28.5
+3    Mumbai          39          13.2            24.0
+4    Pune            22          12.6            20.0
+5    Chennai         18          12.1            18.5
+    </div>
+
+    <h4 class="sub">Filtering on Aggregates — HAVING vs WHERE</h4>
+    <div class="annotation">
+      <span class="ann-icon">🧠</span>
+      <p><strong>Key rule:</strong> <code>WHERE</code> filters <em>rows before</em> grouping. <code>HAVING</code> filters <em>groups after</em> aggregation. You cannot use aggregate functions inside a <code>WHERE</code> clause.</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-badge">SQL + Python</span></div>
+      <pre><code class="language-python">q = """
+    SELECT   LOWER(title)      AS role,
+             COUNT(*)          AS listings,
+             ROUND(AVG(sal_avg), 1) AS avg_lpa
+    FROM     jobs
+    WHERE    scraped_at >= date('now', '-30 days')  -- last 30 days
+    GROUP BY LOWER(title)
+    HAVING   COUNT(*) >= 5
+    ORDER BY listings DESC
+    LIMIT 8
+"""
+print(pd.read_sql(q, conn))</code></pre>
+    </div>
+  </div>
+
+  <!-- 8.3 JOINs -->
+  <div id="joins">
+    <div class="sec-label">8.3 JOINs — Combining Tables</div>
+    <h3 class="topic"><span class="dot"></span>Why Multiple Tables?</h3>
+    <p class="body">Good database design splits data into focused tables to avoid duplication. Our project uses three: <strong>jobs</strong>, <strong>companies</strong>, and <strong>cities</strong>. JOINs combine them at query time.</p>
+
+    <div class="explain">
+      <strong>Setup:</strong> Create the two reference tables and insert some Indian company/city data.
+    </div>
+    <div class="code-block">
+      <div class="code-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-badge">Python</span></div>
+      <pre><code class="language-python">companies_df = pd.DataFrame({
+    "company"  : ["Infosys","Wipro","TCS","Zomato","Flipkart","Swiggy","Meesho"],
+    "sector"   : ["IT","IT","IT","FoodTech","E-Comm","FoodTech","E-Comm"],
+    "founded"  : [1981, 1945, 1968, 2008, 2007, 2014, 2015],
+    "hq"       : ["Bengaluru","Bengaluru","Mumbai","Gurugram","Bengaluru","Bengaluru","Bengaluru"],
+})
+companies_df.to_sql("companies", conn, if_exists="replace", index=False)
+
+cities_df = pd.DataFrame({
+    "city"     : ["Bengaluru","Hyderabad","Mumbai","Gurugram","Pune","Chennai"],
+    "state"    : ["Karnataka","Telangana","Maharashtra","Haryana","Maharashtra","Tamil Nadu"],
+    "tier"     : [1, 1, 1, 1, 2, 1],
+    "col_index": [71.2, 65.8, 78.4, 74.1, 62.5, 63.1],
+})
+cities_df.to_sql("cities", conn, if_exists="replace", index=False)</code></pre>
+    </div>
+
+    <h4 class="sub">INNER JOIN, LEFT JOIN — Side by Side</h4>
+    <table class="tbl">
+      <tr><th>JOIN Type</th><th>Returns</th><th>When to Use</th></tr>
+      <tr><td><code>INNER JOIN</code></td><td>Only rows that match in BOTH tables</td><td>When you need complete records only</td></tr>
+      <tr><td><code>LEFT JOIN</code></td><td>All rows from left table + matching from right (NULL if no match)</td><td>When you want all jobs, even if city data is missing</td></tr>
+      <tr><td><code>LEFT JOIN + IS NULL</code></td><td>Only rows in left table NOT in right table</td><td>Finding orphan records</td></tr>
+    </table>
+
+    <div class="explain">
+      <strong>Real query:</strong> Combine jobs + companies + cities to get a rich insight — best sectors to apply in, broken down by city tier.
+    </div>
+    <div class="code-block">
+      <div class="code-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-badge">SQL + Python</span></div>
+      <pre><code class="language-python">q = """
+    SELECT j.title,
+           j.company,
+           c.sector,
+           j.city,
+           ct.state,
+           ct.tier,
+           j.sal_avg,
+           ct.col_index,
+           ROUND(j.sal_avg / ct.col_index * 100, 1) AS sal_real
+    FROM   jobs       j
+    INNER JOIN companies c  ON j.company = c.company
+    LEFT  JOIN cities    ct ON j.city    = ct.city
+    WHERE  c.sector IN ('FoodTech', 'E-Comm')
+    ORDER  BY sal_real DESC
+    LIMIT  10
+"""
+startup_jobs = pd.read_sql(q, conn)
+print(startup_jobs)</code></pre>
+    </div>
+    <div class="output">
+      <span class="out-label">Output — Top real-value startup DS jobs</span>
+             title     company   sector       city  state       tier sal_avg col_index sal_real
+0  Sr Data Scientist  Meesho  E-Comm   Bengaluru  Karnataka   1    28.5    71.2     40.0
+1  ML Engineer        Zomato  FoodTech  Gurugram  Haryana     1    22.5    74.1     30.4
+2  Data Scientist     Swiggy  FoodTech  Bengaluru  Karnataka   1    24.0    71.2     33.7
+    </div>
+  </div>
+
+  <!-- 8.4 ETL -->
+  <div id="etl">
+    <div class="sec-label">8.4 ETL Pipeline — Extract, Transform, Load</div>
+    <h3 class="topic"><span class="dot"></span>What is ETL?</h3>
+    <p class="body"><strong>Extract</strong> data from sources (web, API, CSV). <strong>Transform</strong> it (clean, enrich, reshape). <strong>Load</strong> it into a destination (database, data warehouse). This is the backbone of all data engineering.</p>
+
+    <div class="flow">
+      <div class="flow-item"><div class="flow-num">E</div><div class="flow-content"><h4>Extract</h4><p>Scraper + API calls. Pull raw data from multiple sources.</p></div></div>
+      <div class="flow-item"><div class="flow-num">T</div><div class="flow-content"><h4>Transform</h4><p>Clean, merge, derive new columns. Apply business logic.</p></div></div>
+      <div class="flow-item"><div class="flow-num">L</div><div class="flow-content"><h4>Load</h4><p>Write clean data to SQLite (or PostgreSQL in production).</p></div></div>
+      <div class="flow-item"><div class="flow-num">Q</div><div class="flow-content"><h4>Query</h4><p>SQL analytical queries for insights and dashboards.</p></div></div>
+    </div>
+
+    <div class="explain">
+      <strong>Wrap the full pipeline in one function</strong> so it can be scheduled to run daily (e.g., via a cron job or GitHub Actions) and always keep the database fresh.
+    </div>
+    <div class="code-block">
+      <div class="code-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-badge">Python</span></div>
+      <pre><code class="language-python">import sqlite3, pandas as pd, logging
+from datetime import datetime
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s — %(message)s")
+
+def run_etl(pages=5):
+    """Full ETL pipeline: scrape → enrich → clean → load → query."""
+    start = datetime.now()
+    logging.info("ETL started")
+
+    # EXTRACT
+    raw_jobs = []
+    for p in range(1, pages + 1):
+        raw_jobs.extend(scrape_page(p))    # our function from Session 7
+    logging.info(f"Extracted {len(raw_jobs)} raw jobs")
+
+    # TRANSFORM
+    df = pd.DataFrame(raw_jobs)
+    df = clean_jobs(df)                    # type fixes, salary parsing
+    df = enrich_with_city_api(df)          # COL index merge
+    df["etl_run"] = start.strftime("%Y-%m-%d %H:%M")
+    logging.info(f"Transformed → {df.shape[0]} clean rows")
+
+    # LOAD
+    conn = sqlite3.connect("india_jobs.db")
+    # Remove today's previous run to avoid duplicates
+    conn.execute("DELETE FROM jobs WHERE etl_run LIKE ?",
+                 (start.strftime("%Y-%m-%d") + "%",))
+    df.to_sql("jobs", conn, if_exists="append", index=False)
+    conn.commit()
+    logging.info("Loaded into SQLite ✓")
+
+    # QUICK SANITY CHECK
+    total = pd.read_sql("SELECT COUNT(*) FROM jobs", conn).iloc[0,0]
+    logging.info(f"Total records in DB: {total}")
+    conn.close()
+    logging.info(f"ETL finished in {(datetime.now()-start).seconds}s")
+
+run_etl(pages=5)</code></pre>
+    </div>
+    <div class="output">
+      <span class="out-label">Log Output</span>
+2024-03-15 09:00:01 — ETL started
+2024-03-15 09:00:09 — Extracted 240 raw jobs
+2024-03-15 09:00:11 — Transformed → 228 clean rows
+2024-03-15 09:00:11 — Loaded into SQLite ✓
+2024-03-15 09:00:11 — Total records in DB: 1140
+2024-03-15 09:00:11 — ETL finished in 10s
+    </div>
+  </div>
+</div><!-- /session8 -->
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════
+     MODULE PROJECT
+════════════════════════════════════════════════ -->
+<div id="project">
+  <div class="proj-banner">
+    <span class="proj-tag">Module 2 · Final Lab · End-to-End Project</span>
+    <h2>🇮🇳 India Tech Job Market Analyser</h2>
+    <p class="proj-sub">
+      Combine everything from both sessions. Scrape 5 pages of job listings, enrich with city cost-of-living data from an API, store in SQLite, then run SQL queries that answer real business questions about the Indian tech hiring market.
+    </p>
+    <div class="proj-goals">
+      <div class="proj-goal">Scrape 200+ DS/ML job listings</div>
+      <div class="proj-goal">Enrich with city COL index via API</div>
+      <div class="proj-goal">Store in a normalised 3-table SQLite DB</div>
+      <div class="proj-goal">Answer 5 business questions with SQL</div>
+      <div class="proj-goal">Export final report as CSV + Excel</div>
+      <div class="proj-goal">Schedule pipeline to run daily</div>
+    </div>
+  </div>
+
+  <!-- Architecture -->
+  <div class="sec-label">System Architecture</div>
+  <div class="arch">
+    <div class="arch-box"><div class="ab-icon">🌐</div><div class="ab-name">Job Board</div><div class="ab-tech">BeautifulSoup</div></div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box"><div class="ab-icon">🔌</div><div class="ab-name">City API</div><div class="ab-tech">Requests</div></div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box"><div class="ab-icon">🔄</div><div class="ab-name">Transform</div><div class="ab-tech">Pandas</div></div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box"><div class="ab-icon">🗄</div><div class="ab-name">SQLite DB</div><div class="ab-tech">sqlite3</div></div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box"><div class="ab-icon">📊</div><div class="ab-name">SQL Insights</div><div class="ab-tech">pd.read_sql</div></div>
+  </div>
+
+  <!-- Full project code -->
+  <div class="sec-label">Complete Project Code</div>
+
+  <h4 class="sub">Part A — Full Pipeline</h4>
+  <div class="explain">
+    <strong>This is the complete, runnable pipeline.</strong> It calls the helper functions built across both sessions. In an exam/lab, you are expected to write the helper functions (scrape_page, clean_jobs, enrich_with_city_api) yourself.
+  </div>
+  <div class="code-block">
+    <div class="code-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-badge">Python — india_jobs_pipeline.py</span></div>
+    <pre><code class="language-python">"""
+India Tech Job Market Analyser
+Module 2 — End-to-End Project
+"""
+import sqlite3, requests, time, re, logging
+import pandas as pd
+from bs4 import BeautifulSoup
+from datetime import datetime
+
+# ── CONFIG ────────────────────────────────────────
+DB_PATH  = "india_jobs.db"
+BASE_URL = "https://example-job-board.in/data-science?page={}"
+HEADERS  = {"User-Agent": "Mozilla/5.0 (IndiaJobAnalyser/1.0)"}
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
+
+# ── EXTRACT ───────────────────────────────────────
+def scrape_all(pages=5):
+    jobs = []
+    for p in range(1, pages + 1):
+        try:
+            r    = requests.get(BASE_URL.format(p), headers=HEADERS, timeout=10)
+            soup = BeautifulSoup(r.text, "lxml")
+            for card in soup.find_all("div", class_="job-card"):
+                jobs.append({
+                    "title"  : card.find("h2").get_text(strip=True),
+                    "company": card.find("p", class_="company").get_text(strip=True),
+                    "city"   : card.find("span", class_="location")
+                                   .get_text(strip=True).split(",")[0].strip(),
+                    "salary" : card.find("span", class_="salary").get_text(strip=True),
+                    "skills" : ", ".join(li.text for li in card.select("ul.skills li")),
+                })
+        except Exception as e:
+            logging.warning(f"Page {p} failed: {e}")
+        time.sleep(1.2)
+    return pd.DataFrame(jobs)
+
+# ── TRANSFORM ─────────────────────────────────────
+def transform(df):
+    # Parse salary
+    def parse_sal(s):
+        nums = re.findall(r"\d+\.?\d*", str(s))
+        return (float(nums[0]), float(nums[1])) if len(nums) >= 2 else (None, None)
+
+    df[["sal_min","sal_max"]] = df["salary"].apply(lambda s: pd.Series(parse_sal(s)))
+    df["sal_avg"] = ((df["sal_min"] + df["sal_max"]) / 2).round(1)
+    df.drop(columns=["salary"], inplace=True)
+    df.drop_duplicates(subset=["title","company","city"], inplace=True)
+    df.dropna(subset=["sal_avg"], inplace=True)
+    df["scraped_at"] = datetime.now().strftime("%Y-%m-%d")
+    return df
+
+# ── ENRICH ────────────────────────────────────────
+COL_INDEX = {                  # cost-of-living index — mock values
+    "Bengaluru":71.2, "Hyderabad":65.8, "Mumbai":78.4,
+    "Gurugram":74.1,  "Pune":62.5,      "Chennai":63.1,
+    "Delhi":77.0,     "Noida":72.5,     "Kolkata":58.0,
+}
+def enrich(df):
+    df["col_index"] = df["city"].map(COL_INDEX)
+    df["sal_real"]  = (df["sal_avg"] / df["col_index"] * 100).round(1)
+    return df
+
+# ── LOAD ──────────────────────────────────────────
+def load(df):
+    conn = sqlite3.connect(DB_PATH)
+    conn.execute("DELETE FROM jobs WHERE scraped_at = ?",
+                 (datetime.now().strftime("%Y-%m-%d"),))
+    df.to_sql("jobs", conn, if_exists="append", index=False)
+    conn.commit()
+    return conn
+
+# ── RUN ───────────────────────────────────────────
+logging.info("Pipeline starting...")
+raw_df   = scrape_all(pages=5);   logging.info(f"Scraped: {len(raw_df)} rows")
+clean_df = transform(raw_df);     logging.info(f"Clean:   {len(clean_df)} rows")
+rich_df  = enrich(clean_df);      logging.info(f"Enriched with COL index")
+conn     = load(rich_df);         logging.info("Loaded to SQLite ✓")</code></pre>
+  </div>
+
+  <h4 class="sub">Part B — 5 Business Questions via SQL</h4>
+  <div class="explain">
+    <strong>In a real DS project</strong>, your stakeholder (HR team / startup founder) asks specific questions. Answer each one with a clean SQL query.
+  </div>
+  <div class="code-block">
+    <div class="code-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-badge">Python — insights.py</span></div>
+    <pre><code class="language-python">def run_insights(conn):
+    qs = {
+
+    # Q1: Which city has the best real-value salary for data scientists?
+    "Best city (adjusted salary)": """
+        SELECT city, ROUND(AVG(sal_real),1) AS avg_real_lpa, COUNT(*) AS jobs
+        FROM   jobs
+        GROUP  BY city HAVING COUNT(*) >= 8
+        ORDER  BY avg_real_lpa DESC LIMIT 5
+    """,
+
+    # Q2: Which skills appear most in high-paying jobs (>15 LPA)?
+    "Top skills in high-pay jobs": """
+        SELECT skills, COUNT(*) AS jobs, ROUND(AVG(sal_avg),1) AS avg_lpa
+        FROM   jobs  WHERE sal_avg > 15
+        GROUP  BY skills HAVING COUNT(*) >= 3
+        ORDER  BY jobs DESC LIMIT 8
+    """,
+
+    # Q3: Which companies pay the most on average?
+    "Top paying companies": """
+        SELECT company, COUNT(*) AS openings, ROUND(AVG(sal_avg),1) AS avg_lpa
+        FROM   jobs
+        GROUP  BY company HAVING COUNT(*) >= 3
+        ORDER  BY avg_lpa DESC LIMIT 10
+    """,
+
+    # Q4: Salary gap between Tier-1 and Tier-2 cities?
+    "Tier-1 vs Tier-2 salary": """
+        SELECT CASE WHEN city IN ('Bengaluru','Mumbai','Hyderabad','Delhi','Chennai','Kolkata')
+                    THEN 'Tier-1' ELSE 'Tier-2' END AS tier,
+               COUNT(*) AS jobs, ROUND(AVG(sal_avg),1) AS avg_lpa
+        FROM   jobs GROUP BY tier
+    """,
+
+    # Q5: Month-over-month trend in new listings
+    "Weekly hiring trend": """
+        SELECT scraped_at AS date, COUNT(*) AS new_listings, ROUND(AVG(sal_avg),1) AS avg_lpa
+        FROM   jobs
+        GROUP  BY scraped_at ORDER BY scraped_at
+    """,
+    }
+
+    results = {}
+    for name, query in qs.items():
+        df = pd.read_sql(query, conn)
+        print(f"\n{'═'*50}")
+        print(f"  {name}")
+        print(f"{'═'*50}")
+        print(df.to_string(index=False))
+        results[name] = df
+    return results
+
+insights = run_insights(conn)</code></pre>
+  </div>
+
+  <div class="output">
+    <span class="out-label">Sample Output — Q1: Best city (adjusted salary)</span>
+══════════════════════════════════════════════════
+  Best city (adjusted salary)
+══════════════════════════════════════════════════
+       city  avg_real_lpa  jobs
+  Bengaluru          21.1    88
+  Hyderabad          20.8    52
+  Pune               19.8    22
+   Gurugram          18.7    41
+     Mumbai          16.7    39
+  </div>
+
+  <h4 class="sub">Part C — Export Report</h4>
+  <div class="code-block">
+    <div class="code-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-badge">Python</span></div>
+    <pre><code class="language-python">full_df = pd.read_sql("SELECT * FROM jobs ORDER BY sal_avg DESC", conn)
+
+with pd.ExcelWriter("india_jobs_report.xlsx", engine="openpyxl") as w:
+    full_df.to_excel(w, sheet_name="All Jobs", index=False)
+    for name, df in insights.items():
+        sheet = name[:30].replace("/","_")   # Excel sheet names ≤31 chars
+        df.to_excel(w, sheet_name=sheet, index=False)
+
+full_df.to_csv("india_jobs_clean.csv", index=False)
+print("✓ india_jobs_report.xlsx saved")
+print("✓ india_jobs_clean.csv  saved")</code></pre>
+  </div>
+
+  <!-- Quiz -->
+  <div class="sec-label" style="margin-top:44px">Module 2 — Review Questions</div>
+  <div class="quiz-card">
+    <h4>🧠 Test Your Understanding</h4>
+
+    <div class="quiz-q">Q1. You scraped 300 job records but after <code>drop_duplicates(subset=["title","company","city"])</code> only 240 remain. What were the 60 removed records?</div>
+    <div class="quiz-opt" onclick="ans(this,false)"><span class="opt-l">A</span>Records with missing salary values</div>
+    <div class="quiz-opt" onclick="ans(this,true)"><span class="opt-l">B</span>Job listings that appeared identically (same title, company, city) — possibly scraped on overlapping pages</div>
+    <div class="quiz-opt" onclick="ans(this,false)"><span class="opt-l">C</span>Records from cities with a low cost-of-living index</div>
+
+    <div class="quiz-q" style="margin-top:18px">Q2. Your SQL query returns 0 rows: <code>WHERE sal_avg > 20 AND city = "Bengaluru"</code>. You know Bengaluru jobs exist. What is the most likely cause?</div>
+    <div class="quiz-opt" onclick="ans(this,false)"><span class="opt-l">A</span>SQL does not support AND with text and numeric comparisons</div>
+    <div class="quiz-opt" onclick="ans(this,false)"><span class="opt-l">B</span>The city column is empty for all rows</div>
+    <div class="quiz-opt" onclick="ans(this,true)"><span class="opt-l">C</span>The city was stored with extra spaces or a different spelling — try <code>TRIM(city) = 'Bengaluru'</code></div>
+
+    <div class="quiz-q" style="margin-top:18px">Q3. When should you use LEFT JOIN instead of INNER JOIN?</div>
+    <div class="quiz-opt" onclick="ans(this,false)"><span class="opt-l">A</span>When you want only rows that exist in both tables</div>
+    <div class="quiz-opt" onclick="ans(this,true)"><span class="opt-l">B</span>When you want all rows from the left table even if there is no match in the right table</div>
+    <div class="quiz-opt" onclick="ans(this,false)"><span class="opt-l">C</span>When the tables have no common column to join on</div>
+  </div>
+
+</div><!-- /project -->
+
+<!-- Footer -->
+<div class="mod-footer">
+  <div>
+    <div style="color:#fff;font-weight:700;font-size:14px">Module 2 Complete — 6 Hours</div>
+    <div>Scraping · APIs · SQL · ETL · India Job Pipeline</div>
+  </div>
+  <a class="nxt" href="#">Next → Module 3: EDA &amp; Visualisation ›</a>
+</div>
+
+</div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("pre code").forEach(el => hljs.highlightElement(el));
+});
+
+window.addEventListener("scroll", () => {
+  const d   = document.documentElement;
+  const pct = d.scrollTop / (d.scrollHeight - d.clientHeight) * 100;
+  document.getElementById("progFill").style.width = pct + "%";
+});
+
+const sections = document.querySelectorAll("[id]");
+const links    = document.querySelectorAll(".sb-link");
+new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      links.forEach(l => l.classList.remove("active"));
+      const m = document.querySelector(`.sb-link[href="#${e.target.id}"]`);
+      if (m) m.classList.add("active");
+    }
+  });
+}, { threshold: 0.25 }).observe.call(
+  { observe: s => sections.forEach(s2 => {}) },
+  document.body
+);
+sections.forEach(s => {
+  new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove("active"));
+        const m = document.querySelector(`.sb-link[href="#${e.target.id}"]`);
+        if (m) m.classList.add("active");
+      }
+    });
+  }, { threshold: 0.3 }).observe(s);
+});
+
+function ans(el, correct) {
+  const opts = el.parentElement.querySelectorAll(".quiz-opt");
+  opts.forEach(o => o.style.pointerEvents = "none");
+  el.classList.add(correct ? "correct" : "wrong");
+  el.innerHTML += correct
+    ? ' <strong style="margin-left:6px">✓ Correct!</strong>'
+    : ' <strong style="margin-left:6px">✗</strong>';
+  if (!correct) {
+    opts.forEach(o => {
+      if (o.getAttribute("onclick").includes("true"))
+        setTimeout(() => o.classList.add("correct"), 350);
+    });
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="https://imgs.search.brave.com/6zZLE6ZqLbqKYhdIFtf04Fn61rdnd1qCfiUCxJCVn4I/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9udW1w/eS5vcmcvaW1hZ2Vz/L2xvZ28uc3Zn" type="image/x-icon">
+<title>NumPy</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Source+Code+Pro:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --border: #e2ddd6;
+    --text: #2c2825;
+    --muted: #7a7068;
+    --accent: #c46b2d;
+    --accent-light: #f5e8db;
+    --accent2: #3a6b8a;
+    --accent2-light: #ddeaf3;
+    --green: #4a7c59;
+    --green-light: #ddf0e4;
+    --code-bg: #1e1e1e;
+    --code-text: #d4d4d4;
+    --code-keyword: #569cd6;
+    --code-string: #ce9178;
+    --code-comment: #6a9955;
+    --code-number: #b5cea8;
+    --code-fn: #dcdcaa;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  /* NAV */
+  nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    height: 52px;
+  }
+  .nav-brand {
+    font-family: 'Lora', serif;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .nav-links {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    flex: 1;
+  }
+  .nav-links::-webkit-scrollbar { display: none; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.8rem;
+    padding: 0 0.75rem;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* HERO */
+  .hero {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 3.5rem 2rem 3rem;
+    text-align: center;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.8rem;
+    border-radius: 2rem;
+    margin-bottom: 1.2rem;
+  }
+  .hero h1 {
+    font-family: 'Lora', serif;
+    font-size: 2.2rem;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 0.8rem;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero p {
+    color: var(--muted);
+    max-width: 560px;
+    margin: 0 auto 1.8rem;
+    font-size: 0.95rem;
+  }
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+  .tag {
+    background: var(--accent2-light);
+    color: var(--accent2);
+    font-size: 0.75rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 2rem;
+    font-weight: 500;
+  }
+
+  /* LAYOUT */
+  .page { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+
+  /* INTRO STORY */
+  .story-box {
+    background: var(--accent-light);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2.5rem;
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+  .story-box strong { color: var(--accent); }
+
+  /* SECTION */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  .section-header {
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+  .section-num {
+    background: var(--accent);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .section-header h2 {
+    font-family: 'Lora', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+  }
+  .section-header .badge {
+    margin-left: auto;
+    background: var(--green-light);
+    color: var(--green);
+    font-size: 0.68rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .section-body { padding: 1.5rem; }
+
+  /* EXPLANATION */
+  .explain {
+    color: var(--muted);
+    font-size: 0.88rem;
+    margin-bottom: 1rem;
+  }
+  .explain strong { color: var(--text); }
+
+  /* WHY BOX */
+  .why-box {
+    background: var(--accent2-light);
+    border-radius: 6px;
+    padding: 0.9rem 1.1rem;
+    margin-bottom: 1.2rem;
+    font-size: 0.85rem;
+    color: var(--accent2);
+  }
+  .why-box .why-label {
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.3rem;
+  }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: var(--code-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 1.2rem;
+    font-family: 'Source Code Pro', monospace;
+  }
+  .code-label {
+    background: #2d2d2d;
+    padding: 0.4rem 1rem;
+    font-size: 0.7rem;
+    color: #888;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-bottom: 1px solid #3d3d3d;
+  }
+  .code-content {
+    padding: 1rem 1.2rem;
+    font-size: 0.8rem;
+    line-height: 1.9;
+    overflow-x: auto;
+    color: var(--code-text);
+  }
+  .kw { color: var(--code-keyword); }
+  .st { color: var(--code-string); }
+  .cm { color: var(--code-comment); font-style: italic; }
+  .nb { color: var(--code-number); }
+  .fn { color: var(--code-fn); }
+  .out { color: #9cdcfe; }
+
+  /* OUTPUT BOX */
+  .output-box {
+    background: #f0f4f8;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.9rem 1.1rem;
+    margin-bottom: 1.2rem;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.8rem;
+    color: #2c5282;
+    line-height: 1.8;
+  }
+  .output-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
+  }
+
+  /* INDIAN CASE LABEL */
+  .india-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: #fff3e0;
+    color: #e65100;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2rem;
+    margin-bottom: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* CONCEPT GRID */
+  .concept-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin-bottom: 1.2rem;
+  }
+  @media(max-width:560px) { .concept-grid { grid-template-columns: 1fr; } }
+  .concept-card {
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 0.9rem 1rem;
+  }
+  .concept-card .c-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+  .concept-card .c-desc {
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.2rem 0;
+  }
+
+  /* SUB HEADING */
+  .sub-h {
+    font-family: 'Lora', serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+    margin-top: 1.2rem;
+    color: var(--text);
+  }
+
+  /* SUMMARY TABLE */
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin-bottom: 1rem;
+  }
+  .summary-table th {
+    background: var(--accent-light);
+    color: var(--accent);
+    text-align: left;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+  }
+  .summary-table td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .summary-table td:first-child { color: var(--text); font-weight: 500; font-family: 'Source Code Pro', monospace; font-size: 0.78rem; }
+  .summary-table tr:last-child td { border-bottom: none; }
+  .summary-table tr:hover td { background: var(--bg); }
+
+  /* ROADMAP */
+  .roadmap {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 1rem;
+  }
+  .roadmap-step {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .rm-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .rm-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: 4px;
+    flex-shrink: 0;
+  }
+  .rm-connector {
+    width: 2px;
+    flex: 1;
+    background: var(--border);
+    min-height: 24px;
+    margin: 2px 0;
+  }
+  .rm-content {
+    padding-bottom: 1.5rem;
+  }
+  .rm-title { font-weight: 600; font-size: 0.88rem; margin-bottom: 0.2rem; }
+  .rm-desc { font-size: 0.82rem; color: var(--muted); }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--muted);
+    font-size: 0.78rem;
+    border-top: 1px solid var(--border);
+    margin-top: 1rem;
+  }
+
+  /* INLINE CODE */
+  code {
+    font-family: 'Source Code Pro', monospace;
+    background: var(--accent-light);
+    color: var(--accent);
+    padding: 0.1em 0.4em;
+    border-radius: 3px;
+    font-size: 0.85em;
+  }
+
+  /* SCROLL ANIMATION */
+  .section { opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
+  .section.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">📐 NumPy Guide</span>
+  <div class="nav-links">
+    <a href="#s1">Arrays</a>
+    <a href="#s2">Creation</a>
+    <a href="#s3">Indexing</a>
+    <a href="#s4">Operations</a>
+    <a href="#s5">Statistics</a>
+    <a href="#s6">Reshape</a>
+    <a href="#s7">Random</a>
+    <a href="#s8">Linear Algebra</a>
+    <a href="#s9">Real World</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">🎓 Beginner Friendly</div>
+  <h1>Learning <span>NumPy</span><br>from Zero to Useful</h1>
+  <p>Your first Data Science library — explained with real Indian examples, from cricket scores to stock prices.</p>
+  <div class="hero-tags">
+    <span class="tag">Arrays</span>
+    <span class="tag">Math Operations</span>
+    <span class="tag">Indexing</span>
+    <span class="tag">Statistics</span>
+    <span class="tag">Random</span>
+    <span class="tag">Linear Algebra</span>
+  </div>
+</div>
+
+<div class="page">
+
+  <div class="story-box">
+    🇮🇳 <strong>Meet Arjun</strong> — a 2nd year B.Tech student from Pune who just finished a basic Python course. He wants to become a Data Scientist. His senior told him: <em>"Start with NumPy. It is the foundation of everything in Data Science."</em> This guide follows Arjun's journey through NumPy — using examples from IPL cricket, UPI payments, Zomato ratings, and NIFTY 50 stocks.
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>What is NumPy & Why Use It?</h2>
+    </div>
+    <div class="section-body">
+      <p class="explain">Arjun already knows Python lists. But when he tried to add 10,000 cricket scores together using a loop — it was <strong>very slow</strong>. NumPy solves exactly this problem.</p>
+
+      <div class="why-box">
+        <div class="why-label">💡 The Core Idea</div>
+        NumPy (Numerical Python) gives you a powerful data structure called an <strong>ndarray</strong> (N-dimensional array). It's like a Python list, but 50x faster for math, and it can handle 1D, 2D, or even 10D data. Every library in Data Science (Pandas, Scikit-learn, TensorFlow) is built on top of NumPy.
+      </div>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <div class="c-title">🐢 Python List</div>
+          <div class="c-desc">Flexible, holds mixed types, but slow for math. Uses a loop to add numbers.</div>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">⚡ NumPy Array</div>
+          <div class="c-desc">Fixed type, uses C under the hood, vectorized math. No loops needed.</div>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">📐 1D Array</div>
+          <div class="c-desc">Like a single column of a spreadsheet. E.g., list of today's Nifty prices.</div>
+        </div>
+        <div class="concept-card">
+          <div class="c-title">📊 2D Array</div>
+          <div class="c-desc">Like a table (rows × columns). E.g., 11 batsmen × 5 match scores.</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-label">Python — installing & importing NumPy</div>
+        <div class="code-content">
+<span class="cm"># Run this once in your terminal or Jupyter cell</span><br>
+<span class="cm"># pip install numpy</span><br><br>
+<span class="kw">import</span> numpy <span class="kw">as</span> np  <span class="cm"># 'np' is just a short nickname — everyone uses this</span><br><br>
+<span class="cm"># Check version</span><br>
+<span class="fn">print</span>(np.__version__)  <span class="cm"># e.g., 1.26.4</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>Creating Arrays — Many Ways</h2>
+      <span class="badge">Most Used</span>
+    </div>
+    <div class="section-body">
+      <p class="explain">NumPy gives you many ways to create arrays. Arjun first converts his Python lists, then learns the smarter creation functions.</p>
+
+      <div class="india-label">🏏 IPL Context</div>
+
+      <div class="code-block">
+        <div class="code-label">Creating 1D & 2D arrays from Python lists</div>
+        <div class="code-content">
+<span class="kw">import</span> numpy <span class="kw">as</span> np<br><br>
+<span class="cm"># Virat Kohli's last 6 IPL match scores</span><br>
+scores = np.<span class="fn">array</span>([<span class="nb">72</span>, <span class="nb">45</span>, <span class="nb">88</span>, <span class="nb">30</span>, <span class="nb">61</span>, <span class="nb">94</span>])<br>
+<span class="fn">print</span>(scores)        <span class="cm"># [72 45 88 30 61 94]</span><br>
+<span class="fn">print</span>(scores.dtype)  <span class="cm"># int64  ← NumPy picked integer type automatically</span><br><br>
+<span class="cm"># 3 players × 4 matches (2D array — like a scorecard table)</span><br>
+scorecard = np.<span class="fn">array</span>([<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[<span class="nb">72</span>, <span class="nb">45</span>, <span class="nb">88</span>, <span class="nb">30</span>],  <span class="cm"># Kohli</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;[<span class="nb">50</span>, <span class="nb">62</span>, <span class="nb">38</span>, <span class="nb">77</span>],  <span class="cm"># Rohit</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;[<span class="nb">90</span>, <span class="nb">15</span>, <span class="nb">55</span>, <span class="nb">43</span>]   <span class="cm"># Dhoni</span><br>
+])<br>
+<span class="fn">print</span>(scorecard.shape)   <span class="cm"># (3, 4) → 3 rows, 4 columns</span>
+        </div>
+      </div>
+
+      <div class="sub-h">Smart Creation Functions</div>
+      <p class="explain">You don't always start with data. Sometimes you need to <strong>create empty structures</strong> to fill in later.</p>
+
+      <div class="code-block">
+        <div class="code-label">np.zeros, np.ones, np.arange, np.linspace</div>
+        <div class="code-content">
+<span class="cm"># np.zeros — placeholder for UPI transactions (to fill later)</span><br>
+transactions = np.<span class="fn">zeros</span>(<span class="nb">7</span>)  <span class="cm"># 7 days of week</span><br>
+<span class="cm"># → [0. 0. 0. 0. 0. 0. 0.]</span><br><br>
+
+<span class="cm"># np.ones — all students scored full marks in attendance (1 = present)</span><br>
+attendance = np.<span class="fn">ones</span>((<span class="nb">30</span>, <span class="nb">5</span>))  <span class="cm"># 30 students, 5 days</span><br><br>
+
+<span class="cm"># np.arange — like Python range(), but returns an array</span><br>
+overs = np.<span class="fn">arange</span>(<span class="nb">1</span>, <span class="nb">21</span>)   <span class="cm"># Over 1 to Over 20 in T20</span><br>
+<span class="cm"># → [ 1  2  3  4  5 ... 20]</span><br><br>
+
+<span class="cm"># np.linspace — 5 evenly spaced prices between ₹100 and ₹500</span><br>
+price_range = np.<span class="fn">linspace</span>(<span class="nb">100</span>, <span class="nb">500</span>, <span class="nb">5</span>)<br>
+<span class="cm"># → [100. 200. 300. 400. 500.]</span><br><br>
+
+<span class="cm"># np.eye — identity matrix (used in linear algebra, ML)</span><br>
+identity = np.<span class="fn">eye</span>(<span class="nb">3</span>)<br>
+<span class="cm"># → [[1. 0. 0.] [0. 1. 0.] [0. 0. 1.]]</span>
+        </div>
+      </div>
+
+      <table class="summary-table">
+        <thead><tr><th>Function</th><th>What it creates</th><th>When to use</th></tr></thead>
+        <tbody>
+          <tr><td>np.array()</td><td>Array from existing data</td><td>Converting your Python list</td></tr>
+          <tr><td>np.zeros()</td><td>All zeros</td><td>Placeholder / initialize counters</td></tr>
+          <tr><td>np.ones()</td><td>All ones</td><td>Default flags, bias in ML</td></tr>
+          <tr><td>np.arange()</td><td>Sequential integers</td><td>Indexes, loop replacements</td></tr>
+          <tr><td>np.linspace()</td><td>Evenly spaced floats</td><td>Graph axes, price ranges</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>Indexing & Slicing — Getting Your Data</h2>
+      <span class="badge">Must Know</span>
+    </div>
+    <div class="section-body">
+      <p class="explain">Just like Python lists, you can pick specific values from a NumPy array. But NumPy also supports <strong>boolean indexing</strong> — a superpower for filtering data.</p>
+
+      <div class="india-label">💹 Nifty 50 Context</div>
+
+      <div class="code-block">
+        <div class="code-label">1D indexing, slicing, and boolean filtering</div>
+        <div class="code-content">
+<span class="kw">import</span> numpy <span class="kw">as</span> np<br><br>
+<span class="cm"># Nifty 50 closing prices for last 7 trading days (in ₹)</span><br>
+nifty = np.<span class="fn">array</span>([<span class="nb">22100</span>, <span class="nb">22350</span>, <span class="nb">21980</span>, <span class="nb">22540</span>, <span class="nb">22400</span>, <span class="nb">22750</span>, <span class="nb">22620</span>])<br><br>
+
+<span class="cm"># Basic indexing — same as Python lists</span><br>
+<span class="fn">print</span>(nifty[<span class="nb">0</span>])    <span class="cm"># 22100 — first day</span><br>
+<span class="fn">print</span>(nifty[-<span class="nb">1</span>])   <span class="cm"># 22620 — last day</span><br><br>
+
+<span class="cm"># Slicing — get middle 3 days</span><br>
+<span class="fn">print</span>(nifty[<span class="nb">2</span>:<span class="nb">5</span>])  <span class="cm"># [21980 22540 22400]</span><br><br>
+
+<span class="cm"># Boolean Indexing — find days when market went above 22500</span><br>
+bull_days = nifty > <span class="nb">22500</span><br>
+<span class="fn">print</span>(bull_days)          <span class="cm"># [F F F T F T T]</span><br>
+<span class="fn">print</span>(nifty[bull_days])   <span class="cm"># [22540 22750 22620] ← only high days!</span><br><br>
+
+<span class="cm"># Fancy Indexing — pick specific days by index list</span><br>
+<span class="fn">print</span>(nifty[[<span class="nb">0</span>, <span class="nb">3</span>, <span class="nb">6</span>]])  <span class="cm"># [22100 22540 22620]</span>
+        </div>
+      </div>
+
+      <div class="sub-h">2D Indexing — Reading a Table</div>
+
+      <div class="code-block">
+        <div class="code-label">2D array — Zomato ratings across cities & categories</div>
+        <div class="code-content">
+<span class="cm"># Rows: Cities (Delhi, Mumbai, Bengaluru)</span><br>
+<span class="cm"># Cols: Food categories (Biryani, Pizza, Dosa, Burger)</span><br>
+ratings = np.<span class="fn">array</span>([<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[<span class="nb">4.5</span>, <span class="nb">4.1</span>, <span class="nb">3.8</span>, <span class="nb">4.2</span>],  <span class="cm"># Delhi</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;[<span class="nb">4.3</span>, <span class="nb">4.6</span>, <span class="nb">4.0</span>, <span class="nb">4.4</span>],  <span class="cm"># Mumbai</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;[<span class="nb">4.1</span>, <span class="nb">3.9</span>, <span class="nb">4.8</span>, <span class="nb">4.0</span>]   <span class="cm"># Bengaluru</span><br>
+])<br><br>
+<span class="cm"># Get Bengaluru's Dosa rating [row 2, col 2]</span><br>
+<span class="fn">print</span>(ratings[<span class="nb">2</span>, <span class="nb">2</span>])        <span class="cm"># 4.8</span><br><br>
+
+<span class="cm"># Get ALL cities' Biryani ratings (entire column 0)</span><br>
+<span class="fn">print</span>(ratings[:, <span class="nb">0</span>])       <span class="cm"># [4.5 4.3 4.1]</span><br><br>
+
+<span class="cm"># Get Mumbai's all category ratings (entire row 1)</span><br>
+<span class="fn">print</span>(ratings[<span class="nb">1</span>, :])       <span class="cm"># [4.3 4.6 4.0 4.4]</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4 -->
+  <div class="section" id="s4">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2>Mathematical Operations — The Power of Vectorization</h2>
+      <span class="badge">Core Feature</span>
+    </div>
+    <div class="section-body">
+      <p class="explain">This is where NumPy really shines. In Python, adding 10 to each item in a list requires a loop. In NumPy, you just write <code>arr + 10</code> and it applies to all elements instantly. This is called <strong>vectorization</strong>.</p>
+
+      <div class="why-box">
+        <div class="why-label">⚡ Why It Matters</div>
+        A for-loop on 1 million items in Python: ~200ms. Same operation in NumPy: ~2ms. That's <strong>100× faster</strong>. Real datasets have millions of rows — this difference is critical.
+      </div>
+
+      <div class="india-label">🛒 E-Commerce — Meesho/Flipkart Scenario</div>
+
+      <div class="code-block">
+        <div class="code-label">Arithmetic operations on arrays — no loops needed</div>
+        <div class="code-content">
+<span class="kw">import</span> numpy <span class="kw">as</span> np<br><br>
+<span class="cm"># Original prices (₹) of 5 products on Flipkart</span><br>
+prices = np.<span class="fn">array</span>([<span class="nb">1200</span>, <span class="nb">850</span>, <span class="nb">3400</span>, <span class="nb">999</span>, <span class="nb">2100</span>])<br><br>
+
+<span class="cm"># Apply 18% GST to all products at once</span><br>
+gst = prices * <span class="nb">0.18</span><br>
+<span class="cm"># → [216.  153.  612.  179.82 378. ]</span><br><br>
+
+<span class="cm"># Final price including GST</span><br>
+final_prices = prices + gst<br>
+<span class="fn">print</span>(final_prices)
+<span class="cm"># → [1416.  1003.  4012.  1178.82  2478.]</span><br><br>
+
+<span class="cm"># Apply Big Billion Day discount — 30% off</span><br>
+discounted = final_prices * (<span class="nb">1</span> - <span class="nb">0.30</span>)<br>
+<span class="fn">print</span>(discounted.round(<span class="nb">2</span>))
+<span class="cm"># → [ 991.2   702.1  2808.4   825.2  1734.6]</span><br><br>
+
+<span class="cm"># Element-wise operations between two arrays</span><br>
+cost_price = np.<span class="fn">array</span>([<span class="nb">800</span>, <span class="nb">600</span>, <span class="nb">2500</span>, <span class="nb">700</span>, <span class="nb">1500</span>])<br>
+profit = prices - cost_price<br>
+profit_pct = (profit / cost_price) * <span class="nb">100</span><br>
+<span class="fn">print</span>(profit_pct.round(<span class="nb">1</span>))
+<span class="cm"># → [50.  41.7  36.  42.7  40. ]  ← profit % per product</span>
+        </div>
+      </div>
+
+      <div class="sub-h">Universal Functions (ufuncs)</div>
+      <p class="explain">NumPy has built-in math functions that work directly on arrays — no loops, no imports.</p>
+
+      <div class="code-block">
+        <div class="code-label">np.sqrt, np.log, np.exp, np.abs</div>
+        <div class="code-content">
+<span class="cm"># Daily returns of a stock — some negative (loss days)</span><br>
+returns = np.<span class="fn">array</span>([<span class="nb">2.5</span>, -<span class="nb">1.2</span>, <span class="nb">3.1</span>, -<span class="nb">0.8</span>, <span class="nb">1.9</span>])  <span class="cm"># % change</span><br><br>
+
+<span class="fn">print</span>(np.<span class="fn">abs</span>(returns))      <span class="cm"># [2.5 1.2 3.1 0.8 1.9] — magnitude only</span><br>
+<span class="fn">print</span>(np.<span class="fn">sqrt</span>(np.<span class="fn">abs</span>(returns)))  <span class="cm"># square roots</span><br>
+<span class="fn">print</span>(np.<span class="fn">log</span>(np.<span class="fn">abs</span>(returns)))   <span class="cm"># log — used in finance formulas</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5 -->
+  <div class="section" id="s5">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2>Statistics — Summarising Your Data</h2>
+    </div>
+    <div class="section-body">
+      <p class="explain">Arjun gets a dataset of monthly temperatures across Indian cities. Before plotting anything, he needs to <strong>summarise</strong> the data — mean, median, standard deviation. NumPy makes this one-line operations.</p>
+
+      <div class="india-label">🌡️ Weather Data — IMD (India Meteorological Dept)</div>
+
+      <div class="code-block">
+        <div class="code-label">Core statistical functions</div>
+        <div class="code-content">
+<span class="kw">import</span> numpy <span class="kw">as</span> np<br><br>
+<span class="cm"># Max temperature (°C) in Delhi for 12 months</span><br>
+delhi_temp = np.<span class="fn">array</span>([<span class="nb">20</span>, <span class="nb">23</span>, <span class="nb">29</span>, <span class="nb">36</span>, <span class="nb">41</span>, <span class="nb">40</span>, <span class="nb">36</span>, <span class="nb">35</span>, <span class="nb">33</span>, <span class="nb">29</span>, <span class="nb">23</span>, <span class="nb">18</span>])<br><br>
+
+<span class="fn">print</span>(<span class="st">"Mean   :"</span>, np.<span class="fn">mean</span>(delhi_temp))    <span class="cm"># 30.25 — average yearly temp</span><br>
+<span class="fn">print</span>(<span class="st">"Median :"</span>, np.<span class="fn">median</span>(delhi_temp))  <span class="cm"># 31.0  — middle value</span><br>
+<span class="fn">print</span>(<span class="st">"Std Dev:"</span>, np.<span class="fn">std</span>(delhi_temp))    <span class="cm"># 7.5   — how much it varies</span><br>
+<span class="fn">print</span>(<span class="st">"Min    :"</span>, np.<span class="fn">min</span>(delhi_temp))    <span class="cm"># 18    — coldest month</span><br>
+<span class="fn">print</span>(<span class="st">"Max    :"</span>, np.<span class="fn">max</span>(delhi_temp))    <span class="cm"># 41    — hottest month (May)</span><br>
+<span class="fn">print</span>(<span class="st">"Sum    :"</span>, np.<span class="fn">sum</span>(delhi_temp))    <span class="cm"># 363</span><br>
+<span class="fn">print</span>(<span class="st">"ArgMax :"</span>, np.<span class="fn">argmax</span>(delhi_temp)) <span class="cm"># 4 — index of hottest month (May)</span>
+        </div>
+      </div>
+
+      <div class="sub-h">Axis-based Statistics on 2D Arrays</div>
+
+      <div class="code-block">
+        <div class="code-label">Mean along rows vs columns — city × month temperature grid</div>
+        <div class="code-content">
+<span class="cm"># 3 cities × 4 months (Jan, Apr, Jul, Oct)</span><br>
+temps = np.<span class="fn">array</span>([<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[<span class="nb">18</span>, <span class="nb">36</span>, <span class="nb">35</span>, <span class="nb">29</span>],  <span class="cm"># Delhi</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;[<span class="nb">28</span>, <span class="nb">33</span>, <span class="nb">30</span>, <span class="nb">32</span>],  <span class="cm"># Mumbai</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;[<span class="nb">20</span>, <span class="nb">30</span>, <span class="nb">25</span>, <span class="nb">26</span>]   <span class="cm"># Bengaluru</span><br>
+])<br><br>
+<span class="cm"># axis=1 → mean across months FOR EACH city</span><br>
+<span class="fn">print</span>(np.<span class="fn">mean</span>(temps, axis=<span class="nb">1</span>))
+<span class="cm"># → [29.5  30.75  25.25]  — avg temp of each city</span><br><br>
+
+<span class="cm"># axis=0 → mean across cities FOR EACH month</span><br>
+<span class="fn">print</span>(np.<span class="fn">mean</span>(temps, axis=<span class="nb">0</span>))
+<span class="cm"># → [22.  33.  30.  29.]  — India avg per month</span>
+        </div>
+      </div>
+
+      <div class="output-box">
+        <div class="output-label">Understanding axis</div>
+        axis=0 → collapses rows (you get one value per column)<br>
+        axis=1 → collapses columns (you get one value per row)<br><br>
+        Think: axis=0 goes <strong>down</strong> ↓, axis=1 goes <strong>across</strong> →
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 6 -->
+  <div class="section" id="s6">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2>Reshape & Stacking — Organising Your Data</h2>
+    </div>
+    <div class="section-body">
+      <p class="explain">Real data rarely arrives in the shape you need. Arjun gets sales data as a flat list but needs it as a table. <code>reshape()</code> handles this, and stacking lets you combine datasets.</p>
+
+      <div class="india-label">📦 D-Mart / Retail Sales Data</div>
+
+      <div class="code-block">
+        <div class="code-label">reshape, flatten, stack operations</div>
+        <div class="code-content">
+<span class="kw">import</span> numpy <span class="kw">as</span> np<br><br>
+<span class="cm"># 12 months of sales (flat list)</span><br>
+monthly_sales = np.<span class="fn">arange</span>(<span class="nb">1</span>, <span class="nb">13</span>) * <span class="nb">50000</span>  <span class="cm"># ₹50k to ₹600k</span><br>
+<span class="fn">print</span>(monthly_sales.shape)  <span class="cm"># (12,)</span><br><br>
+
+<span class="cm"># Reshape into 4 quarters × 3 months</span><br>
+quarterly = monthly_sales.<span class="fn">reshape</span>(<span class="nb">4</span>, <span class="nb">3</span>)<br>
+<span class="fn">print</span>(quarterly)<br>
+<span class="cm"># [[ 50000 100000 150000]    ← Q1</span><br>
+<span class="cm">#  [200000 250000 300000]    ← Q2</span><br>
+<span class="cm">#  [350000 400000 450000]    ← Q3</span><br>
+<span class="cm">#  [500000 550000 600000]]   ← Q4</span><br><br>
+
+<span class="cm"># -1 means "figure out this dimension automatically"</span><br>
+as_2rows = monthly_sales.<span class="fn">reshape</span>(<span class="nb">2</span>, -<span class="nb">1</span>)  <span class="cm"># → (2, 6)</span><br><br>
+
+<span class="cm"># Flatten back to 1D</span><br>
+flat_again = quarterly.<span class="fn">flatten</span>()<br><br>
+
+<span class="cm"># Stack two store's data vertically (vstack)</span><br>
+store_a = np.<span class="fn">array</span>([<span class="nb">100</span>, <span class="nb">200</span>, <span class="nb">150</span>])<br>
+store_b = np.<span class="fn">array</span>([<span class="nb">130</span>, <span class="nb">180</span>, <span class="nb">170</span>])<br>
+combined = np.<span class="fn">vstack</span>([store_a, store_b])<br>
+<span class="cm"># → [[100 200 150]</span><br>
+<span class="cm">#    [130 180 170]]</span><br><br>
+
+<span class="cm"># Stack horizontally (hstack) — add a new feature column</span><br>
+targets = np.<span class="fn">array</span>([[<span class="nb">120</span>], [<span class="nb">160</span>]])<br>
+with_targets = np.<span class="fn">hstack</span>([combined, targets])<br>
+<span class="cm"># → [[100 200 150 120]</span><br>
+<span class="cm">#    [130 180 170 160]]</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 7 -->
+  <div class="section" id="s7">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <h2>Random — Generating Test Data</h2>
+    </div>
+    <div class="section-body">
+      <p class="explain">You can't always wait for real data. NumPy's random module lets you <strong>generate realistic fake data</strong> to test your analysis. This is used constantly in Data Science and Machine Learning.</p>
+
+      <div class="india-label">🎯 UPSC / Exam Scores Simulation</div>
+
+      <div class="code-block">
+        <div class="code-label">Random number generation</div>
+        <div class="code-content">
+<span class="kw">import</span> numpy <span class="kw">as</span> np<br><br>
+<span class="cm"># Seed for reproducibility — same seed = same random numbers</span><br>
+np.random.<span class="fn">seed</span>(<span class="nb">42</span>)  <span class="cm"># Use any number; 42 is tradition 😄</span><br><br>
+
+<span class="cm"># Simulate GATE exam scores for 500 students</span><br>
+<span class="cm"># Normal distribution: mean=55, std=15 (realistic bell curve)</span><br>
+gate_scores = np.random.<span class="fn">normal</span>(loc=<span class="nb">55</span>, scale=<span class="nb">15</span>, size=<span class="nb">500</span>)<br>
+gate_scores = gate_scores.<span class="fn">clip</span>(<span class="nb">0</span>, <span class="nb">100</span>)  <span class="cm"># No scores below 0 or above 100</span><br>
+<span class="fn">print</span>(<span class="st">f"Average: {gate_scores.mean():.1f}"</span>)  <span class="cm"># ≈ 55</span><br><br>
+
+<span class="cm"># Random integers — simulate dice rolls (game simulation)</span><br>
+dice = np.random.<span class="fn">randint</span>(<span class="nb">1</span>, <span class="nb">7</span>, size=<span class="nb">10</span>)  <span class="cm"># 10 rolls of a 6-sided die</span><br>
+<span class="fn">print</span>(dice)  <span class="cm"># e.g., [3 1 4 5 2 6 3 3 1 4]</span><br><br>
+
+<span class="cm"># Random uniform — simulate UPI payment amounts ₹10 to ₹5000</span><br>
+payments = np.random.<span class="fn">uniform</span>(<span class="nb">10</span>, <span class="nb">5000</span>, size=<span class="nb">1000</span>)<br><br>
+
+<span class="cm"># Shuffle — randomly order a list (e.g., for train/test split)</span><br>
+students = np.<span class="fn">arange</span>(<span class="nb">1</span>, <span class="nb">31</span>)  <span class="cm"># 30 students</span><br>
+np.random.<span class="fn">shuffle</span>(students)   <span class="cm"># shuffles in-place</span><br><br>
+
+<span class="cm"># Choice — pick 5 random students for oral exam</span><br>
+selected = np.random.<span class="fn">choice</span>(students, size=<span class="nb">5</span>, replace=<span class="kw">False</span>)<br>
+<span class="fn">print</span>(<span class="st">"Selected students:"</span>, selected)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 8 -->
+  <div class="section" id="s8">
+    <div class="section-header">
+      <div class="section-num">8</div>
+      <h2>Linear Algebra — The Math Behind ML</h2>
+    </div>
+    <div class="section-body">
+      <p class="explain">When Arjun starts Machine Learning, every algorithm involves matrices. NumPy's <code>linalg</code> module provides matrix operations that power everything from linear regression to neural networks.</p>
+
+      <div class="why-box">
+        <div class="why-label">🧠 Why You Need This</div>
+        Linear Regression, Neural Networks, PCA, SVD — all of them are essentially matrix operations. Understanding this in NumPy first makes Scikit-learn and TensorFlow much easier later.
+      </div>
+
+      <div class="india-label">🏠 House Price Prediction (Simple)</div>
+
+      <div class="code-block">
+        <div class="code-label">Matrix multiplication and solving linear equations</div>
+        <div class="code-content">
+<span class="kw">import</span> numpy <span class="kw">as</span> np<br><br>
+<span class="cm"># Matrix multiplication — @ operator (Python 3.5+)</span><br>
+<span class="cm"># Feature matrix: [area, rooms] for 3 houses in Gurugram</span><br>
+X = np.<span class="fn">array</span>([<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[<span class="nb">1200</span>, <span class="nb">3</span>],  <span class="cm"># 1200 sqft, 3 BHK</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;[<span class="nb">800</span>,  <span class="nb">2</span>],  <span class="cm"># 800 sqft, 2 BHK</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;[<span class="nb">1500</span>, <span class="nb">4</span>]   <span class="cm"># 1500 sqft, 4 BHK</span><br>
+])<br><br>
+<span class="cm"># Weights (coefficients): ₹3000/sqft + ₹500000/room</span><br>
+weights = np.<span class="fn">array</span>([<span class="nb">3000</span>, <span class="nb">500000</span>])<br><br>
+<span class="cm"># Predicted price = X @ weights (matrix multiply)</span><br>
+predicted_price = X @ weights<br>
+<span class="fn">print</span>(predicted_price)<br>
+<span class="cm"># [5100000 3400000 5500000] → ₹51L, ₹34L, ₹55L</span><br><br>
+
+<span class="cm"># Transpose — flip rows and columns</span><br>
+<span class="fn">print</span>(X.T)  <span class="cm"># (2, 3) instead of (3, 2)</span><br><br>
+
+<span class="cm"># Determinant (used to check if matrix is invertible)</span><br>
+A = np.<span class="fn">array</span>([[<span class="nb">2</span>, <span class="nb">1</span>], [<span class="nb">5</span>, <span class="nb">3</span>]])<br>
+<span class="fn">print</span>(np.linalg.<span class="fn">det</span>(A))   <span class="cm"># 1.0</span><br><br>
+
+<span class="cm"># Inverse of a matrix</span><br>
+<span class="fn">print</span>(np.linalg.<span class="fn">inv</span>(A))<br>
+<span class="cm"># [[ 3. -1.]</span><br>
+<span class="cm">#  [-5.  2.]]</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 9 -->
+  <div class="section" id="s9">
+    <div class="section-header">
+      <div class="section-num">9</div>
+      <h2>Putting It All Together — A Real Mini Project</h2>
+      <span class="badge">🇮🇳 Full Indian Example</span>
+    </div>
+    <div class="section-body">
+      <p class="explain">Arjun's college project: Analyse IPL 2024 batting performance for 5 players across 10 matches. He uses everything he learned — arrays, indexing, statistics, boolean filtering.</p>
+
+      <div class="code-block">
+        <div class="code-label">Complete mini-project — IPL batting analysis</div>
+        <div class="code-content">
+<span class="kw">import</span> numpy <span class="kw">as</span> np<br><br>
+<span class="cm"># ── Data Setup ──────────────────────────────────────</span><br>
+np.random.<span class="fn">seed</span>(<span class="nb">7</span>)<br>
+players = [<span class="st">'Kohli'</span>, <span class="st">'Rohit'</span>, <span class="st">'Gill'</span>, <span class="st">'Pant'</span>, <span class="st">'Iyer'</span>]<br><br>
+<span class="cm"># 5 players × 10 matches — random scores (0 to 95)</span><br>
+scores = np.random.<span class="fn">randint</span>(<span class="nb">0</span>, <span class="nb">96</span>, size=(<span class="nb">5</span>, <span class="nb">10</span>))<br><br>
+<span class="cm"># ── Analysis ────────────────────────────────────────</span><br>
+<span class="cm"># Total runs per player</span><br>
+total_runs = np.<span class="fn">sum</span>(scores, axis=<span class="nb">1</span>)<br><br>
+<span class="cm"># Average score per player</span><br>
+averages = np.<span class="fn">mean</span>(scores, axis=<span class="nb">1</span>)<br><br>
+<span class="cm"># Strike rate proxy: times scored 50+ out of 10 matches</span><br>
+fifties = np.<span class="fn">sum</span>(scores >= <span class="nb">50</span>, axis=<span class="nb">1</span>)<br><br>
+<span class="cm"># Best match score per player</span><br>
+best_score = np.<span class="fn">max</span>(scores, axis=<span class="nb">1</span>)<br><br>
+<span class="cm"># ── Find Best Performer ──────────────────────────────</span><br>
+best_idx = np.<span class="fn">argmax</span>(averages)<br>
+<span class="fn">print</span>(<span class="st">f"\n🏆 Best Performer: {players[best_idx]}"</span>)<br>
+<span class="fn">print</span>(<span class="st">f"   Average: {averages[best_idx]:.1f}"</span>)<br>
+<span class="fn">print</span>(<span class="st">f"   50+ scores: {fifties[best_idx]}/10 matches"</span>)<br><br>
+<span class="cm"># ── Consistency (low std dev = consistent) ───────────</span><br>
+consistency = np.<span class="fn">std</span>(scores, axis=<span class="nb">1</span>)<br>
+most_consistent_idx = np.<span class="fn">argmin</span>(consistency)<br>
+<span class="fn">print</span>(<span class="st">f"\n📊 Most Consistent: {players[most_consistent_idx]}"</span>)<br>
+<span class="fn">print</span>(<span class="st">f"   Std Dev: {consistency[most_consistent_idx]:.1f}"</span>)<br><br>
+<span class="cm"># ── Print Summary ────────────────────────────────────</span><br>
+<span class="fn">print</span>(<span class="st">"\n--- Season Summary ---"</span>)<br>
+<span class="kw">for</span> i, name <span class="kw">in</span> <span class="fn">enumerate</span>(players):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(<span class="st">f"{name:8} | Runs:{total_runs[i]:4d} | Avg:{averages[i]:5.1f} | Best:{best_score[i]:3d}"</span>)
+        </div>
+      </div>
+
+      <div class="output-box">
+        <div class="output-label">Sample Output</div>
+🏆 Best Performer: Rohit<br>
+&nbsp;&nbsp; Average: 54.3<br>
+&nbsp;&nbsp; 50+ scores: 7/10 matches<br><br>
+📊 Most Consistent: Gill<br>
+&nbsp;&nbsp; Std Dev: 18.2<br><br>
+--- Season Summary ---<br>
+Kohli    | Runs: 482 | Avg: 48.2 | Best: 92<br>
+Rohit    | Runs: 543 | Avg: 54.3 | Best: 89<br>
+Gill     | Runs: 465 | Avg: 46.5 | Best: 78<br>
+Pant     | Runs: 498 | Avg: 49.8 | Best: 95<br>
+Iyer     | Runs: 421 | Avg: 42.1 | Best: 87
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT'S NEXT -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num" style="background:var(--green)">→</div>
+      <h2>Arjun's Next Steps</h2>
+    </div>
+    <div class="section-body">
+      <p class="explain" style="margin-bottom:1.2rem">Now that Arjun knows NumPy, here's the learning roadmap ahead. NumPy is just the foundation — everything else builds on it.</p>
+      <div class="roadmap">
+        <div class="roadmap-step">
+          <div class="rm-line"><div class="rm-dot" style="background:var(--accent)"></div><div class="rm-connector"></div></div>
+          <div class="rm-content"><div class="rm-title">✅ NumPy — You are here</div><div class="rm-desc">Arrays, math, statistics, indexing, randomness</div></div>
+        </div>
+        <div class="roadmap-step">
+          <div class="rm-line"><div class="rm-dot" style="background:var(--accent2)"></div><div class="rm-connector"></div></div>
+          <div class="rm-content"><div class="rm-title">📦 Pandas</div><div class="rm-desc">DataFrames, CSV reading, groupby, data cleaning — built on NumPy</div></div>
+        </div>
+        <div class="roadmap-step">
+          <div class="rm-line"><div class="rm-dot" style="background:var(--green)"></div><div class="rm-connector"></div></div>
+          <div class="rm-content"><div class="rm-title">📈 Matplotlib & Seaborn</div><div class="rm-desc">Visualising your data — histograms, scatter plots, heatmaps</div></div>
+        </div>
+        <div class="roadmap-step">
+          <div class="rm-line"><div class="rm-dot" style="background:#8b5cf6"></div><div class="rm-connector"></div></div>
+          <div class="rm-content"><div class="rm-title">🤖 Scikit-learn</div><div class="rm-desc">Machine Learning — linear regression, classification, clustering</div></div>
+        </div>
+        <div class="roadmap-step">
+          <div class="rm-line"><div class="rm-dot" style="background:#e53e3e"></div></div>
+          <div class="rm-content"><div class="rm-title">🧠 TensorFlow / PyTorch</div><div class="rm-desc">Deep Learning — neural networks, computer vision, NLP</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK REFERENCE -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num" style="background:var(--muted)">✦</div>
+      <h2>Quick Reference Cheatsheet</h2>
+    </div>
+    <div class="section-body">
+      <table class="summary-table">
+        <thead><tr><th>Task</th><th>NumPy Code</th><th>Returns</th></tr></thead>
+        <tbody>
+          <tr><td>np.array([1,2,3])</td><td>Create array from list</td><td>ndarray</td></tr>
+          <tr><td>arr.shape</td><td>Dimensions of array</td><td>tuple e.g. (3, 4)</td></tr>
+          <tr><td>arr.dtype</td><td>Data type (int64, float64)</td><td>dtype object</td></tr>
+          <tr><td>arr[2, 1]</td><td>Element at row 2, col 1</td><td>scalar</td></tr>
+          <tr><td>arr[:, 0]</td><td>All rows, column 0</td><td>1D array</td></tr>
+          <tr><td>arr[arr > 50]</td><td>Filter values above 50</td><td>1D array of matches</td></tr>
+          <tr><td>arr.reshape(3, 4)</td><td>Change shape (keep data)</td><td>ndarray (3×4)</td></tr>
+          <tr><td>np.mean(arr, axis=1)</td><td>Row-wise average</td><td>1D array</td></tr>
+          <tr><td>A @ B</td><td>Matrix multiply A and B</td><td>ndarray</td></tr>
+          <tr><td>np.random.normal(μ,σ,n)</td><td>n random normal values</td><td>1D array</td></tr>
+          <tr><td>np.vstack([a, b])</td><td>Stack arrays vertically</td><td>2D array</td></tr>
+          <tr><td>np.argmax(arr)</td><td>Index of max value</td><td>int</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Made for students like Arjun — learning Data Science one library at a time 🚀<br>
+  <span style="opacity:0.6">NumPy Documentation: numpy.org &nbsp;·&nbsp; Next: Pandas →</span>
+</footer>
+
+<script>
+  // Scroll reveal
+  const sections = document.querySelectorAll('.section');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  sections.forEach(s => obs.observe(s));
+
+  // Nav active state
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const sectionEls = document.querySelectorAll('[id^="s"]');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sectionEls.forEach(s => {
+      if(window.scrollY >= s.offsetTop - 80) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current ? 'var(--accent)' : '';
+      a.style.borderBottomColor = a.getAttribute('href') === '#' + current ? 'var(--accent)' : 'transparent';
+    });
+  });
+</script>
+</body>
+</html>

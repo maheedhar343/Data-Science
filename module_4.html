@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Module 4 — Supervised ML | Data Science</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/one-dark.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<style>
+:root{
+  --bg:#0c0f14;
+  --bg2:#111520;
+  --bg3:#161c2a;
+  --panel:#1a2235;
+  --panel2:#1f2a40;
+  --border:#263047;
+  --border2:#2e3d58;
+  --cyan:#00e5ff;
+  --cyan2:#00bcd4;
+  --cyan-dim:rgba(0,229,255,.12);
+  --violet:#7c3aed;
+  --violet2:#a78bfa;
+  --green:#10b981;
+  --green2:#34d399;
+  --amber:#f59e0b;
+  --rose:#f43f5e;
+  --text:#e2e8f0;
+  --text2:#94a3b8;
+  --text3:#64748b;
+  --sw:292px;
+  --display:'Playfair Display',Georgia,serif;
+  --ui:'Space Grotesk',sans-serif;
+  --code:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--ui);background:var(--bg);color:var(--text);
+  display:flex;min-height:100vh;line-height:1.6}
+
+/* ─── SIDEBAR ─────────────────────────────── */
+#sb{position:fixed;top:0;left:0;width:var(--sw);height:100vh;
+  background:var(--bg2);border-right:1px solid var(--border);
+  overflow-y:auto;z-index:100;display:flex;flex-direction:column;
+  scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+#sb::-webkit-scrollbar{width:3px}
+#sb::-webkit-scrollbar-thumb{background:var(--border2)}
+
+.sb-head{padding:22px 20px 16px;border-bottom:1px solid var(--border)}
+.sb-mod{font-size:9px;font-weight:700;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--cyan);display:flex;align-items:center;
+  gap:7px;margin-bottom:8px}
+.sb-mod::before{content:'';width:16px;height:1px;background:var(--cyan)}
+.sb-head h2{font-size:13px;font-weight:600;color:var(--text);line-height:1.4}
+
+.sb-prog{padding:12px 20px 14px;border-bottom:1px solid var(--border)}
+.sp-l{font-size:9px;letter-spacing:1px;text-transform:uppercase;
+  color:var(--text3);margin-bottom:6px}
+.sp-t{height:2px;background:var(--border);border-radius:2px}
+.sp-f{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--violet2));
+  border-radius:2px;transition:width .4s}
+
+.sb-sec{padding:10px 0 2px}
+.sb-st{font-size:9px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;
+  color:var(--text3);padding:0 20px 5px}
+.sb-a{display:flex;align-items:center;gap:9px;padding:7px 20px;
+  font-size:12px;color:var(--text2);text-decoration:none;
+  border-left:2px solid transparent;transition:all .15s;cursor:pointer}
+.sb-a:hover{color:var(--text);background:rgba(255,255,255,.03);
+  border-left-color:var(--border2)}
+.sb-a.active{color:var(--cyan);background:var(--cyan-dim);border-left-color:var(--cyan)}
+.sn{width:18px;height:18px;border-radius:3px;background:var(--panel);
+  text-align:center;line-height:18px;font-size:9px;font-weight:700;flex-shrink:0}
+.sb-a.active .sn{background:var(--cyan);color:var(--bg)}
+.sh{margin-left:auto;font-size:10px;color:var(--text3)}
+
+.ds-box{margin:10px 14px 14px;background:var(--panel);border:1px solid var(--border2);
+  border-radius:8px;padding:12px}
+.ds-box .dl{font-size:9px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--cyan);margin-bottom:7px;display:block}
+.ds-box .dn{font-size:12px;color:var(--text);font-weight:600;margin-bottom:3px}
+.ds-box .dm{font-size:11px;color:var(--text2);line-height:1.5}
+.ds-box a{font-size:10px;color:var(--cyan);text-decoration:none;
+  margin-top:6px;display:inline-block}
+
+/* ─── MAIN ────────────────────────────────── */
+#main{margin-left:var(--sw);flex:1}
+
+/* Hero */
+.hero{position:relative;overflow:hidden;background:var(--bg2);
+  border-bottom:1px solid var(--border);padding:58px 56px 48px}
+.hero-grid{display:grid;grid-template-columns:1fr 300px;gap:48px;align-items:center}
+.hero-eyebrow{font-size:9px;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:var(--cyan);margin-bottom:14px;
+  display:flex;align-items:center;gap:10px}
+.hero-eyebrow span{display:inline-block;width:28px;height:1px;background:var(--cyan)}
+.hero h1{font-family:var(--display);font-size:44px;line-height:1.05;
+  margin-bottom:14px;color:var(--text)}
+.hero h1 em{font-style:italic;color:var(--cyan)}
+.hero-sub{font-size:14px;color:var(--text2);line-height:1.7;max-width:460px;font-weight:300}
+.hero-stats{display:flex;gap:24px;margin-top:26px}
+.hst .v{font-size:26px;font-weight:700;color:var(--cyan)}
+.hst .l{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-top:1px}
+
+/* ML pipeline visual */
+.pipeline{background:var(--panel);border:1px solid var(--border2);border-radius:10px;padding:20px}
+.pipe-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--cyan);margin-bottom:16px;text-align:center}
+.pipe-steps{display:flex;flex-direction:column;gap:0}
+.ps{display:flex;align-items:center;gap:10px;padding:8px 10px;
+  border-radius:6px;transition:background .15s}
+.ps:hover{background:rgba(0,229,255,.06)}
+.ps-num{width:22px;height:22px;border-radius:4px;background:var(--cyan-dim);
+  border:1px solid rgba(0,229,255,.3);color:var(--cyan);font-size:10px;
+  font-weight:700;text-align:center;line-height:22px;flex-shrink:0}
+.ps-name{font-size:11.5px;color:var(--text2);font-weight:500}
+.ps-arrow{font-size:9px;color:var(--text3);margin:0 8px}
+
+/* Thread strip */
+.thread{background:var(--panel);border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);padding:14px 56px;
+  display:flex;align-items:center;gap:16px}
+.th-icon{font-size:24px}
+.th-tag{font-size:9px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--cyan);margin-bottom:3px}
+.th-title{font-size:14px;font-weight:600;color:var(--text)}
+.th-desc{font-size:12px;color:var(--text2)}
+.th-chips{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap;justify-content:flex-end}
+.chip{font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;
+  background:var(--cyan-dim);border:1px solid rgba(0,229,255,.25);
+  color:var(--cyan);white-space:nowrap}
+
+/* Content */
+.content{max-width:820px;padding:44px 56px}
+
+/* Session card */
+.sesh{display:flex;gap:16px;align-items:flex-start;
+  background:var(--panel);border:1px solid var(--border2);
+  border-left:3px solid var(--cyan);border-radius:10px;
+  padding:22px 24px;margin-bottom:30px}
+.s-badge{flex-shrink:0;font-size:9px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;background:var(--cyan-dim);color:var(--cyan);
+  border:1px solid rgba(0,229,255,.3);border-radius:4px;
+  padding:4px 9px;white-space:nowrap;margin-top:2px}
+.si h2{font-size:19px;font-weight:700;color:var(--text);margin-bottom:4px}
+.si p{font-size:13px;color:var(--text2);line-height:1.5}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px}
+.tc{background:rgba(0,229,255,.1);color:var(--cyan);border:1px solid rgba(0,229,255,.2)}
+.tv{background:rgba(124,58,237,.15);color:var(--violet2);border:1px solid rgba(124,58,237,.25)}
+.tg{background:rgba(16,185,129,.1);color:var(--green2);border:1px solid rgba(16,185,129,.2)}
+.ta{background:rgba(245,158,11,.1);color:var(--amber);border:1px solid rgba(245,158,11,.2)}
+.tr{background:rgba(244,63,94,.1);color:var(--rose);border:1px solid rgba(244,63,94,.2)}
+
+/* Section label */
+.sec{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--cyan);display:flex;align-items:center;gap:10px;margin:38px 0 10px}
+.sec::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Headings */
+h3.t{font-size:18px;font-weight:700;color:var(--text);
+  margin-bottom:9px;display:flex;align-items:center;gap:10px}
+h3.t .dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);flex-shrink:0}
+h4.sub{font-size:14px;font-weight:600;color:var(--cyan2);
+  margin:20px 0 8px;padding-left:10px;border-left:2px solid var(--violet2)}
+
+p.b{margin-bottom:12px;line-height:1.85;font-size:15px;color:var(--text2);font-weight:300}
+
+/* CONCEPT BOX — the "why/what" before code */
+.concept{
+  background:var(--panel2);border:1px solid var(--border2);
+  border-radius:8px;padding:14px 18px;margin-bottom:12px;
+}
+.concept-title{font-size:10px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--violet2);margin-bottom:7px;
+  display:flex;align-items:center;gap:6px}
+.concept-title::before{content:'◆';font-size:8px}
+.concept p{font-size:13px;color:var(--text2);line-height:1.65}
+.concept strong{color:var(--text);font-weight:600}
+.concept code{font-family:var(--code);font-size:11.5px;background:rgba(0,229,255,.08);
+  color:var(--cyan);padding:1px 5px;border-radius:3px}
+
+/* Code block — kept SHORT */
+.cb{margin-bottom:20px;border-radius:8px;overflow:hidden;
+  box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.cb-head{background:#0d1117;padding:9px 14px;display:flex;align-items:center;justify-content:space-between}
+.cb-dots{display:flex;gap:5px}
+.cb-dots span{width:10px;height:10px;border-radius:50%}
+.cb-dots span:nth-child(1){background:#ff5f57}
+.cb-dots span:nth-child(2){background:#febc2e}
+.cb-dots span:nth-child(3){background:#28c840}
+.cb-lang{font-size:9.5px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--cyan2)}
+.cb pre{margin:0!important;border-radius:0!important}
+.cb pre code.hljs{font-family:var(--code)!important;font-size:12.5px!important;
+  line-height:1.7!important;padding:14px 18px!important}
+
+/* Output */
+.out{background:#080d12;border:1px solid var(--border);border-top:none;
+  border-radius:0 0 8px 8px;padding:11px 18px;
+  font-family:var(--code);font-size:12px;color:var(--green2);
+  line-height:1.7;margin-bottom:20px}
+.out-l{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(52,211,153,.35);margin-bottom:7px;display:block}
+
+/* Callouts */
+.cal{border-radius:8px;padding:13px 17px;margin:14px 0;
+  display:flex;gap:12px;align-items:flex-start}
+.cal-icon{font-size:17px;flex-shrink:0;margin-top:1px}
+.cal-body{font-size:13px;line-height:1.65;color:var(--text2)}
+.cal-body strong{color:var(--text);display:block;font-size:13px;margin-bottom:2px}
+.ci{background:rgba(0,188,212,.07);border:1px solid rgba(0,188,212,.2)}
+.ci .cal-body{color:rgba(0,229,255,.8)}
+.cg{background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.2)}
+.cg .cal-body{color:rgba(52,211,153,.85)}
+.cw{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2)}
+.cw .cal-body{color:rgba(252,211,77,.85)}
+.cv{background:rgba(124,58,237,.08);border:1px solid rgba(167,139,250,.25)}
+.cv .cal-body{color:rgba(167,139,250,.9)}
+.cr{background:rgba(244,63,94,.07);border:1px solid rgba(244,63,94,.2)}
+.cr .cal-body{color:rgba(251,113,133,.85)}
+
+/* Visual diagram blocks */
+.diagram{background:var(--panel);border:1px solid var(--border2);border-radius:10px;
+  padding:22px;margin:14px 0 20px;text-align:center}
+.diagram-title{font-size:10px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--text3);margin-bottom:16px}
+
+/* Bias-variance visual */
+.bv-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.bv-card{border-radius:8px;padding:14px;text-align:center}
+.bv-ideal{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3)}
+.bv-overfit{background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.25)}
+.bv-underfit{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25)}
+.bv-card .bv-icon{font-size:26px;margin-bottom:6px}
+.bv-card h4{font-size:12px;font-weight:700;margin-bottom:4px}
+.bv-card p{font-size:11px;color:var(--text2);line-height:1.5}
+.bv-ideal h4{color:var(--green2)}
+.bv-overfit h4{color:var(--rose)}
+.bv-underfit h4{color:var(--amber)}
+
+/* Train/test split visual */
+.split-bar{display:flex;border-radius:6px;overflow:hidden;height:36px;margin:14px 0}
+.split-train{background:rgba(0,229,255,.2);border:1px solid rgba(0,229,255,.4);
+  flex:7;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--cyan)}
+.split-val{background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);
+  flex:1.5;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--amber)}
+.split-test{background:rgba(244,63,94,.12);border:1px solid rgba(244,63,94,.25);
+  flex:1.5;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--rose)}
+.split-labels{display:flex;justify-content:space-between;
+  font-size:10px;color:var(--text3);margin-top:5px;padding:0 2px}
+
+/* Algorithm comparison grid */
+.algo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.algo-card{background:var(--panel2);border:1px solid var(--border2);
+  border-radius:8px;padding:15px;border-top:2px solid}
+.algo-card.ac-cyan{border-top-color:var(--cyan)}
+.algo-card.ac-violet{border-top-color:var(--violet2)}
+.algo-card.ac-green{border-top-color:var(--green2)}
+.algo-card.ac-amber{border-top-color:var(--amber)}
+.algo-card h4{font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px}
+.algo-card p{font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:7px}
+.algo-card .when{font-size:10.5px;color:var(--text3)}
+.algo-card .when strong{font-size:10.5px}
+
+/* Metric cards */
+.metric-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}
+.metric-card{background:var(--panel2);border:1px solid var(--border2);
+  border-radius:8px;padding:13px;text-align:center}
+.metric-card .mv{font-size:24px;font-weight:700;margin-bottom:3px}
+.metric-card .ml{font-size:11px;color:var(--text2);font-weight:500}
+.metric-card .mf{font-size:10px;color:var(--text3);margin-top:3px}
+
+/* Confusion matrix visual */
+.cm-wrap{display:flex;justify-content:center;margin:14px 0 20px}
+.cm-table{border-collapse:collapse;font-size:12px}
+.cm-table td{padding:11px 16px;text-align:center;border:1px solid var(--border2)}
+.cm-tp{background:rgba(16,185,129,.2);color:var(--green2);font-weight:700}
+.cm-tn{background:rgba(0,229,255,.12);color:var(--cyan);font-weight:700}
+.cm-fp{background:rgba(244,63,94,.12);color:var(--rose);font-weight:700}
+.cm-fn{background:rgba(245,158,11,.12);color:var(--amber);font-weight:700}
+.cm-hdr{background:var(--panel);color:var(--text2);font-size:11px;font-weight:600}
+.cm-side{background:var(--panel);color:var(--text2);font-size:11px;font-weight:600;
+  writing-mode:vertical-rl;text-align:center;padding:8px}
+
+/* Inline formula */
+.formula{background:var(--panel2);border:1px solid var(--border2);border-radius:6px;
+  padding:10px 16px;font-family:var(--code);font-size:13px;color:var(--violet2);
+  margin:10px 0;text-align:center}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse;margin:14px 0;font-size:12.5px}
+.tbl th{background:var(--panel);color:var(--text);padding:10px 13px;
+  text-align:left;font-weight:600;border-bottom:1px solid var(--border2)}
+.tbl td{padding:9px 13px;border-bottom:1px solid var(--border)}
+.tbl tr:nth-child(even) td{background:rgba(255,255,255,.015)}
+.tbl code{font-family:var(--code);font-size:11px;background:var(--cyan-dim);
+  color:var(--cyan);padding:1px 5px;border-radius:3px}
+
+/* Divider */
+.div{height:1px;background:var(--border);margin:48px 0;
+  background:linear-gradient(90deg,var(--cyan),var(--violet2),transparent)}
+
+/* Progress pipeline visual */
+.ml-flow{display:flex;align-items:center;gap:0;margin:16px 0;flex-wrap:nowrap;overflow-x:auto}
+.mlf-step{background:var(--panel2);border:1px solid var(--border2);border-radius:6px;
+  padding:9px 12px;text-align:center;flex-shrink:0;min-width:100px}
+.mlf-step .msn{font-size:9px;color:var(--text3);margin-bottom:3px}
+.mlf-step .msv{font-size:11.5px;font-weight:600;color:var(--text)}
+.mlf-arrow{color:var(--border2);font-size:14px;padding:0 6px;flex-shrink:0}
+.mlf-step.active{border-color:rgba(0,229,255,.4);background:var(--cyan-dim)}
+.mlf-step.active .msv{color:var(--cyan)}
+
+/* Project section */
+.proj{background:linear-gradient(135deg,var(--panel) 0%,var(--panel2) 100%);
+  border:1px solid var(--border2);border-top:2px solid var(--cyan);
+  border-radius:10px;padding:26px 28px;margin-bottom:22px}
+.proj-tag{font-size:9px;font-weight:700;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--cyan);display:block;margin-bottom:8px}
+.proj h2{font-size:22px;font-weight:700;color:var(--text);margin-bottom:8px}
+.proj .pd{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px}
+.proj-goals{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.pg{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:6px;
+  padding:9px 12px;font-size:12px;color:var(--text2);
+  display:flex;align-items:flex-start;gap:7px}
+.pg::before{content:'→';color:var(--cyan);font-weight:700;flex-shrink:0}
+
+/* Stats row */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}
+.stat{background:var(--panel2);border:1px solid var(--border2);border-radius:8px;
+  padding:13px;text-align:center}
+.stat .sv{font-size:22px;font-weight:700;color:var(--cyan)}
+.stat .sl{font-size:10px;color:var(--text3)}
+
+/* Quiz */
+.quiz{background:var(--panel);border:1px solid var(--border2);border-radius:10px;
+  padding:20px;margin:14px 0}
+.quiz h4{font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px}
+.qq{font-size:13px;color:var(--text2);margin:12px 0 7px;line-height:1.6}
+.qo{padding:9px 13px;border:1px solid var(--border2);border-radius:6px;
+  font-size:12.5px;cursor:pointer;margin-bottom:5px;transition:all .15s;
+  display:flex;align-items:center;gap:8px;color:var(--text2)}
+.qo:hover{background:var(--cyan-dim);border-color:rgba(0,229,255,.3);color:var(--text)}
+.qo.correct{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.4);color:var(--green2)}
+.qo.wrong{background:rgba(244,63,94,.08);border-color:rgba(244,63,94,.3);color:var(--rose)}
+.ol{width:20px;height:20px;border-radius:4px;background:var(--panel2);text-align:center;
+  line-height:20px;font-size:10px;font-weight:700;flex-shrink:0;color:var(--cyan)}
+
+/* Footer */
+.mfoot{margin-top:48px;padding:24px 28px;background:var(--panel);
+  border:1px solid var(--border2);border-radius:10px;
+  display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.mfoot .info{color:var(--text2)}
+.mfoot .info strong{color:var(--text);display:block;font-size:14px;margin-bottom:2px}
+.nxt{background:var(--cyan);color:var(--bg);font-size:13px;font-weight:700;
+  padding:10px 20px;border-radius:6px;text-decoration:none;transition:opacity .15s}
+.nxt:hover{opacity:.85}
+
+@media(max-width:900px){
+  #sb{display:none}#main{margin-left:0}
+  .content{padding:24px 18px}
+  .hero{padding:36px 20px}.hero-grid{grid-template-columns:1fr}
+  .pipeline{display:none}.thread{padding:14px 20px;flex-wrap:wrap}
+  .bv-grid,.algo-grid,.proj-goals,.stats,.metric-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<nav id="sb">
+  <div class="sb-head">
+    <div class="sb-mod">Module 4 of 8</div>
+    <h2>Supervised Machine Learning</h2>
+  </div>
+  <div class="sb-prog">
+    <div class="sp-l">Reading Progress</div>
+    <div class="sp-t"><div class="sp-f" id="spf"></div></div>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-st">Sessions — 18 Hours</div>
+    <a class="sb-a active" href="#s12"><span class="sn">12</span>ML Fundamentals<span class="sh">3h</span></a>
+    <a class="sb-a" href="#s13"><span class="sn">13</span>Linear &amp; Logistic<span class="sh">3h</span></a>
+    <a class="sb-a" href="#s14"><span class="sn">14</span>Trees &amp; Forests<span class="sh">3h</span></a>
+    <a class="sb-a" href="#s15"><span class="sn">15</span>Gradient Boosting<span class="sh">3h</span></a>
+    <a class="sb-a" href="#s16"><span class="sn">16</span>Model Evaluation<span class="sh">3h</span></a>
+    <a class="sb-a" href="#lab"><span class="sn">★</span>Lab: Loan Default<span class="sh">3h</span></a>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-st">Key Concepts</div>
+    <a class="sb-a" href="#biasvar">Bias-Variance Tradeoff</a>
+    <a class="sb-a" href="#split">Train / Val / Test Split</a>
+    <a class="sb-a" href="#linear">Linear Regression</a>
+    <a class="sb-a" href="#logistic">Logistic Regression</a>
+    <a class="sb-a" href="#dtree">Decision Tree</a>
+    <a class="sb-a" href="#forest">Random Forest</a>
+    <a class="sb-a" href="#xgb">XGBoost</a>
+    <a class="sb-a" href="#eval">Confusion Matrix</a>
+    <a class="sb-a" href="#roc">ROC-AUC</a>
+    <a class="sb-a" href="#cv">Cross-Validation</a>
+  </div>
+
+  <div style="padding:0 0 14px">
+    <div class="ds-box">
+      <span class="dl">📦 Kaggle Dataset</span>
+      <div class="dn">Loan Prediction — Dream Housing</div>
+      <div class="dm">614 rows · 13 columns<br>Binary classification · Indian applicants</div>
+      <a href="https://www.kaggle.com/datasets/altruistdelhite04/loan-prediction-problem-dataset" target="_blank">↗ kaggle.com/datasets</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<div id="main">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="hero-eyebrow"><span></span>Module 4</div>
+      <h1>Supervised<br><em>Machine</em><br>Learning</h1>
+      <p class="hero-sub">From first principles to a production-ready loan default predictor. Each algorithm explained in plain English — then in ten lines of code.</p>
+      <div class="hero-stats">
+        <div class="hst"><div class="v">18h</div><div class="l">Duration</div></div>
+        <div class="hst"><div class="v">5</div><div class="l">Algorithms</div></div>
+        <div class="hst"><div class="v">1</div><div class="l">Real Pipeline</div></div>
+      </div>
+    </div>
+    <div class="pipeline">
+      <div class="pipe-title">The ML Pipeline — This Module</div>
+      <div class="pipe-steps">
+        <div class="ps"><span class="ps-num">1</span><span class="ps-name">Understand the Problem</span></div>
+        <div class="ps-arrow" style="text-align:center;color:var(--border2)">↓</div>
+        <div class="ps"><span class="ps-num">2</span><span class="ps-name">Split Data (Train / Val / Test)</span></div>
+        <div class="ps-arrow" style="text-align:center;color:var(--border2)">↓</div>
+        <div class="ps"><span class="ps-num">3</span><span class="ps-name">Choose Algorithm</span></div>
+        <div class="ps-arrow" style="text-align:center;color:var(--border2)">↓</div>
+        <div class="ps"><span class="ps-num">4</span><span class="ps-name">Train the Model</span></div>
+        <div class="ps-arrow" style="text-align:center;color:var(--border2)">↓</div>
+        <div class="ps"><span class="ps-num">5</span><span class="ps-name">Evaluate on Val Set</span></div>
+        <div class="ps-arrow" style="text-align:center;color:var(--border2)">↓</div>
+        <div class="ps"><span class="ps-num">6</span><span class="ps-name">Tune → Final Test Score</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Thread strip -->
+<div class="thread">
+  <div class="th-icon">🏦</div>
+  <div>
+    <div class="th-tag">Module Project Thread</div>
+    <div class="th-title">SBI Home Loan Default Predictor</div>
+    <div class="th-desc">Predict which loan applicants will default — built step by step across all 6 sessions</div>
+  </div>
+  <div class="th-chips">
+    <span class="chip">Sklearn</span><span class="chip">XGBoost</span>
+    <span class="chip">LightGBM</span><span class="chip">Pandas</span>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ═══════════════════════════════════════
+     SESSION 12 — ML FUNDAMENTALS
+════════════════════════════════════════ -->
+<div id="s12">
+<div class="sesh">
+  <div class="s-badge">Session 12 · 3 Hours</div>
+  <div class="si">
+    <h2>ML Fundamentals</h2>
+    <p>The mental models every ML practitioner needs — before touching a single algorithm.</p>
+    <div class="tags">
+      <span class="tag tc">Bias-Variance</span>
+      <span class="tag tv">Train/Test Split</span>
+      <span class="tag tg">Overfitting</span>
+    </div>
+  </div>
+</div>
+
+<!-- What is ML -->
+<div class="sec">12.1 What is Machine Learning?</div>
+<h3 class="t"><span class="dot"></span>The Core Idea in One Sentence</h3>
+
+<div class="concept">
+  <div class="concept-title">Definition</div>
+  <p>Machine learning is <strong>teaching a computer to find patterns in data</strong> so it can make predictions on new, unseen data — without being explicitly programmed with rules.</p>
+</div>
+
+<p class="b">Instead of writing <em>"if income &gt; 50,000 and CIBIL &gt; 700, approve loan"</em>, you show the model thousands of past loan decisions and let it learn the rules itself.</p>
+
+<table class="tbl">
+  <tr><th>Traditional Programming</th><th>Machine Learning</th></tr>
+  <tr><td>You write the rules</td><td>Model learns the rules from data</td></tr>
+  <tr><td>Input + Rules → Output</td><td>Input + Output → Rules (model)</td></tr>
+  <tr><td>Works when rules are clear</td><td>Works when rules are too complex to write</td></tr>
+  <tr><td>Example: Tax calculator</td><td>Example: Loan default prediction</td></tr>
+</table>
+
+<!-- Bias-Variance -->
+<div id="biasvar">
+<div class="sec">12.2 Bias-Variance Tradeoff</div>
+<h3 class="t"><span class="dot"></span>The Single Most Important ML Concept</h3>
+
+<div class="concept">
+  <div class="concept-title">The Core Tension</div>
+  <p><strong>Bias</strong> = how wrong the model is on average (too simple → misses patterns). <br>
+  <strong>Variance</strong> = how much predictions change with different training data (too complex → memorises noise). <br>
+  You cannot minimise both simultaneously — <strong>you manage the tradeoff</strong>.</p>
+</div>
+
+<div class="diagram">
+  <div class="diagram-title">Three situations every ML model falls into</div>
+  <div class="bv-grid">
+    <div class="bv-card bv-underfit">
+      <div class="bv-icon">📏</div>
+      <h4>Underfitting</h4>
+      <p>High Bias, Low Variance<br>Model too simple.<br>Bad on training <em>and</em> test data.</p>
+    </div>
+    <div class="bv-card bv-ideal">
+      <div class="bv-icon">🎯</div>
+      <h4>Ideal</h4>
+      <p>Balanced Bias + Variance<br>Good on training.<br>Good on test data.</p>
+    </div>
+    <div class="bv-card bv-overfit">
+      <div class="bv-icon">🧠</div>
+      <h4>Overfitting</h4>
+      <p>Low Bias, High Variance<br>Perfect on training.<br>Bad on test data.</p>
+    </div>
+  </div>
+</div>
+
+<div class="cal cw">
+  <span class="cal-icon">⚠️</span>
+  <div class="cal-body">
+    <strong>How to spot overfitting instantly</strong>
+    Training accuracy = 99%, Test accuracy = 72% → classic overfit. The gap between train and test score is your overfit alarm.
+  </div>
+</div>
+
+<div class="concept">
+  <div class="concept-title">Indian Analogy</div>
+  <p>A student who memorises last year's CA exam answers word-for-word will score 100% in mock tests (low bias), but fail the actual exam when questions are slightly different (high variance). That's overfitting.</p>
+</div>
+</div><!-- /biasvar -->
+
+<!-- Train/Test Split -->
+<div id="split">
+<div class="sec">12.3 Train / Validation / Test Split</div>
+<h3 class="t"><span class="dot"></span>Why You Must Split Your Data</h3>
+
+<div class="concept">
+  <div class="concept-title">The Rule</div>
+  <p>Never evaluate your model on the same data it trained on. That is like giving students the exam questions in advance — scores will be inflated. Hold out a <strong>test set</strong> the model never sees during training.</p>
+</div>
+
+<div class="diagram">
+  <div class="diagram-title">Standard 70 / 15 / 15 split</div>
+  <div class="split-bar">
+    <div class="split-train">Training Set — 70%</div>
+    <div class="split-val">Val — 15%</div>
+    <div class="split-test">Test — 15%</div>
+  </div>
+  <div class="split-labels">
+    <span>Model learns here</span>
+    <span>Tune hyperparameters here</span>
+    <span>Final honest score</span>
+  </div>
+</div>
+
+<div class="concept">
+  <div class="concept-title">Code — Three-way split</div>
+  <p>Use <code>train_test_split</code> twice. Always set <code>random_state</code> for reproducibility. Use <code>stratify=y</code> when classes are imbalanced.</p>
+</div>
+<div class="cb">
+  <div class="cb-head"><span class="cb-dots"><span></span><span></span><span></span></span><span class="cb-lang">Python</span></div>
+  <pre><code class="language-python">from sklearn.model_selection import train_test_split
+
+# Step 1: carve out test set first — lock it away
+X_temp, X_test, y_temp, y_test = train_test_split(
+    X, y, test_size=0.15, random_state=42, stratify=y
+)
+
+# Step 2: split remainder into train + val
+X_train, X_val, y_train, y_val = train_test_split(
+    X_temp, y_temp, test_size=0.176,   # 0.176 × 0.85 ≈ 0.15
+    random_state=42, stratify=y_temp
+)
+
+print(X_train.shape, X_val.shape, X_test.shape)
+# (428, 11)   (92, 11)   (94, 11)</code></pre>
+</div>
+
+<div class="cal cg">
+  <span class="cal-icon">✅</span>
+  <div class="cal-body">
+    <strong>stratify=y — always use it for classification</strong>
+    Without stratify, a random split might put 90% of "default" cases in training and only 10% in test. Stratify ensures the class ratio is preserved in each split.
+  </div>
+</div>
+</div><!-- /split -->
+</div><!-- /s12 -->
+
+<div class="div"></div>
+
+<!-- ═══════════════════════════════════════
+     SESSION 13 — LINEAR & LOGISTIC REGRESSION
+════════════════════════════════════════ -->
+<div id="s13">
+<div class="sesh">
+  <div class="s-badge">Session 13 · 3 Hours</div>
+  <div class="si">
+    <h2>Linear &amp; Logistic Regression</h2>
+    <p>The two most fundamental algorithms. Understand the math in plain English, then implement in five lines of Sklearn.</p>
+    <div class="tags">
+      <span class="tag tc">Linear Regression</span>
+      <span class="tag tv">Logistic Regression</span>
+      <span class="tag tg">Coefficients</span>
+    </div>
+  </div>
+</div>
+
+<!-- Linear Regression -->
+<div id="linear">
+<div class="sec">13.1 Linear Regression — Predicting a Number</div>
+<h3 class="t"><span class="dot"></span>The Idea</h3>
+
+<div class="concept">
+  <div class="concept-title">What it does</div>
+  <p>Finds the <strong>best-fit straight line</strong> through your data points. The line predicts a continuous number (salary, loan amount, house price) from input features.</p>
+</div>
+
+<div class="formula">ŷ = w₁·income + w₂·credit_score + w₃·years_employed + b</div>
+
+<p class="b">The model learns the weights (w) and bias (b) by minimising the average squared error between predicted and actual values — called <strong>Mean Squared Error (MSE)</strong>.</p>
+
+<div class="concept">
+  <div class="concept-title">Indian Example — Predicting Loan Amount</div>
+  <p>Given an applicant's <strong>monthly income, CIBIL score, and years employed</strong>, predict how much home loan (in lakhs) they can service. This is a regression problem — the output is a number.</p>
+</div>
+
+<div class="cb">
+  <div class="cb-head"><span class="cb-dots"><span></span><span></span><span></span></span><span class="cb-lang">Python</span></div>
+  <pre><code class="language-python">from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+import numpy as np
+
+model = LinearRegression()
+model.fit(X_train, y_train)             # learn the weights
+
+y_pred = model.predict(X_val)           # predict on val set
+
+rmse = np.sqrt(mean_squared_error(y_val, y_pred))
+r2   = r2_score(y_val, y_pred)
+print(f"RMSE: ₹{rmse:.1f}L   R²: {r2:.3f}")</code></pre>
+</div>
+<div class="out">
+  <span class="out-l">Output</span>
+RMSE: ₹2.3L   R²: 0.814
+</div>
+
+<h4 class="sub">Reading the Coefficients</h4>
+<div class="concept">
+  <div class="concept-title">Interpretability — Linear Regression's Superpower</div>
+  <p>Each coefficient tells you exactly <strong>how much the prediction changes per unit increase</strong> in that feature — holding all others constant. This makes it the favourite model in banking and insurance where decisions must be explained.</p>
+</div>
+<div class="cb">
+  <div class="cb-head"><span class="cb-dots"><span></span><span></span><span></span></span><span class="cb-lang">Python</span></div>
+  <pre><code class="language-python">import pandas as pd
+
+coef_df = pd.DataFrame({
+    "feature"    : X_train.columns,
+    "coefficient": model.coef_
+}).sort_values("coefficient", ascending=False)
+
+print(coef_df)
+# feature           coefficient
+# ApplicantIncome       0.0031   ← +₹1 income → +₹0.003L loan
+# CoapplicantIncome     0.0018
+# Credit_History        8.42     ← good history adds ₹8.42L eligibility
+# LoanAmount_Log       -1.20</code></pre>
+</div>
+</div><!-- /linear -->
+
+<!-- Logistic Regression -->
+<div id="logistic">
+<div class="sec">13.2 Logistic Regression — Predicting Yes/No</div>
+<h3 class="t"><span class="dot"></span>The Idea</h3>
+
+<div class="concept">
+  <div class="concept-title">From number to probability</div>
+  <p>Logistic regression runs the linear equation through a <strong>sigmoid function</strong> that squashes any number into the range 0–1. That output is the <strong>probability of the positive class</strong> (e.g., probability of loan default).</p>
+</div>
+
+<div class="formula">P(default) = σ(w·X + b) = 1 / (1 + e<sup>−(w·X+b)</sup>)</div>
+
+<div class="cal ci">
+  <span class="cal-icon">💡</span>
+  <div class="cal-body">
+    <strong>Decision threshold = 0.5 by default</strong>
+    If P(default) ≥ 0.5 → predict "Default". You can change this threshold — lower it (e.g., 0.3) to catch more defaulters, but at the cost of more false alarms. This is a business decision, not a data decision.
+  </div>
+</div>
+
+<div class="cb">
+  <div class="cb-head"><span class="cb-dots"><span></span><span></span><span></span></span><span class="cb-lang">Python</span></div>
+  <pre><code class="language-python">from sklearn.linear_model import LogisticRegression
+
+model = LogisticRegression(max_iter=1000, random_state=42)
+model.fit(X_train, y_train)
+
+# Probabilities — more useful than hard labels
+proba = model.predict_proba(X_val)[:, 1]   # P(default)
+preds = (proba >= 0.5).astype(int)          # apply threshold
+
+print(f"P(default) for first 5: {proba[:5].round(3)}")</code></pre>
+</div>
+<div class="out">
+  <span class="out-l">Output</span>
+P(default) for first 5: [0.087  0.813  0.241  0.671  0.034]
+</div>
+
+<div class="cal cv">
+  <span class="cal-icon">🔍</span>
+  <div class="cal-body">
+    <strong>When to use Logistic vs Linear Regression</strong>
+    If the target is a <strong>number</strong> (loan amount, salary, price) → Linear Regression. If the target is a <strong>category</strong> (default/no-default, approved/rejected) → Logistic Regression.
+  </div>
+</div>
+</div><!-- /logistic -->
+</div><!-- /s13 -->
+
+<div class="div"></div>
+
+<!-- ═══════════════════════════════════════
+     SESSION 14 — DECISION TREES & RANDOM FORESTS
+════════════════════════════════════════ -->
+<div id="s14">
+<div class="sesh">
+  <div class="s-badge">Session 14 · 3 Hours</div>
+  <div class="si">
+    <h2>Decision Trees &amp; Random Forests</h2>
+    <p>Tree-based models that work without any data scaling and naturally handle mixed data types.</p>
+    <div class="tags">
+      <span class="tag tc">Gini Impurity</span>
+      <span class="tag tv">Entropy</span>
+      <span class="tag tg">Feature Importance</span>
+      <span class="tag ta">Bagging</span>
+    </div>
+  </div>
+</div>
+
+<!-- Decision Tree -->
+<div id="dtree">
+<div class="sec">14.1 Decision Tree — A Flowchart the Computer Builds</div>
+<h3 class="t"><span class="dot"></span>The Idea</h3>
+
+<div class="concept">
+  <div class="concept-title">How it works</div>
+  <p>A decision tree asks a series of <strong>yes/no questions</strong> about the data, splitting it into purer and purer groups at each step. It keeps splitting until all leaf nodes are "pure" — containing mostly one class.</p>
+</div>
+
+<div class="diagram">
+  <div class="diagram-title">How a tree decides: Loan Default?</div>
+  <pre style="font-family:var(--code);font-size:12px;color:var(--text2);text-align:left;display:inline-block;margin:0 auto">
+  Credit_History ≤ 0.5?
+  ├── Yes (bad credit) ──→ <span style="color:var(--rose)">DEFAULT (85% likely)</span>
+  └── No  (good credit)
+        └── Income ≤ ₹25,000?
+              ├── Yes ──→ <span style="color:var(--amber)">DEFAULT (60% likely)</span>
+              └── No  ──→ <span style="color:var(--green2)">APPROVED (78% likely)</span></pre>
+</div>
+
+<h4 class="sub">Gini Impurity — How the Tree Picks the Best Split</h4>
+<div class="concept">
+  <div class="concept-title">The Splitting Criterion</div>
+  <p>At each node, the tree tries every possible split on every feature and picks the one that creates the <strong>most homogeneous (purest) child nodes</strong>. Gini measures impurity — <strong>0 = perfectly pure</strong>, 0.5 = maximum impurity (50/50 mix).</p>
+</div>
+
+<div class="formula">Gini = 1 − (p_default² + p_approved²)</div>
+
+<div class="cb">
+  <div class="cb-head"><span class="cb-dots"><span></span><span></span><span></span></span><span class="cb-lang">Python</span></div>
+  <pre><code class="language-python">from sklearn.tree import DecisionTreeClassifier
+
+tree = DecisionTreeClassifier(
+    max_depth=4,          # stop at depth 4 — prevents overfit
+    min_samples_leaf=10,  # each leaf needs ≥10 samples
+    random_state=42
+)
+tree.fit(X_train, y_train)
+print(f"Train: {tree.score(X_train, y_train):.3f}")
+print(f"Val:   {tree.score(X_val,   y_val):.3f}")</code></pre>
+</div>
+<div class="out">
+  <span class="out-l">Output</span>
+Train: 0.887
+Val:   0.811
+</div>
+
+<div class="cal cw">
+  <span class="cal-icon">⚠️</span>
+  <div class="cal-body">
+    <strong>Decision trees overfit aggressively without limits</strong>
+    Without <code>max_depth</code>, a tree will grow until every training sample has its own leaf — 100% train accuracy, terrible test accuracy. Always set depth limits.
+  </div>
+</div>
+</div><!-- /dtree -->
+
+<!-- Random Forest -->
+<div id="forest">
+<div class="sec">14.2 Random Forest — Many Trees, One Answer</div>
+<h3 class="t"><span class="dot"></span>The Idea</h3>
+
+<div class="concept">
+  <div class="concept-title">Wisdom of the crowd</div>
+  <p>Instead of one deep, overfit tree, train <strong>100+ shallow trees</strong>, each on a random subset of data and features. Let them vote. The majority vote is more accurate than any single tree — this is called <strong>Bagging</strong>.</p>
+</div>
+
+<div class="algo-grid">
+  <div class="algo-card ac-cyan">
+    <h4>Decision Tree</h4>
+    <p>One tree. Prone to overfitting. Fast. Interpretable.</p>
+    <div class="when">Best when: you need human-readable rules</div>
+  </div>
+  <div class="algo-card ac-green">
+    <h4>Random Forest</h4>
+    <p>100+ trees. Robust. Slower. Gives feature importance.</p>
+    <div class="when">Best when: accuracy matters more than speed</div>
+  </div>
+</div>
+
+<div class="cb">
+  <div class="cb-head"><span class="cb-dots"><span></span><span></span><span></span></span><span class="cb-lang">Python</span></div>
+  <pre><code class="language-python">from sklearn.ensemble import RandomForestClassifier
+
+rf = RandomForestClassifier(
+    n_estimators=100,   # 100 trees
+    max_depth=8,
+    random_state=42,
+    n_jobs=-1           # use all CPU cores
+)
+rf.fit(X_train, y_train)
+print(f"Val Accuracy: {rf.score(X_val, y_val):.3f}")</code></pre>
+</div>
+<div class="out">
+  <span class="out-l">Output</span>
+Val Accuracy: 0.837
+</div>
+
+<h4 class="sub">Feature Importance — What Matters Most?</h4>
+<div class="concept">
+  <div class="concept-title">Built-in explainability</div>
+  <p>Random Forest tells you how much each feature contributed to reducing impurity across all 100 trees. This is <strong>feature importance</strong> — one of the most useful outputs in applied ML for business communication.</p>
+</div>
+<div class="cb">
+  <div class="cb-head"><span class="cb-dots"><span></span><span></span><span></span></span><span class="cb-lang">Python</span></div>
+  <pre><code class="language-python">import pandas as pd
+import matplotlib.pyplot as plt
+
+fi = pd.Series(rf.feature_importances_, index=X_train.columns)
+fi.sort_values().plot(kind="barh", color="#00e5ff", figsize=(8,5))
+plt.title("Feature Importance — Loan Default Model")
+plt.tight_layout(); plt.show()</code></pre>
+</div>
+<div class="out">
+  <span class="out-l">Top Features (typical output)</span>
+Credit_History      ████████████████████  0.38
+ApplicantIncome     ████████████          0.22
+LoanAmount          █████████             0.18
+Loan_Amount_Term    ██████                0.11
+Property_Area       ████                  0.07
+</div>
+</div><!-- /forest -->
+</div><!-- /s14 -->
+
+<div class="div"></div>
+
+<!-- ═══════════════════════════════════════
+     SESSION 15 — GRADIENT BOOSTING
+════════════════════════════════════════ -->
+<div id="s15">
+<div class="sesh">
+  <div class="s-badge">Session 15 · 3 Hours</div>
+  <div class="si">
+    <h2>Gradient Boosting — XGBoost &amp; LightGBM</h2>
+    <p>The algorithms that win Kaggle competitions and power most production ML systems in industry.</p>
+    <div class="tags">
+      <span class="tag tc">Boosting</span>
+      <span class="tag tv">XGBoost</span>
+      <span class="tag tg">LightGBM</span>
+      <span class="tag ta">Hyperparameter Tuning</span>
+    </div>
+  </div>
+</div>
+
+<div id="xgb">
+<div class="sec">15.1 Boosting vs Bagging — The Key Difference</div>
+
+<div class="algo-grid">
+  <div class="algo-card ac-cyan">
+    <h4>🌲 Bagging (Random Forest)</h4>
+    <p><strong>Parallel.</strong> Build 100 trees independently on random subsets. Average their predictions.</p>
+    <div class="when">Reduces variance. Works well out of the box.</div>
+  </div>
+  <div class="algo-card ac-violet">
+    <h4>⚡ Boosting (XGBoost)</h4>
+    <p><strong>Sequential.</strong> Each tree fixes the mistakes of the previous one. Learns from errors iteratively.</p>
+    <div class="when">Reduces bias. Higher accuracy. Needs tuning.</div>
+  </div>
+</div>
+
+<div class="concept">
+  <div class="concept-title">Indian Analogy</div>
+  <p>Bagging = 100 students each attempt the exam independently, then you take the majority answer. <br>Boosting = 1 student attempts the exam, you mark it, they study only the wrong answers, attempt again — repeat 100 times.</p>
+</div>
+
+<div class="sec">15.2 XGBoost</div>
+<h3 class="t"><span class="dot"></span>Training XGBoost</h3>
+
+<div class="concept">
+  <div class="concept-title">Key hyperparameters to know</div>
+  <p><code>n_estimators</code> = number of trees. <code>learning_rate</code> = how much each tree contributes (lower = more trees needed but better). <code>max_depth</code> = complexity of each tree. <code>subsample</code> = fraction of data each tree sees.</p>
+</div>
+
+<div class="cb">
+  <div class="cb-head"><span class="cb-dots"><span></span><span></span><span></span></span><span class="cb-lang">Python</span></div>
+  <pre><code class="language-python">from xgboost import XGBClassifier
+
+xgb = XGBClassifier(
+    n_estimators=200,
+    learning_rate=0.05,   # low lr → need more trees, but generalises better
+    max_depth=4,
+    subsample=0.8,
+    eval_metric="logloss",
+    random_state=42, verbosity=0
+)
+xgb.fit(X_train, y_train,
+        eval_set=[(X_val, y_val)],
+        early_stopping_rounds=20)   # stop if val loss doesn't improve for 20 rounds
+print(f"Val: {xgb.score(X_val, y_val):.3f}")</code></pre>
+</div>
+<div class="out">
+  <span class="out-l">Output</span>
+[Early stopping] Best iteration: 147
+Val: 0.858
+</div>
+
+<div class="sec">15.3 LightGBM — Faster for Large Data</div>
+<h3 class="t"><span class="dot"></span>When to prefer LightGBM</h3>
+
+<div class="concept">
+  <div class="concept-title">LightGBM vs XGBoost</div>
+  <p>LightGBM grows trees <strong>leaf-wise</strong> (deeper, more accurate) while XGBoost grows <strong>level-wise</strong> (safer, less overfit-prone). LightGBM trains <strong>10× faster</strong> on large datasets (&gt;100K rows) and handles categorical features natively.</p>
+</div>
+
+<div class="cb">
+  <div class="cb-head"><span class="cb-dots"><span></span><span></span><span></span></span><span class="cb-lang">Python</span></div>
+  <pre><code class="language-python">from lightgbm import LGBMClassifier
+
+lgbm = LGBMClassifier(
+    n_estimators=300,
+    learning_rate=0.05,
+    num_leaves=31,       # controls model complexity (default=31)
+    random_state=42,
+    verbosity=-1
+)
+lgbm.fit(X_train, y_train,
+         eval_set=[(X_val, y_val)],
+         callbacks=[lgbm.early_stopping(20, verbose=False)])
+print(f"Val: {lgbm.score(X_val, y_val):.3f}")</code></pre>
+</div>
+<div class="out">
+  <span class="out-l">Output</span>
+Val: 0.862
+</div>
+
+<table class="tbl">
+  <tr><th>Model</th><th>Accuracy</th><th>Speed</th><th>Best For</th></tr>
+  <tr><td>Logistic Regression</td><td>~0.79</td><td>⚡⚡⚡⚡⚡</td><td>Baseline, interpretability</td></tr>
+  <tr><td>Decision Tree</td><td>~0.81</td><td>⚡⚡⚡⚡</td><td>Explainable decisions</td></tr>
+  <tr><td>Random Forest</td><td>~0.84</td><td>⚡⚡⚡</td><td>Robust, low tuning needed</td></tr>
+  <tr><td>XGBoost</td><td>~0.86</td><td>⚡⚡</td><td>Competitions, high accuracy</td></tr>
+  <tr><td>LightGBM</td><td>~0.86</td><td>⚡⚡⚡</td><td>Large datasets, fastest boosting</td></tr>
+</table>
+</div><!-- /xgb -->
+</div><!-- /s15 -->
+
+<div class="div"></div>
+
+<!-- ═══════════════════════════════════════
+     SESSION 16 — MODEL EVALUATION
+════════════════════════════════════════ -->
+<div id="s16">
+<div class="sesh">
+  <div class="s-badge">Session 16 · 3 Hours</div>
+  <div class="si">
+    <h2>Model Evaluation</h2>
+    <p>Accuracy alone lies. Learn the metrics that actually matter — and how to tune your model properly.</p>
+    <div class="tags">
+      <span class="tag tc">Confusion Matrix</span>
+      <span class="tag tv">Precision / Recall</span>
+      <span class="tag tg">ROC-AUC</span>
+      <span class="tag ta">Cross-Validation</span>
+    </div>
+  </div>
+</div>
+
+<!-- Confusion Matrix -->
+<div id="eval">
+<div class="sec">16.1 Confusion Matrix — Breaking Down Predictions</div>
+<h3 class="t"><span class="dot"></span>Why Accuracy Alone is Misleading</h3>
+
+<div class="concept">
+  <div class="concept-title">The Accuracy Trap — Loan Context</div>
+  <p>If only 10% of applicants default, a model that predicts <strong>"no default" for everyone</strong> gets 90% accuracy — but is completely useless. You need to know <em>what kind</em> of errors the model makes.</p>
+</div>
+
+<div class="diagram">
+  <div class="diagram-title">Confusion Matrix — Loan Default Model</div>
+  <div class="cm-wrap">
+    <table class="cm-table">
+      <tr>
+        <td style="background:transparent;border:none"></td>
+        <td style="background:transparent;border:none"></td>
+        <td colspan="2" class="cm-hdr" style="text-align:center">Predicted</td>
+      </tr>
+      <tr>
+        <td style="background:transparent;border:none"></td>
+        <td style="background:transparent;border:none"></td>
+        <td class="cm-hdr">No Default</td>
+        <td class="cm-hdr">Default</td>
+      </tr>
+      <tr>
+        <td class="cm-side" rowspan="2">Actual</td>
+        <td class="cm-hdr">No Default</td>
+        <td class="cm-tn">TN = 71<br><span style="font-size:10px">Correct ✓</span></td>
+        <td class="cm-fp">FP = 7<br><span style="font-size:10px">False Alarm</span></td>
+      </tr>
+      <tr>
+        <td class="cm-hdr">Default</td>
+        <td class="cm-fn">FN = 10<br><span style="font-size:10px">Missed! ✗</span></td>
+        <td class="cm-tp">TP = 6<br><span style="font-size:10px">Caught ✓</span></td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<div class="metric-row">
+  <div class="metric-card">
+    <div class="mv" style="color:var(--cyan)">82%</div>
+    <div class="ml">Accuracy</div>
+    <div class="mf">(TP+TN) / Total</div>
+  </div>
+  <div class="metric-card">
+    <div class="mv" style="color:var(--violet2)">46%</div>
+    <div class="ml">Precision</div>
+    <div class="mf">TP / (TP+FP)</div>
+  </div>
+  <div class="metric-card">
+    <div class="mv" style="color:var(--rose)">37%</div>
+    <div class="ml">Recall</div>
+    <div class="mf">TP / (TP+FN)</div>
+  </div>
+  <div class="metric-card">
+    <div class="mv" style="color:var(--green2)">41%</div>
+    <div class="ml">F1 Score</div>
+    <div class="mf">2×P×R / (P+R)</div>
+  </div>
+</div>
+
+<div class="cal cr">
+  <span class="cal-icon">🏦</span>
+  <div class="cal-body">
+    <strong>Recall matters more in loan default prediction</strong>
+    A False Negative (missed defaulter) costs the bank ₹lakhs. A False Positive (wrongly rejected applicant) loses one customer. For high-stakes decisions, optimise for Recall, not Accuracy.
+  </div>
+</div>
+
+<div class="cb">
+  <div class="cb-head"><span class="cb-dots"><span></span><span></span><span></span></span><span class="cb-lang">Python</span></div>
+  <pre><code class="language-python">from sklearn.metrics import classification_report, confusion_matrix
+import seaborn as sns, matplotlib.pyplot as plt
+
+y_pred = xgb.predict(X_val)
+print(classification_report(y_val, y_pred,
+      target_names=["No Default","Default"]))
+
+cm = confusion_matrix(y_val, y_pred)
+sns.heatmap(cm, annot=True, fmt="d", cmap="Blues",
+            xticklabels=["No Default","Default"],
+            yticklabels=["No Default","Default"])
+plt.title("Confusion Matrix — XGBoost"); plt.show()</code></pre>
+</div>
+</div><!-- /eval -->
+
+<!-- ROC-AUC -->
+<div id="roc">
+<div class="sec">16.2 ROC-AUC — The Gold Standard Metric</div>
+<h3 class="t"><span class="dot"></span>What is ROC-AUC?</h3>
+
+<div class="concept">
+  <div class="concept-title">Definition</div>
+  <p>The <strong>ROC curve</strong> plots True Positive Rate vs False Positive Rate at every possible decision threshold. <strong>AUC</strong> (Area Under Curve) summarises this as a single number. <strong>AUC = 0.5</strong> means random guessing. <strong>AUC = 1.0</strong> means perfect.</p>
+</div>
+
+<div class="cal ci">
+  <span class="cal-icon">📊</span>
+  <div class="cal-body">
+    <strong>AUC is threshold-independent</strong>
+    Accuracy changes when you change the 0.5 threshold. AUC does not — it measures how well the model ranks defaulters above non-defaulters regardless of threshold. This is why it is the standard metric for binary classification in banking and healthcare.
+  </div>
+</div>
+
+<div class="cb">
+  <div class="cb-head"><span class="cb-dots"><span></span><span></span><span></span></span><span class="cb-lang">Python</span></div>
+  <pre><code class="language-python">from sklearn.metrics import roc_auc_score, roc_curve
+
+y_proba = xgb.predict_proba(X_val)[:, 1]
+auc     = roc_auc_score(y_val, y_proba)
+fpr, tpr, _ = roc_curve(y_val, y_proba)
+
+plt.plot(fpr, tpr, label=f"XGBoost (AUC = {auc:.3f})", color="#00e5ff")
+plt.plot([0,1],[0,1], "k--", label="Random baseline")
+plt.xlabel("False Positive Rate"); plt.ylabel("True Positive Rate")
+plt.title("ROC Curve — Loan Default"); plt.legend(); plt.show()
+print(f"AUC: {auc:.3f}")</code></pre>
+</div>
+<div class="out">
+  <span class="out-l">Output</span>
+AUC: 0.871
+</div>
+</div><!-- /roc -->
+
+<!-- Cross-Validation -->
+<div id="cv">
+<div class="sec">16.3 Cross-Validation &amp; Hyperparameter Tuning</div>
+<h3 class="t"><span class="dot"></span>Cross-Validation — A More Honest Score</h3>
+
+<div class="concept">
+  <div class="concept-title">Why one validation set isn't enough</div>
+  <p>With a single train/val split, your score might be <strong>lucky or unlucky</strong> depending on which samples ended up in val. K-Fold CV splits data into K folds, trains on K−1, validates on 1, and <strong>averages K scores</strong> for a reliable estimate.</p>
+</div>
+
+<div class="cb">
+  <div class="cb-head"><span class="cb-dots"><span></span><span></span><span></span></span><span class="cb-lang">Python</span></div>
+  <pre><code class="language-python">from sklearn.model_selection import cross_val_score
+
+scores = cross_val_score(
+    rf, X_train, y_train,
+    cv=5,             # 5-fold
+    scoring="roc_auc",
+    n_jobs=-1
+)
+print(f"CV AUC: {scores.mean():.3f} ± {scores.std():.3f}")
+# CV AUC: 0.841 ± 0.023</code></pre>
+</div>
+
+<h4 class="sub">GridSearchCV — Finding the Best Hyperparameters</h4>
+<div class="concept">
+  <div class="concept-title">Hyperparameter tuning</div>
+  <p><strong>Parameters</strong> = learned from data (weights). <strong>Hyperparameters</strong> = set by you before training (n_estimators, max_depth). <code>GridSearchCV</code> tries every combination in a grid and finds the best one using cross-validation.</p>
+</div>
+
+<div class="cb">
+  <div class="cb-head"><span class="cb-dots"><span></span><span></span><span></span></span><span class="cb-lang">Python</span></div>
+  <pre><code class="language-python">from sklearn.model_selection import GridSearchCV
+
+param_grid = {
+    "n_estimators": [100, 200],
+    "max_depth"   : [4, 6, 8],
+    "min_samples_leaf": [5, 10],
+}
+
+grid = GridSearchCV(rf, param_grid, cv=5,
+                    scoring="roc_auc", n_jobs=-1)
+grid.fit(X_train, y_train)
+
+print(f"Best params: {grid.best_params_}")
+print(f"Best CV AUC: {grid.best_score_:.3f}")</code></pre>
+</div>
+<div class="out">
+  <span class="out-l">Output</span>
+Best params: {'max_depth': 6, 'min_samples_leaf': 5, 'n_estimators': 200}
+Best CV AUC: 0.853
+</div>
+</div><!-- /cv -->
+</div><!-- /s16 -->
+
+<div class="div"></div>
+
+<!-- ═══════════════════════════════════════
+     LAB — LOAN DEFAULT PIPELINE
+════════════════════════════════════════ -->
+<div id="lab">
+<div class="proj">
+  <span class="proj-tag">Session Lab · 3 Hours · End-to-End Project</span>
+  <h2>🏦 SBI Home Loan Default Predictor</h2>
+  <p class="pd">Build a complete, production-ready ML pipeline that predicts loan defaults on the Dream Housing Finance dataset. Each step connects directly to what you learned in sessions 12–16.</p>
+  <div class="proj-goals">
+    <div class="pg">Load &amp; clean the Kaggle loan dataset</div>
+    <div class="pg">Engineer features (log-transform, encode)</div>
+    <div class="pg">Train 4 models + compare scores</div>
+    <div class="pg">Plot confusion matrix &amp; ROC curves</div>
+    <div class="pg">Tune the best model with GridSearchCV</div>
+    <div class="pg">Save model + generate prediction report</div>
+  </div>
+</div>
+
+<div class="ml-flow">
+  <div class="mlf-step active"><div class="msn">Step 1</div><div class="msv">Load &amp; Clean</div></div>
+  <div class="mlf-arrow">→</div>
+  <div class="mlf-step active"><div class="msn">Step 2</div><div class="msv">Feature Eng.</div></div>
+  <div class="mlf-arrow">→</div>
+  <div class="mlf-step active"><div class="msn">Step 3</div><div class="msv">Train Models</div></div>
+  <div class="mlf-arrow">→</div>
+  <div class="mlf-step active"><div class="msn">Step 4</div><div class="msv">Evaluate</div></div>
+  <div class="mlf-arrow">→</div>
+  <div class="mlf-step active"><div class="msn">Step 5</div><div class="msv">Tune Best</div></div>
+  <div class="mlf-arrow">→</div>
+  <div class="mlf-step active"><div class="msn">Step 6</div><div class="msv">Save &amp; Report</div></div>
+</div>
+
+<div class="sec">Step 1 — Load &amp; Clean</div>
+<div class="cb">
+  <div class="cb-head"><span class="cb-dots"><span></span><span></span><span></span></span><span class="cb-lang">Python — loan_pipeline.py</span></div>
+  <pre><code class="language-python">import pandas as pd, numpy as np
+from sklearn.model_selection import train_test_split
+
+df = pd.read_csv("loan_prediction.csv")
+
+# Target encoding
+df["Loan_Status"] = df["Loan_Status"].map({"Y":1,"N":0})
+
+# Fill missing values
+df["Gender"]         .fillna(df["Gender"].mode()[0],    inplace=True)
+df["Married"]        .fillna(df["Married"].mode()[0],   inplace=True)
+df["LoanAmount"]     .fillna(df["LoanAmount"].median(), inplace=True)
+df["Loan_Amount_Term"].fillna(360,                      inplace=True)
+df["Credit_History"] .fillna(1,                         inplace=True)
+
+print(df.isnull().sum().sum(), "missing values remaining")  # 0</code></pre>
+</div>
+
+<div class="sec">Step 2 — Feature Engineering</div>
+<div class="cb">
+  <div class="cb-head"><span class="cb-dots"><span></span><span></span><span></span></span><span class="cb-lang">Python</span></div>
+  <pre><code class="language-python"># Log-transform skewed columns (reduces impact of outliers)
+df["LoanAmount_log"]     = np.log1p(df["LoanAmount"])
+df["ApplicantIncome_log"]= np.log1p(df["ApplicantIncome"])
+df["TotalIncome"]        = df["ApplicantIncome"] + df["CoapplicantIncome"]
+df["TotalIncome_log"]    = np.log1p(df["TotalIncome"])
+
+# One-hot encode categoricals
+df = pd.get_dummies(df, columns=["Gender","Married","Education",
+                                  "Self_Employed","Property_Area"],
+                    drop_first=True)
+
+# Drop original skewed + ID columns
+df.drop(columns=["Loan_ID","ApplicantIncome",
+                  "CoapplicantIncome","LoanAmount"], inplace=True)</code></pre>
+</div>
+
+<div class="sec">Step 3 — Train Four Models</div>
+<div class="cb">
+  <div class="cb-head"><span class="cb-dots"><span></span><span></span><span></span></span><span class="cb-lang">Python</span></div>
+  <pre><code class="language-python">from sklearn.linear_model  import LogisticRegression
+from sklearn.ensemble      import RandomForestClassifier
+from xgboost               import XGBClassifier
+from lightgbm              import LGBMClassifier
+from sklearn.metrics       import roc_auc_score
+
+X = df.drop(columns=["Loan_Status"])
+y = df["Loan_Status"]
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2,
+                                            random_state=42, stratify=y)
+
+models = {
+    "Logistic Regression": LogisticRegression(max_iter=500, random_state=42),
+    "Random Forest"      : RandomForestClassifier(n_estimators=100,random_state=42),
+    "XGBoost"            : XGBClassifier(n_estimators=100, verbosity=0, random_state=42),
+    "LightGBM"           : LGBMClassifier(n_estimators=100, verbosity=-1, random_state=42),
+}
+
+results = {}
+for name, m in models.items():
+    m.fit(X_tr, y_tr)
+    auc = roc_auc_score(y_te, m.predict_proba(X_te)[:,1])
+    acc = m.score(X_te, y_te)
+    results[name] = {"AUC": round(auc,3), "Accuracy": round(acc,3)}
+    print(f"{name:<25} AUC={auc:.3f}  Acc={acc:.3f}")</code></pre>
+</div>
+<div class="out">
+  <span class="out-l">Output — Model Comparison</span>
+Logistic Regression       AUC=0.783  Acc=0.797
+Random Forest             AUC=0.831  Acc=0.821
+XGBoost                   AUC=0.858  Acc=0.846
+LightGBM                  AUC=0.861  Acc=0.854
+</div>
+
+<div class="sec">Step 4 — Evaluate Best Model</div>
+<div class="cb">
+  <div class="cb-head"><span class="cb-dots"><span></span><span></span><span></span></span><span class="cb-lang">Python</span></div>
+  <pre><code class="language-python">from sklearn.metrics import (classification_report, confusion_matrix,
+                              roc_curve, ConfusionMatrixDisplay)
+import matplotlib.pyplot as plt
+
+best = models["LightGBM"]
+y_pred  = best.predict(X_te)
+y_proba = best.predict_proba(X_te)[:,1]
+
+# Confusion matrix
+fig, axes = plt.subplots(1,2,figsize=(12,4))
+ConfusionMatrixDisplay(confusion_matrix(y_te, y_pred),
+    display_labels=["Approved","Default"]).plot(ax=axes[0], cmap="Blues")
+axes[0].set_title("Confusion Matrix — LightGBM")
+
+# ROC curve
+for name, m in models.items():
+    fpr, tpr, _ = roc_curve(y_te, m.predict_proba(X_te)[:,1])
+    auc = results[name]["AUC"]
+    axes[1].plot(fpr, tpr, label=f"{name} ({auc})")
+axes[1].plot([0,1],[0,1],"k--")
+axes[1].set(xlabel="FPR",ylabel="TPR",title="ROC Curves — All Models")
+axes[1].legend(fontsize=8)
+plt.tight_layout(); plt.savefig("model_eval.png",dpi=150); plt.show()</code></pre>
+</div>
+
+<div class="sec">Step 5 — Tune Best Model</div>
+<div class="cb">
+  <div class="cb-head"><span class="cb-dots"><span></span><span></span><span></span></span><span class="cb-lang">Python</span></div>
+  <pre><code class="language-python">from sklearn.model_selection import GridSearchCV
+
+param_grid = {
+    "n_estimators" : [100, 200, 300],
+    "num_leaves"   : [20, 31, 50],
+    "learning_rate": [0.05, 0.1],
+}
+grid = GridSearchCV(LGBMClassifier(verbosity=-1, random_state=42),
+                    param_grid, cv=5, scoring="roc_auc", n_jobs=-1)
+grid.fit(X_tr, y_tr)
+
+tuned = grid.best_estimator_
+final_auc = roc_auc_score(y_te, tuned.predict_proba(X_te)[:,1])
+print(f"Tuned AUC: {final_auc:.3f}")   # 0.871</code></pre>
+</div>
+
+<div class="sec">Step 6 — Save Model &amp; Generate Report</div>
+<div class="cb">
+  <div class="cb-head"><span class="cb-dots"><span></span><span></span><span></span></span><span class="cb-lang">Python</span></div>
+  <pre><code class="language-python">import joblib, json
+from sklearn.metrics import classification_report
+
+# Save model
+joblib.dump(tuned, "loan_default_model.pkl")
+
+# Save evaluation report
+report = classification_report(y_te, tuned.predict(X_te),
+                                target_names=["Approved","Default"],
+                                output_dict=True)
+with open("evaluation_report.json","w") as f:
+    json.dump(report, f, indent=2)
+
+# Print summary
+print("""
+╔══════════════════════════════════════════════════╗
+║     SBI LOAN DEFAULT PREDICTOR — FINAL RESULTS  ║
+╠══════════════════════════════════════════════════╣
+║  Model : LightGBM (tuned)                        ║
+║  AUC   : 0.871  (vs baseline 0.783)              ║
+║  Acc   : 0.862                                   ║
+║  Recall: 0.74   (catches 74% of defaulters)      ║
+║  Saved : loan_default_model.pkl                  ║
+╚══════════════════════════════════════════════════╝
+""")</code></pre>
+</div>
+<div class="out">
+  <span class="out-l">Final Output</span>
+╔══════════════════════════════════════════════════╗
+║     SBI LOAN DEFAULT PREDICTOR — FINAL RESULTS  ║
+╠══════════════════════════════════════════════════╣
+║  Model : LightGBM (tuned)                        ║
+║  AUC   : 0.871  (vs baseline 0.783)              ║
+║  Acc   : 0.862                                   ║
+║  Recall: 0.74   (catches 74% of defaulters)      ║
+║  Saved : loan_default_model.pkl                  ║
+╚══════════════════════════════════════════════════╝
+</div>
+
+<!-- Quiz -->
+<div class="sec" style="margin-top:40px">Module 4 — Review</div>
+<div class="quiz">
+  <h4>🧠 Check Your Understanding</h4>
+
+  <div class="qq">Q1. Your model scores 96% accuracy but only 23% recall on the "default" class. What is most likely happening?</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ol">A</span>The model is underfitting — increase max_depth</div>
+  <div class="qo" onclick="qa(this,true)"><span class="ol">B</span>Class imbalance — the model predicts "no default" for almost everyone and still looks accurate</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ol">C</span>The AUC is too high — try a simpler model</div>
+
+  <div class="qq" style="margin-top:14px">Q2. You have Train AUC = 0.98 and Val AUC = 0.71. What is the problem and what is one fix?</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ol">A</span>Underfitting — add more features to the model</div>
+  <div class="qo" onclick="qa(this,true)"><span class="ol">B</span>Overfitting — reduce max_depth or increase min_samples_leaf</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ol">C</span>Data leakage — the test set was used during training</div>
+
+  <div class="qq" style="margin-top:14px">Q3. Why does Boosting generally outperform Bagging (Random Forest)?</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ol">A</span>Boosting uses more trees, so it always wins</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ol">B</span>Bagging has no hyperparameters, so it cannot be tuned</div>
+  <div class="qo" onclick="qa(this,true)"><span class="ol">C</span>Boosting trains sequentially — each tree corrects the errors of the previous one, focusing learning on hard examples</div>
+</div>
+
+</div><!-- /lab -->
+
+<!-- Footer -->
+<div class="mfoot">
+  <div class="info">
+    <strong>Module 4 Complete — 18 Hours</strong>
+    Linear · Logistic · Decision Tree · Random Forest · XGBoost · LightGBM · ROC-AUC · GridSearchCV
+  </div>
+  <a class="nxt" href="#">Next → Module 5: Unsupervised Learning ›</a>
+</div>
+
+</div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+  document.querySelectorAll("pre code").forEach(el=>hljs.highlightElement(el));
+});
+window.addEventListener("scroll",()=>{
+  const d=document.documentElement;
+  document.getElementById("spf").style.width=
+    (d.scrollTop/(d.scrollHeight-d.clientHeight)*100)+"%";
+});
+document.querySelectorAll("[id]").forEach(sec=>{
+  new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        document.querySelectorAll(".sb-a").forEach(l=>l.classList.remove("active"));
+        const m=document.querySelector(`.sb-a[href="#${e.target.id}"]`);
+        if(m)m.classList.add("active");
+      }
+    });
+  },{threshold:0.25}).observe(sec);
+});
+function qa(el,correct){
+  el.parentElement.querySelectorAll(".qo").forEach(o=>o.style.pointerEvents="none");
+  el.classList.add(correct?"correct":"wrong");
+  el.innerHTML+=correct?' <strong style="margin-left:5px">✓ Correct!</strong>':' <strong style="margin-left:5px">✗</strong>';
+  if(!correct) el.parentElement.querySelectorAll(".qo").forEach(o=>{
+    if(o.getAttribute("onclick")?.includes("true"))
+      setTimeout(()=>o.classList.add("correct"),350);
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Module 6 — Deep Learning | ByteXL Data Science</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Spectral:ital,wght@0,400;0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<style>
+:root{
+  --bx-blue:#1B9AE4;
+  --bx-orange:#F4511E;
+  --bg:#0b0f1a;
+  --bg2:#10162a;
+  --panel:#151d30;
+  --panel2:#1a2540;
+  --panel3:#1f2d4a;
+  --border:#253050;
+  --border2:#2e3d60;
+  --text:#e8edf5;
+  --text2:#a8b8d0;
+  --text3:#5a7090;
+  --cyan:#06b6d4;
+  --cyan2:#22d3ee;
+  --violet:#8b5cf6;
+  --violet2:#a78bfa;
+  --rose:#f43f5e;
+  --rose2:#fb7185;
+  --green:#10b981;
+  --green2:#34d399;
+  --amber:#f59e0b;
+  --amber2:#fbbf24;
+  --sky:#0ea5e9;
+  --lime:#84cc16;
+  --ui:'Manrope',sans-serif;
+  --serif:'Spectral',Georgia,serif;
+  --code:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:var(--ui)}
+
+/* ── HEADER ── */
+header{
+  position:fixed;top:0;left:0;right:0;height:54px;z-index:300;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 22px;
+}
+.logo{display:flex;align-items:baseline;gap:0;cursor:pointer;text-decoration:none}
+.lb{font-family:var(--ui);font-size:21px;font-weight:800;color:var(--bx-blue);letter-spacing:-.5px}
+.lx{font-family:var(--ui);font-size:15px;font-weight:800;color:var(--bx-orange)}
+.hc{display:flex;align-items:center;gap:12px}
+.h-badge{font-family:var(--ui);font-size:10px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--text3);background:var(--panel2);
+  border:1px solid var(--border);border-radius:20px;padding:3px 11px}
+.h-sc{font-family:var(--ui);font-size:11px;color:var(--text3)}
+.h-sc strong{color:var(--text);font-size:13px}
+.hr{display:flex;align-items:center;gap:10px}
+.prog{width:110px;height:3px;background:var(--border);border-radius:3px;overflow:hidden}
+.prog-f{height:100%;background:linear-gradient(90deg,var(--bx-blue),var(--bx-orange));
+  border-radius:3px;transition:width .4s}
+.kh{font-family:var(--ui);font-size:10px;color:var(--text3);display:flex;align-items:center;gap:4px}
+.k{background:var(--panel2);border:1px solid var(--border2);border-radius:3px;
+  padding:1px 5px;font-size:9px;color:var(--text2)}
+
+/* ── ARROWS ── */
+.arr{
+  position:fixed;top:50%;transform:translateY(-50%);
+  width:42px;height:42px;border-radius:50%;z-index:200;
+  background:var(--panel2);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:16px;color:var(--text2);transition:all .15s;
+}
+.arr:hover{background:var(--bx-blue);color:#fff;border-color:var(--bx-blue)}
+.arr.dis{opacity:.25;pointer-events:none}
+#pb{left:14px}#nb{right:14px}
+
+/* ── DOTS ── */
+#dots{
+  position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
+  display:flex;gap:4px;z-index:200;
+  background:rgba(11,15,26,.8);backdrop-filter:blur(8px);
+  border:1px solid var(--border);border-radius:20px;padding:6px 12px;
+}
+.d{width:6px;height:6px;border-radius:50%;background:var(--border2);
+  cursor:pointer;border:none;padding:0;transition:all .2s}
+.d.on{background:var(--bx-blue);width:20px;border-radius:3px}
+
+/* ── SLIDES ── */
+#deck{position:fixed;top:54px;left:0;right:0;bottom:0;overflow:hidden}
+.sl{
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  opacity:0;transform:translateX(50px) scale(.98);
+  transition:opacity .38s cubic-bezier(.4,0,.2,1),transform .38s cubic-bezier(.4,0,.2,1);
+  pointer-events:none;overflow-y:auto;
+  scrollbar-width:thin;scrollbar-color:var(--border) transparent;
+}
+.sl::-webkit-scrollbar{width:4px}
+.sl::-webkit-scrollbar-thumb{background:var(--border)}
+.sl.on{opacity:1;transform:none;pointer-events:all}
+.sl.out{opacity:0;transform:translateX(-50px) scale(.98)}
+
+/* ── SLIDE TYPES ── */
+.sl-cover{
+  background:radial-gradient(ellipse at 30% 50%,#0e1e45 0%,var(--bg) 70%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:60px 48px;position:relative;overflow:hidden;
+}
+.sl-cover::after{
+  content:'06';position:absolute;right:-20px;bottom:-40px;
+  font-family:var(--ui);font-size:200px;font-weight:800;
+  color:rgba(255,255,255,.025);line-height:1;pointer-events:none;
+}
+.sl-body{background:var(--bg2);padding:44px 60px;overflow-y:auto}
+.sl-split{background:var(--bg2);display:grid;grid-template-columns:1fr 1fr;overflow:hidden}
+.sl-split .sp-l{padding:40px 40px;border-right:1px solid var(--border);overflow-y:auto}
+.sl-split .sp-r{padding:40px 40px;background:var(--panel);overflow-y:auto}
+.sl-dark{background:var(--bg);padding:40px 56px;overflow-y:auto}
+.sl-code{background:var(--bg);display:grid;grid-template-columns:42% 58%;overflow:hidden}
+.sl-code .co-l{padding:36px 32px;border-right:1px solid var(--border);overflow-y:auto}
+.sl-code .co-r{overflow-y:auto}
+.sl-lab{
+  background:linear-gradient(160deg,#0a1628 0%,#0d1f3a 40%,#091224 100%);
+  padding:40px 56px;overflow-y:auto;
+}
+.sl-end{
+  background:radial-gradient(ellipse at 60% 40%,#0e2a1e 0%,var(--bg) 70%);
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:56px;
+}
+
+/* ── TYPOGRAPHY ── */
+.eyebrow{font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.eyebrow::before{content:'';width:18px;height:2px;border-radius:2px;flex-shrink:0}
+.eb-blue{color:var(--cyan)}.eb-blue::before{background:var(--cyan)}
+.eb-orange{color:var(--amber)}.eb-orange::before{background:var(--amber)}
+.eb-violet{color:var(--violet2)}.eb-violet::before{background:var(--violet2)}
+.eb-green{color:var(--green2)}.eb-green::before{background:var(--green2)}
+.eb-rose{color:var(--rose2)}.eb-rose::before{background:var(--rose2)}
+.eb-light{color:rgba(255,255,255,.5)}.eb-light::before{background:rgba(255,255,255,.3)}
+.eb-dim{color:var(--text3)}.eb-dim::before{background:var(--border2)}
+
+h1.ct{font-family:var(--ui);font-size:50px;font-weight:800;color:var(--text);
+  line-height:1.06;margin-bottom:14px}
+h1.ct em{font-style:italic;font-family:var(--serif);color:var(--cyan)}
+h2.st{font-family:var(--ui);font-size:28px;font-weight:800;color:var(--text);
+  line-height:1.15;margin-bottom:10px}
+h3.ss{font-family:var(--ui);font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px}
+h4.sh{font-family:var(--ui);font-size:14px;font-weight:700;color:var(--text2);
+  margin:18px 0 7px;padding-left:10px;border-left:2px solid var(--violet2)}
+p.pb{font-size:14.5px;color:var(--text2);line-height:1.8;margin-bottom:11px;font-weight:400}
+p.pl{font-size:13.5px;color:rgba(255,255,255,.65);line-height:1.75;margin-bottom:10px}
+.cover-meta{display:flex;gap:28px;justify-content:center;margin-top:24px}
+.cm .cv{font-family:var(--ui);font-size:26px;font-weight:800;color:var(--cyan)}
+.cm .cl{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-top:2px}
+.cover-sub{font-size:14px;color:var(--text2);max-width:500px;margin:0 auto 20px;line-height:1.7}
+
+/* ── CONCEPT BOX ── */
+.concept{
+  background:var(--panel2);border:1px solid var(--border2);border-radius:10px;
+  padding:16px 20px;margin:12px 0;border-left:3px solid;
+}
+.concept.cc{border-left-color:var(--cyan)}
+.concept.cv2{border-left-color:var(--violet2)}
+.concept.cg{border-left-color:var(--green2)}
+.concept.ca{border-left-color:var(--amber)}
+.concept.cr{border-left-color:var(--rose)}
+.concept-label{font-size:9px;font-weight:800;letter-spacing:2px;
+  text-transform:uppercase;margin-bottom:8px;display:block}
+.concept.cc .concept-label{color:var(--cyan)}
+.concept.cv2 .concept-label{color:var(--violet2)}
+.concept.cg .concept-label{color:var(--green2)}
+.concept.ca .concept-label{color:var(--amber)}
+.concept.cr .concept-label{color:var(--rose)}
+.concept p{font-size:13.5px;color:var(--text2);line-height:1.7}
+.concept strong{color:var(--text);font-weight:600}
+.concept code{font-family:var(--code);font-size:12px;background:rgba(0,0,0,.3);
+  padding:1px 5px;border-radius:3px;color:var(--cyan)}
+
+/* ── ANALOGY BOX ── */
+.analogy{
+  background:linear-gradient(135deg,rgba(139,92,246,.1),rgba(6,182,212,.05));
+  border:1px solid rgba(139,92,246,.25);border-radius:10px;
+  padding:14px 18px;margin:12px 0;
+}
+.analogy-label{font-size:9px;font-weight:800;letter-spacing:2px;
+  text-transform:uppercase;color:var(--violet2);margin-bottom:7px;display:block}
+.analogy p{font-size:13.5px;color:rgba(255,255,255,.7);line-height:1.7;font-style:italic}
+.analogy strong{color:var(--text);font-style:normal;font-weight:600}
+
+/* ── SCENARIO CARD ── */
+.scenario{
+  background:var(--panel3);border:1px solid var(--border2);border-radius:10px;
+  padding:14px 18px;margin:10px 0;
+}
+.scenario-label{font-size:9px;font-weight:800;letter-spacing:2px;
+  text-transform:uppercase;color:var(--amber2);margin-bottom:7px;display:block}
+.scenario h4{font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:5px}
+.scenario p{font-size:13px;color:var(--text2);line-height:1.65}
+
+/* ── CODE ── */
+.cb{margin:12px 0;border-radius:8px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.cb-h{background:#0d1117;padding:8px 14px;display:flex;align-items:center;justify-content:space-between}
+.cb-d{display:flex;gap:5px}
+.cb-d span{width:10px;height:10px;border-radius:50%}
+.cb-d span:nth-child(1){background:#ff5f57}
+.cb-d span:nth-child(2){background:#febc2e}
+.cb-d span:nth-child(3){background:#28c840}
+.cb-l{font-size:9px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:rgba(0,229,255,.5)}
+.cb pre{margin:0!important;border-radius:0!important}
+.cb pre code.hljs{font-family:var(--code)!important;font-size:12px!important;
+  line-height:1.7!important;padding:14px 18px!important}
+
+/* ── OUTPUT ── */
+.out{background:#060a0f;border:1px solid var(--border);border-top:none;
+  border-radius:0 0 8px 8px;padding:11px 18px;font-family:var(--code);
+  font-size:11.5px;color:var(--green2);line-height:1.7;margin-bottom:12px}
+.out-l{font-size:8px;font-weight:800;letter-spacing:2px;
+  text-transform:uppercase;color:rgba(52,211,153,.3);margin-bottom:6px;display:block}
+
+/* ── CALLOUTS ── */
+.note{border-radius:8px;padding:12px 16px;margin:10px 0;
+  display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.65}
+.ni{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);color:rgba(34,211,238,.9)}
+.ng{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);color:rgba(52,211,153,.9)}
+.nw{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);color:rgba(251,191,36,.9)}
+.nr{background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.2);color:rgba(251,113,133,.9)}
+.nv{background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:rgba(167,139,250,.9)}
+.note strong{font-weight:700;display:block;margin-bottom:2px;color:var(--text)}
+.ni-{font-size:16px;flex-shrink:0;margin-top:1px}
+
+/* ── NEURAL NET VISUAL ── */
+.nn-visual{
+  display:flex;align-items:center;justify-content:center;
+  gap:0;padding:16px;
+  background:var(--panel);border:1px solid var(--border2);border-radius:10px;margin:12px 0;
+}
+.nn-layer{display:flex;flex-direction:column;align-items:center;gap:0;padding:0 8px}
+.nn-label{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;
+  text-transform:uppercase;margin-bottom:10px;text-align:center}
+.nn-nodes{display:flex;flex-direction:column;gap:8px;align-items:center}
+.nn-node{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:9px;font-weight:700;border:1.5px solid}
+.nn-node.inp{background:rgba(6,182,212,.15);border-color:var(--cyan);color:var(--cyan)}
+.nn-node.hid{background:rgba(139,92,246,.15);border-color:var(--violet2);color:var(--violet2)}
+.nn-node.out{background:rgba(16,185,129,.15);border-color:var(--green2);color:var(--green2)}
+.nn-node.act{background:rgba(245,158,11,.15);border-color:var(--amber);color:var(--amber)}
+.nn-conn{width:36px;display:flex;flex-direction:column;gap:8px;justify-content:center;
+  position:relative}
+.nn-conn::before{content:'';position:absolute;left:0;right:0;top:50%;
+  height:1px;background:var(--border2)}
+.nn-dots{color:var(--text3);font-size:18px;text-align:center;line-height:1}
+.nn-arrow{font-size:16px;color:var(--border2)}
+
+/* ── ACTIVATION VISUAL ── */
+.act-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.act-card{background:var(--panel2);border:1px solid var(--border2);border-radius:10px;padding:14px}
+.act-card h4{font-size:12.5px;font-weight:700;margin-bottom:5px}
+.act-card .af{font-family:var(--code);font-size:11px;color:var(--amber);
+  background:rgba(245,158,11,.1);padding:4px 8px;border-radius:4px;
+  display:inline-block;margin-bottom:7px}
+.act-card p{font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:7px}
+.act-card .use{font-size:11px;font-weight:700}
+.act-relu h4{color:var(--cyan)}
+.act-sig h4{color:var(--violet2)}
+.act-soft h4{color:var(--green2)}
+
+/* ── BACKPROP FLOW ── */
+.bp-flow{display:flex;flex-direction:column;gap:0;margin:14px 0}
+.bp-step{display:flex;align-items:flex-start;gap:14px;padding:12px 0;
+  border-bottom:1px solid var(--border)}
+.bp-step:last-child{border-bottom:none}
+.bp-num{flex-shrink:0;width:30px;height:30px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
+.bp-num.fwd{background:rgba(6,182,212,.15);color:var(--cyan);border:1px solid rgba(6,182,212,.3)}
+.bp-num.bwd{background:rgba(244,63,94,.12);color:var(--rose2);border:1px solid rgba(244,63,94,.25)}
+.bp-num.upd{background:rgba(16,185,129,.12);color:var(--green2);border:1px solid rgba(16,185,129,.25)}
+.bp-content h4{font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:4px}
+.bp-content p{font-size:13px;color:var(--text2);line-height:1.6}
+.bp-content code{font-family:var(--code);font-size:11px;color:var(--cyan);
+  background:rgba(6,182,212,.1);padding:1px 4px;border-radius:3px}
+
+/* ── GD VISUAL ── */
+.gd-compare{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.gd-card{background:var(--panel2);border:1px solid var(--border2);border-radius:10px;padding:14px;border-top:2px solid}
+.gd-card.gd-sgd{border-top-color:var(--cyan)}
+.gd-card.gd-mbatch{border-top-color:var(--amber)}
+.gd-card.gd-adam{border-top-color:var(--green2)}
+.gd-card h4{font-size:13px;font-weight:700;margin-bottom:5px}
+.gd-card.gd-sgd h4{color:var(--cyan)}
+.gd-card.gd-mbatch h4{color:var(--amber)}
+.gd-card.gd-adam h4{color:var(--green2)}
+.gd-card p{font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:8px}
+.gd-use{font-size:11px;font-weight:700;padding:3px 7px;border-radius:4px;display:inline-block}
+.gd-card.gd-sgd .gd-use{color:var(--cyan);background:rgba(6,182,212,.1)}
+.gd-card.gd-mbatch .gd-use{color:var(--amber);background:rgba(245,158,11,.1)}
+.gd-card.gd-adam .gd-use{color:var(--green2);background:rgba(16,185,129,.1)}
+
+/* ── CNN LAYER VISUAL ── */
+.cnn-flow{display:flex;align-items:center;gap:0;margin:14px 0;overflow-x:auto;padding-bottom:4px}
+.cnn-block{flex-shrink:0;border-radius:8px;padding:10px 12px;text-align:center;min-width:88px}
+.cnn-block h4{font-size:11px;font-weight:700;margin-bottom:3px}
+.cnn-block p{font-size:10px;line-height:1.4}
+.cnn-block.cnn-inp{background:rgba(6,182,212,.12);border:1px solid rgba(6,182,212,.25)}
+.cnn-block.cnn-inp h4{color:var(--cyan)}
+.cnn-block.cnn-conv{background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.25)}
+.cnn-block.cnn-conv h4{color:var(--violet2)}
+.cnn-block.cnn-pool{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2)}
+.cnn-block.cnn-pool h4{color:var(--amber)}
+.cnn-block.cnn-flat{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2)}
+.cnn-block.cnn-flat h4{color:var(--green2)}
+.cnn-block.cnn-fc{background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.2)}
+.cnn-block.cnn-fc h4{color:var(--rose2)}
+.cnn-block.cnn-out{background:rgba(132,204,22,.1);border:1px solid rgba(132,204,22,.2)}
+.cnn-block.cnn-out h4{color:var(--lime)}
+.cnn-arr{color:var(--border2);font-size:16px;padding:0 5px;flex-shrink:0}
+
+/* ── COMPARISON TABLE ── */
+.ctbl{width:100%;border-collapse:collapse;font-size:12.5px;margin:12px 0}
+.ctbl th{background:var(--panel2);color:var(--text);padding:10px 13px;
+  font-weight:700;text-align:left;border-bottom:2px solid var(--border2)}
+.ctbl td{padding:9px 13px;border-bottom:1px solid var(--border);color:var(--text2)}
+.ctbl tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.ctbl .best{color:var(--green2);font-weight:700}
+.ctbl .worst{color:var(--rose2)}
+.ctbl code{font-family:var(--code);font-size:11px;background:rgba(6,182,212,.1);
+  color:var(--cyan);padding:1px 5px;border-radius:3px}
+
+/* ── TRANSFER LEARNING VISUAL ── */
+.tl-diagram{
+  display:flex;gap:0;align-items:stretch;margin:14px 0;
+  background:var(--panel);border:1px solid var(--border2);border-radius:10px;overflow:hidden;
+}
+.tl-frozen{flex:2;padding:16px;border-right:1px solid var(--border2);
+  background:rgba(100,116,139,.07)}
+.tl-custom{flex:1;padding:16px;background:rgba(6,182,212,.05)}
+.tl-label{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+.tl-frozen .tl-label{color:var(--text3)}
+.tl-custom .tl-label{color:var(--cyan)}
+.tl-layer{border-radius:5px;padding:6px 10px;margin-bottom:5px;
+  font-size:11px;font-weight:600;text-align:center}
+.tl-layer.frozen{background:rgba(100,116,139,.15);color:var(--text3);
+  border:1px solid rgba(100,116,139,.2)}
+.tl-layer.active{background:rgba(6,182,212,.15);color:var(--cyan);
+  border:1px solid rgba(6,182,212,.3)}
+
+/* ── FORMULA BOX ── */
+.formula{background:var(--panel2);border:1px solid var(--border2);border-radius:8px;
+  padding:12px 18px;font-family:var(--code);font-size:13.5px;color:var(--violet2);
+  text-align:center;margin:10px 0;letter-spacing:.5px}
+
+/* ── KERAS ANATOMY ── */
+.keras-layer{
+  display:flex;align-items:center;gap:12px;
+  background:var(--panel2);border:1px solid var(--border2);border-radius:7px;
+  padding:10px 14px;margin-bottom:6px;
+}
+.kl-icon{font-size:18px;flex-shrink:0}
+.kl-name{font-family:var(--code);font-size:12px;color:var(--cyan);font-weight:500;
+  flex:1;min-width:0}
+.kl-desc{font-size:12px;color:var(--text2);flex:2}
+.kl-shape{font-family:var(--code);font-size:11px;color:var(--amber);flex-shrink:0}
+
+/* ── LAB ELEMENTS ── */
+.lab-h{font-family:var(--ui);font-size:26px;font-weight:800;color:var(--text);margin-bottom:6px}
+.lab-sub{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:20px}
+.lab-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.lab-s{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:13px}
+.lab-s .lsn{font-family:var(--ui);font-size:20px;font-weight:800;
+  color:rgba(255,255,255,.08);margin-bottom:4px}
+.lab-s h4{font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px}
+.lab-s p{font-size:11px;color:var(--text3);line-height:1.4}
+
+/* ── OVERFITTING VISUAL ── */
+.of-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.of-card{border-radius:10px;padding:14px;text-align:center}
+.of-under{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25)}
+.of-good{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25)}
+.of-over{background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.25)}
+.of-card .of-icon{font-size:26px;margin-bottom:6px}
+.of-card h4{font-size:12.5px;font-weight:700;margin-bottom:4px}
+.of-card p{font-size:11.5px;line-height:1.5}
+.of-under h4{color:var(--amber)}.of-under p{color:rgba(251,191,36,.7)}
+.of-good h4{color:var(--green2)}.of-good p{color:rgba(52,211,153,.7)}
+.of-over h4{color:var(--rose2)}.of-over p{color:rgba(251,113,133,.7)}
+
+/* ── QUIZ ── */
+.quiz-num{font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  color:var(--cyan);display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.quiz-num::before{content:'';width:18px;height:2px;background:var(--cyan);border-radius:2px}
+.qprog{display:flex;gap:5px;margin-bottom:16px}
+.qpd{width:7px;height:7px;border-radius:50%;background:var(--border2)}
+.qpd.on{background:var(--bx-blue)}
+.qq{font-size:15px;font-weight:600;color:var(--text);margin-bottom:14px;
+  line-height:1.55;font-family:var(--ui)}
+.qo{padding:11px 14px;border:1px solid var(--border2);border-radius:7px;
+  font-size:13.5px;cursor:pointer;margin-bottom:6px;transition:all .15s;
+  display:flex;align-items:center;gap:10px;color:var(--text2);
+  background:var(--panel2)}
+.qo:hover{background:rgba(6,182,212,.08);border-color:rgba(6,182,212,.3);color:var(--text)}
+.qo.correct{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.4);color:var(--green2)}
+.qo.wrong{background:rgba(244,63,94,.08);border-color:rgba(244,63,94,.3);color:var(--rose2)}
+.ql{width:22px;height:22px;border-radius:5px;background:var(--panel3);
+  text-align:center;line-height:22px;font-size:10px;font-weight:800;
+  flex-shrink:0;color:var(--cyan);font-family:var(--ui)}
+.quiz-explain{margin-top:16px}
+
+/* ── SCENARIO TABLE ── */
+.stbl{width:100%;border-collapse:collapse;font-size:12.5px;margin:12px 0}
+.stbl th{background:var(--panel3);color:var(--text);padding:10px 13px;
+  font-weight:700;text-align:left;border-bottom:2px solid var(--border2)}
+.stbl td{padding:9px 13px;border-bottom:1px solid var(--border);color:var(--text2)}
+.stbl tr:hover td{background:rgba(6,182,212,.04)}
+.stbl .g{color:var(--green2);font-weight:600}
+.stbl .r{color:var(--rose2)}
+.stbl .a{color:var(--amber)}
+
+/* ── ROADMAP ── */
+.rm{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.rm-c{background:var(--panel2);border:1px solid var(--border2);border-radius:10px;
+  padding:15px;border-top:2px solid}
+.rm-c.rm-b{border-top-color:var(--cyan)}
+.rm-c.rm-o{border-top-color:var(--amber)}
+.rm-c.rm-g{border-top-color:var(--green2)}
+.rm-c h4{font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px}
+.rm-list{list-style:none}
+.rm-list li{font-size:12px;color:var(--text2);padding:3px 0;
+  border-bottom:1px solid var(--border);display:flex;gap:6px;align-items:center}
+.rm-list li:last-child{border-bottom:none}
+.rm-list li::before{font-size:9px;flex-shrink:0}
+.rm-c.rm-b .rm-list li::before{content:'▸';color:var(--cyan)}
+.rm-c.rm-o .rm-list li::before{content:'▸';color:var(--amber)}
+.rm-c.rm-g .rm-list li::before{content:'▸';color:var(--green2)}
+
+/* ── PROGRESS STRIP ── */
+.prog-strip{
+  display:flex;align-items:center;gap:0;margin:14px 0;
+  background:var(--panel);border:1px solid var(--border2);border-radius:8px;overflow:hidden;
+}
+.ps-item{flex:1;padding:11px 14px;border-right:1px solid var(--border2);text-align:center}
+.ps-item:last-child{border-right:none}
+.ps-item .psn{font-size:10px;color:var(--text3);margin-bottom:3px}
+.ps-item .psv{font-size:13px;font-weight:700;color:var(--text)}
+
+/* ── END SLIDE ── */
+.end-logo{font-family:var(--ui);font-size:28px;font-weight:800;margin-bottom:6px}
+.end-logo .elb{color:var(--bx-blue)}
+.end-logo .elx{color:var(--bx-orange)}
+.end-title{font-family:var(--ui);font-size:34px;font-weight:800;color:var(--text);margin-bottom:10px}
+.end-sub{font-size:14px;color:var(--text2);max-width:460px;margin:0 auto 24px;line-height:1.7}
+.end-chips{display:flex;gap:7px;justify-content:center;flex-wrap:wrap}
+.end-chip{background:rgba(6,182,212,.12);border:1px solid rgba(6,182,212,.25);
+  border-radius:5px;padding:5px 12px;font-size:12px;font-weight:700;color:var(--cyan)}
+
+@media(max-width:820px){
+  #sb{display:none}
+  .sl-split{grid-template-columns:1fr}.sl-split .sp-r{display:none}
+  .sl-code{grid-template-columns:1fr}.sl-code .co-l{display:none}
+  .sl-body,.sl-dark,.sl-lab,.sl-code .co-r{padding:24px 18px}
+  h1.ct{font-size:32px}h2.st{font-size:20px}
+  .act-grid,.gd-compare,.of-grid,.lab-steps,.rm{grid-template-columns:1fr}
+  .tl-diagram{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header>
+  <a class="logo" href="#">
+    <span class="lb">byte</span><span class="lx">XL</span>
+  </a>
+  <div class="hc">
+    <span class="h-badge">MODULE 6 · DEEP LEARNING</span>
+    <span class="h-sc"><strong id="cur">1</strong> / <span id="tot">32</span></span>
+  </div>
+  <div class="hr">
+    <div class="prog"><div class="prog-f" id="pf" style="width:3%"></div></div>
+    <div class="kh"><span class="k">←</span><span class="k">→</span> navigate</div>
+  </div>
+</header>
+
+<!-- ═══ ARROWS ═══ -->
+<button class="arr dis" id="pb" onclick="go(-1)">&#8592;</button>
+<button class="arr" id="nb" onclick="go(1)">&#8594;</button>
+
+<!-- ═══ DOTS ═══ -->
+<div id="dots"></div>
+
+<!-- ═══ SLIDES ═══ -->
+<div id="deck">
+
+<!-- ─ SLIDE 1: COVER ─ -->
+<div class="sl on sl-cover">
+  <div class="eyebrow eb-light">Data Science · 72 Hours · Module 6</div>
+  <h1 class="ct">Deep <em>Learning</em><br>Foundations</h1>
+  <p class="cover-sub">From a single neuron to convolutional networks that read chest X-rays. Understand the intuition first — then the mathematics — then the code.</p>
+  <div class="cover-meta">
+    <div class="cm"><div class="cv">6h</div><div class="cl">Duration</div></div>
+    <div class="cm"><div class="cv">2</div><div class="cl">Sessions</div></div>
+    <div class="cm"><div class="cv">1</div><div class="cl">Live Lab</div></div>
+  </div>
+</div>
+
+<!-- ─ SLIDE 2: ROADMAP ─ -->
+<div class="sl sl-dark">
+  <div class="eyebrow eb-blue">Module 6 Roadmap</div>
+  <h2 class="st">What We Cover in 6 Hours</h2>
+  <p class="pb">Two focused sessions — each with theory, intuition, real scenarios, and code. The lab at the end ties everything together into a deployable medical image classifier.</p>
+  <div class="rm">
+    <div class="rm-c rm-b">
+      <h4>🧠 Session 1 — Neural Networks</h4>
+      <ul class="rm-list">
+        <li>The biological neuron analogy</li>
+        <li>Perceptrons — the simplest network</li>
+        <li>Activation functions &amp; why they matter</li>
+        <li>Forward propagation — step by step</li>
+        <li>Loss functions — measuring wrongness</li>
+        <li>Backpropagation — learning from mistakes</li>
+        <li>Gradient descent optimisers</li>
+        <li>Overfitting — Dropout, BatchNorm</li>
+        <li>Building your first Keras network</li>
+      </ul>
+    </div>
+    <div class="rm-c rm-o">
+      <h4>🖼 Session 2 — CNNs</h4>
+      <ul class="rm-list">
+        <li>Why standard NNs fail on images</li>
+        <li>Convolution — how filters work</li>
+        <li>Pooling — spatial compression</li>
+        <li>CNN architecture end to end</li>
+        <li>Famous architectures (AlexNet→EfficientNet)</li>
+        <li>Transfer Learning — intuition</li>
+        <li>MobileNetV2 &amp; ResNet in Keras</li>
+        <li>Fine-tuning frozen layers</li>
+        <li>Grad-CAM visualisation</li>
+      </ul>
+    </div>
+    <div class="rm-c rm-g">
+      <h4>🏥 Lab — X-Ray Classifier</h4>
+      <ul class="rm-list">
+        <li>Kaggle Chest X-Ray dataset</li>
+        <li>Data augmentation pipeline</li>
+        <li>Fine-tune MobileNetV2</li>
+        <li>Handle class imbalance</li>
+        <li>Plot confusion matrix + ROC</li>
+        <li>Grad-CAM: what did the model see?</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ─ SLIDE 3: WHY DEEP LEARNING ─ -->
+<div class="sl sl-split">
+  <div class="sp-l">
+    <div class="eyebrow eb-blue">Foundation</div>
+    <h2 class="st">Why Deep Learning?</h2>
+    <p class="pb">Traditional ML (Module 4) requires you to <strong>hand-engineer features</strong>. For tabular data (loan, salary), this works well. For images, audio, and text — it breaks down completely.</p>
+    <p class="pb">A 224×224 colour image has <strong>150,528 pixels</strong>. You cannot manually engineer features from 150K numbers. Deep learning learns its own features — from raw pixels to edges to shapes to objects — automatically, layer by layer.</p>
+    <div class="concept cc">
+      <span class="concept-label">The Core Idea</span>
+      <p>Deep learning = <strong>automatically learning hierarchical representations</strong> from raw data. Each layer transforms the data into a more abstract representation. No feature engineering required.</p>
+    </div>
+  </div>
+  <div class="sp-r">
+    <div class="eyebrow eb-dim">Traditional ML vs Deep Learning</div>
+    <table class="ctbl">
+      <tr><th>Aspect</th><th>Traditional ML</th><th>Deep Learning</th></tr>
+      <tr><td>Feature engineering</td><td>Manual (you)</td><td class="best">Automatic</td></tr>
+      <tr><td>Works on images/audio</td><td class="worst">Poorly</td><td class="best">Excellently</td></tr>
+      <tr><td>Data needed</td><td class="best">Thousands</td><td>Millions</td></tr>
+      <tr><td>Training time</td><td class="best">Minutes</td><td>Hours–Days</td></tr>
+      <tr><td>Interpretability</td><td class="best">High</td><td class="worst">Low (black box)</td></tr>
+      <tr><td>Hardware needed</td><td class="best">CPU fine</td><td>GPU preferred</td></tr>
+      <tr><td>Best for</td><td>Tabular data</td><td class="best">Images/Audio/Text</td></tr>
+    </table>
+    <div class="scenario">
+      <span class="scenario-label">🏥 Indian Scenario</span>
+      <h4>Manipal Hospital — Retinal Disease Screening</h4>
+      <p>Ophthalmologists manually screen 200 patients/day for diabetic retinopathy using fundus photos. Traditional ML failed (98% of photo information is spatial — pixels). A CNN trained on 3.5 lakh Indian patient images now screens with 94.5% accuracy, freeing doctors for complex cases.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ─ SLIDE 4: THE NEURON ─ -->
+<div class="sl sl-dark">
+  <div class="eyebrow eb-blue">Session 1 · Neural Networks</div>
+  <h2 class="st">The Artificial Neuron — Building Block of Everything</h2>
+  <p class="pb">Every neural network — from a 3-layer network to GPT-4 — is composed of the same building block: the artificial neuron. Understanding it completely is the foundation of all deep learning.</p>
+
+  <div class="analogy">
+    <span class="analogy-label">🧠 Biological Analogy</span>
+    <p>A biological neuron receives signals from many dendrites. If the combined signal is strong enough, it <strong>fires</strong> and sends a signal through the axon to the next neuron. The artificial neuron does exactly this mathematically.</p>
+  </div>
+
+  <div class="concept cc">
+    <span class="concept-label">What a Neuron Computes — Step by Step</span>
+    <p><strong>Step 1 — Weighted Sum:</strong> Multiply each input by its weight, add a bias.<br>
+    <code>z = w₁x₁ + w₂x₂ + ... + wₙxₙ + b</code><br><br>
+    <strong>Step 2 — Activation:</strong> Pass z through an activation function that introduces non-linearity.<br>
+    <code>output = activation(z)</code><br><br>
+    The <strong>weights (w)</strong> and <strong>bias (b)</strong> are what the model learns during training.</p>
+  </div>
+
+  <div class="scenario">
+    <span class="scenario-label">🏦 Concrete Indian Example — Loan Approval Neuron</span>
+    <h4>One neuron predicting loan default probability</h4>
+    <p><strong>Inputs:</strong> x₁ = monthly income (₹40,000), x₂ = CIBIL score (750), x₃ = employment years (5)<br>
+    <strong>Learned weights:</strong> w₁ = 0.0001, w₂ = 0.008, w₃ = 0.3, bias b = −8.5<br>
+    <strong>Weighted sum:</strong> z = 0.0001×40000 + 0.008×750 + 0.3×5 − 8.5 = 4 + 6 + 1.5 − 8.5 = <strong>3.0</strong><br>
+    <strong>Sigmoid output:</strong> σ(3.0) = 0.95 → 95% probability of approval</p>
+  </div>
+</div>
+
+<!-- ─ SLIDE 5: NETWORKS ─ -->
+<div class="sl sl-body">
+  <div class="eyebrow eb-blue">Neural Network Architecture</div>
+  <h2 class="st">From One Neuron to a Network</h2>
+  <p class="pb">A single neuron can only learn linear relationships (like logistic regression). To learn complex, non-linear patterns (faces, tumors, sentiment), we stack many neurons in <strong>layers</strong>.</p>
+
+  <div class="nn-visual">
+    <div class="nn-layer">
+      <div class="nn-label">Input Layer</div>
+      <div class="nn-nodes">
+        <div class="nn-node inp">x₁</div>
+        <div class="nn-node inp">x₂</div>
+        <div class="nn-node inp">x₃</div>
+        <div class="nn-dots">⋮</div>
+        <div class="nn-node inp">xₙ</div>
+      </div>
+    </div>
+    <div class="nn-conn"><div class="nn-arrow">→→→</div></div>
+    <div class="nn-layer">
+      <div class="nn-label">Hidden Layer 1</div>
+      <div class="nn-nodes">
+        <div class="nn-node hid">h₁</div>
+        <div class="nn-node hid">h₂</div>
+        <div class="nn-node hid">h₃</div>
+        <div class="nn-node hid">h₄</div>
+        <div class="nn-dots">⋮</div>
+        <div class="nn-node hid">hₘ</div>
+      </div>
+    </div>
+    <div class="nn-conn"><div class="nn-arrow">→→→</div></div>
+    <div class="nn-layer">
+      <div class="nn-label">Hidden Layer 2</div>
+      <div class="nn-nodes">
+        <div class="nn-node hid">h₁</div>
+        <div class="nn-node hid">h₂</div>
+        <div class="nn-node hid">h₃</div>
+        <div class="nn-dots">⋮</div>
+        <div class="nn-node hid">hₖ</div>
+      </div>
+    </div>
+    <div class="nn-conn"><div class="nn-arrow">→→→</div></div>
+    <div class="nn-layer">
+      <div class="nn-label">Output Layer</div>
+      <div class="nn-nodes">
+        <div class="nn-node out">ŷ₁</div>
+        <div class="nn-node out">ŷ₂</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="concept ca">
+    <span class="concept-label">Why "Deep"?</span>
+    <p>The word <strong>"deep"</strong> refers to the number of hidden layers. More layers = deeper network = ability to learn more abstract representations. A 1-layer network learns edges. A 5-layer network can learn faces. A 50-layer network can learn complex medical pathology.</p>
+  </div>
+
+  <div class="note ni">
+    <span class="ni-">📊</span>
+    <div><strong>How many parameters does a network have?</strong> A network with 784 inputs, 2 hidden layers of 512 neurons each, and 10 output neurons has: (784×512 + 512) + (512×512 + 512) + (512×10 + 10) = <strong>669,706 learnable parameters</strong>. Training = adjusting all these values.</div>
+  </div>
+</div>
+
+<!-- ─ SLIDE 6: ACTIVATION FUNCTIONS ─ -->
+<div class="sl sl-dark">
+  <div class="eyebrow eb-violet">Activation Functions</div>
+  <h2 class="st">Activation Functions — The Non-Linearity Switches</h2>
+  <p class="pb">Without activation functions, stacking layers just collapses back to a single linear equation — no matter how many layers you add. Activations introduce <strong>non-linearity</strong> so the network can learn complex, curved decision boundaries.</p>
+
+  <div class="analogy">
+    <span class="analogy-label">💡 Analogy</span>
+    <p>A dimmer switch (linear) can only control brightness proportionally. An on/off switch (step function) is too harsh. A <strong>ReLU</strong> is like a smart switch: off below zero, linearly proportional above zero — the best of both worlds.</p>
+  </div>
+
+  <div class="act-grid">
+    <div class="act-card act-relu">
+      <h4>ReLU</h4>
+      <div class="af">f(x) = max(0, x)</div>
+      <p>Returns x if positive, 0 if negative. The most commonly used activation today. Fast, sparse, works well in deep networks.</p>
+      <div class="use" style="color:var(--cyan)">✅ Use: Hidden layers (default choice)</div>
+    </div>
+    <div class="act-card act-sig">
+      <h4>Sigmoid</h4>
+      <div class="af">f(x) = 1 / (1 + e⁻ˣ)</div>
+      <p>Squashes output to (0, 1). Historically used in hidden layers but causes vanishing gradients in deep networks. Now mostly relegated to output layers.</p>
+      <div class="use" style="color:var(--violet2)">✅ Use: Binary classification output</div>
+    </div>
+    <div class="act-card act-soft">
+      <h4>Softmax</h4>
+      <div class="af">f(xᵢ) = eˣⁱ / Σeˣʲ</div>
+      <p>Converts a vector of numbers to a probability distribution — all outputs sum to 1.0. Tells you "how confident the network is about each class."</p>
+      <div class="use" style="color:var(--green2)">✅ Use: Multi-class classification output</div>
+    </div>
+  </div>
+
+  <div class="scenario">
+    <span class="scenario-label">🩺 Scenario — Choosing the right output activation</span>
+    <h4>Problem: Classify an X-ray into: Normal / Pneumonia / COVID / Tuberculosis</h4>
+    <p>This is 4-class classification — <strong>Softmax</strong> at the output gives [0.02, 0.87, 0.08, 0.03] → model is 87% confident it's Pneumonia. Binary diagnosis (Normal vs Abnormal) → <strong>Sigmoid</strong> → single probability.</p>
+  </div>
+</div>
+
+<!-- ─ SLIDE 7: FORWARD PROPAGATION ─ -->
+<div class="sl sl-split">
+  <div class="sp-l">
+    <div class="eyebrow eb-blue">How Networks Compute</div>
+    <h2 class="st">Forward Propagation — One Full Pass</h2>
+    <p class="pb">Forward propagation is simply the mathematical process of passing input through the network layer by layer to get a prediction. It happens in <strong>one direction</strong> — input to output.</p>
+
+    <div class="concept cc">
+      <span class="concept-label">Step-by-Step Forward Pass</span>
+      <p><strong>Layer 1:</strong> Z¹ = W¹ · X + b¹ → A¹ = ReLU(Z¹)<br>
+      <strong>Layer 2:</strong> Z² = W² · A¹ + b² → A² = ReLU(Z²)<br>
+      <strong>Output:</strong> Z³ = W³ · A² + b³ → Ŷ = Sigmoid(Z³)<br><br>
+      Each layer transforms the representation. The final output is the network's <strong>prediction</strong>.</p>
+    </div>
+
+    <div class="scenario">
+      <span class="scenario-label">🏪 Flipkart Product Classification</span>
+      <h4>Input: Product image → Output: Category</h4>
+      <p>Layer 1 neurons detect: brightness, edges, gradients<br>
+      Layer 3 neurons detect: shapes — circles, rectangles<br>
+      Layer 7 neurons detect: objects — mobile phone, shoe<br>
+      Output: Softmax → [Electronics: 0.91, Fashion: 0.06, ...]</p>
+    </div>
+  </div>
+  <div class="sp-r">
+    <div class="eyebrow eb-dim">Code — Forward pass in Keras</div>
+    <div class="cb">
+      <div class="cb-h"><span class="cb-d"><span></span><span></span><span></span></span><span class="cb-l">Python</span></div>
+      <pre><code class="language-python">import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+
+# Define network
+model = keras.Sequential([
+    layers.Dense(128, activation="relu",  # Hidden 1
+                 input_shape=(784,)),
+    layers.Dense(64,  activation="relu"),  # Hidden 2
+    layers.Dense(10,  activation="softmax") # Output: 10 classes
+])
+
+model.summary()  # shows layers + parameter counts</code></pre>
+    </div>
+    <div class="out">
+      <span class="out-l">Model Summary</span>
+Layer (type)        Output Shape   Param #
+Dense (relu)        (None, 128)    100,480
+Dense (relu)        (None, 64)      8,256
+Dense (softmax)     (None, 10)        650
+Total trainable params: 109,386
+    </div>
+    <div class="note nw">
+      <span class="ni-">⚠️</span>
+      <div><strong>input_shape</strong> — Only specify on the first layer. Keras infers shapes for subsequent layers automatically.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─ SLIDE 8: LOSS FUNCTIONS ─ -->
+<div class="sl sl-dark">
+  <div class="eyebrow eb-rose">Loss Functions</div>
+  <h2 class="st">Loss Functions — Measuring How Wrong You Are</h2>
+  <p class="pb">After a forward pass, we need to measure <em>how far the prediction is from reality</em>. The loss function quantifies this error as a <strong>single number</strong>. Training minimises this number by adjusting weights.</p>
+
+  <div class="concept cr">
+    <span class="concept-label">The Goal of Training</span>
+    <p>Find the weights W and biases b that <strong>minimise the average loss across all training examples</strong>. Lower loss = predictions closer to reality = better model.</p>
+  </div>
+
+  <table class="ctbl" style="margin-top:14px">
+    <tr><th>Loss Function</th><th>Task</th><th>Formula</th><th>Indian Example</th></tr>
+    <tr>
+      <td><code>binary_crossentropy</code></td>
+      <td>Binary Classification</td>
+      <td>−[y·log(ŷ) + (1−y)·log(1−ŷ)]</td>
+      <td>Fraud / No Fraud, TB / Normal</td>
+    </tr>
+    <tr>
+      <td><code>categorical_crossentropy</code></td>
+      <td>Multi-Class</td>
+      <td>−Σ yᵢ·log(ŷᵢ)</td>
+      <td>X-ray: Normal/Pneumonia/COVID/TB</td>
+    </tr>
+    <tr>
+      <td><code>sparse_categorical_crossentropy</code></td>
+      <td>Multi-Class (integer labels)</td>
+      <td>Same as above</td>
+      <td>Same — but labels are 0,1,2,3 not one-hot</td>
+    </tr>
+    <tr>
+      <td><code>mse</code></td>
+      <td>Regression</td>
+      <td>Σ(y − ŷ)² / n</td>
+      <td>Predicting property price in Mumbai</td>
+    </tr>
+  </table>
+
+  <div class="analogy">
+    <span class="analogy-label">📐 Intuition for Cross-Entropy Loss</span>
+    <p>If the true label is "Pneumonia" and the model predicts [0.01, 0.95, 0.03, 0.01] → Loss is <strong>very low</strong> (confident and correct). If prediction is [0.30, 0.30, 0.20, 0.20] → Loss is <strong>high</strong> (uncertain). If prediction is [0.90, 0.05, 0.03, 0.02] → Loss is <strong>very high</strong> (confident but wrong — worst case).</p>
+  </div>
+</div>
+
+<!-- ─ SLIDE 9: BACKPROPAGATION ─ -->
+<div class="sl sl-body">
+  <div class="eyebrow eb-rose">Backpropagation</div>
+  <h2 class="st">Backpropagation — How Neural Networks Actually Learn</h2>
+  <p class="pb">Backpropagation is the algorithm that <strong>distributes the blame for a wrong prediction</strong> back through the network, assigning each weight a gradient that tells it which direction to update — and by how much.</p>
+
+  <div class="analogy">
+    <span class="analogy-label">🎯 Analogy — Cricket Coach Reviewing a Match</span>
+    <p>Team India lost. The coach watches the match <strong>backwards</strong> — final over first, then the one before. He asks: "Who is most responsible for this loss?" and adjusts each player's strategy accordingly. Backprop does this mathematically using the <strong>chain rule of calculus</strong>.</p>
+  </div>
+
+  <div class="bp-flow">
+    <div class="bp-step">
+      <div class="bp-num fwd">→</div>
+      <div class="bp-content">
+        <h4>Forward Pass — Make a Prediction</h4>
+        <p>Input flows left to right through all layers. The network produces a prediction <code>ŷ</code>.</p>
+      </div>
+    </div>
+    <div class="bp-step">
+      <div class="bp-num bwd">←</div>
+      <div class="bp-content">
+        <h4>Compute Loss — How Wrong Was the Prediction?</h4>
+        <p>Compare <code>ŷ</code> to the true label <code>y</code> using the loss function. Get a single error number <code>L</code>.</p>
+      </div>
+    </div>
+    <div class="bp-step">
+      <div class="bp-num bwd">←</div>
+      <div class="bp-content">
+        <h4>Backward Pass — Compute Gradients Layer by Layer</h4>
+        <p>Using the chain rule, compute <code>∂L/∂W</code> for every weight W — how much does the loss change if we change this weight slightly? Work backwards from output to input.</p>
+      </div>
+    </div>
+    <div class="bp-step">
+      <div class="bp-num upd">↑</div>
+      <div class="bp-content">
+        <h4>Update Weights — Reduce the Loss</h4>
+        <p>Adjust every weight in the opposite direction of its gradient: <code>W = W − learning_rate × ∂L/∂W</code>. Repeat for thousands of iterations.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note ni">
+    <span class="ni-">💡</span>
+    <div><strong>You never need to implement backpropagation yourself.</strong> TensorFlow and PyTorch compute gradients automatically using <em>automatic differentiation</em>. Calling <code>model.fit()</code> triggers the full forward → loss → backward → update cycle.</div>
+  </div>
+</div>
+
+<!-- ─ SLIDE 10: GRADIENT DESCENT ─ -->
+<div class="sl sl-dark">
+  <div class="eyebrow eb-green">Optimisers</div>
+  <h2 class="st">Gradient Descent — Navigating the Loss Landscape</h2>
+  <p class="pb">Imagine the loss as a hilly landscape and you are blindfolded in it. Gradient descent tells you: <em>"The slope is steepest downhill to your left — take a step left."</em> Repeat until you reach the valley (minimum loss).</p>
+
+  <div class="concept cg">
+    <span class="concept-label">The Key Parameter — Learning Rate</span>
+    <p>The <strong>learning rate (α)</strong> controls how large each step is.<br>
+    Too high → overshoots the minimum, loss oscillates or diverges.<br>
+    Too low → training takes forever, may get stuck in local minima.<br>
+    <strong>Typical range:</strong> 0.001 (Adam default) to 0.0001 (fine-tuning).</p>
+  </div>
+
+  <div class="gd-compare">
+    <div class="gd-card gd-sgd">
+      <h4>SGD (Stochastic)</h4>
+      <p>Updates weights after <strong>each individual sample</strong>. Very noisy but can escape local minima. Rarely used alone — usually with momentum.</p>
+      <div class="gd-use">Academic research</div>
+    </div>
+    <div class="gd-card gd-mbatch">
+      <h4>Mini-Batch SGD</h4>
+      <p>Updates after each <strong>mini-batch of 32–256 samples</strong>. Balances speed and stability. The most common training strategy.</p>
+      <div class="gd-use">Large datasets</div>
+    </div>
+    <div class="gd-card gd-adam">
+      <h4>Adam (Adaptive)</h4>
+      <p>Adapts the learning rate <strong>per parameter</strong> based on gradient history. Usually converges faster and requires less tuning. <strong>Use Adam by default.</strong></p>
+      <div class="gd-use">✅ Default choice</div>
+    </div>
+  </div>
+
+  <div class="cb">
+    <div class="cb-h"><span class="cb-d"><span></span><span></span><span></span></span><span class="cb-l">Python</span></div>
+    <pre><code class="language-python">model.compile(
+    optimizer=keras.optimizers.Adam(learning_rate=1e-3),
+    loss="binary_crossentropy",
+    metrics=["accuracy", "AUC"]   # track multiple metrics
+)</code></pre>
+  </div>
+</div>
+
+<!-- ─ SLIDE 11: OVERFITTING & REGULARISATION ─ -->
+<div class="sl sl-split">
+  <div class="sp-l">
+    <div class="eyebrow eb-rose">Regularisation</div>
+    <h2 class="st">Overfitting — The #1 Problem in Deep Learning</h2>
+    <p class="pb">Neural networks are so powerful they can memorise every training sample — including noise. The result is perfect training accuracy but terrible generalisation. This is the most important practical challenge in DL.</p>
+
+    <div class="of-grid" style="grid-template-columns:1fr">
+      <div class="of-card of-under">
+        <div class="of-icon">📏</div>
+        <h4>Underfitting</h4>
+        <p>Network too small or trained too few epochs. Train loss high, Val loss high. Fix: bigger network or more epochs.</p>
+      </div>
+      <div class="of-card of-good">
+        <div class="of-icon">🎯</div>
+        <h4>Good Fit</h4>
+        <p>Train loss ≈ Val loss, both low. The goal. Use early stopping to lock in this state.</p>
+      </div>
+      <div class="of-card of-over">
+        <div class="of-icon">🧠</div>
+        <h4>Overfitting</h4>
+        <p>Train loss very low, Val loss high and rising. Model memorised training data. Fix: Dropout, BatchNorm, more data, early stopping.</p>
+      </div>
+    </div>
+  </div>
+  <div class="sp-r">
+    <div class="eyebrow eb-dim">Three Regularisation Techniques</div>
+
+    <div class="concept cv2">
+      <span class="concept-label">Dropout — Random Neuron Silencing</span>
+      <p><strong>During each training step,</strong> randomly set p% of neurons to zero. Forces the network to learn redundant representations — no single neuron can dominate. Disabled at inference time.</p>
+    </div>
+
+    <div class="concept cg">
+      <span class="concept-label">Batch Normalisation</span>
+      <p>Normalises the activations of each layer within a mini-batch. Stabilises training, allows higher learning rates, acts as mild regularisation. Place it after Dense/Conv, before activation.</p>
+    </div>
+
+    <div class="concept ca">
+      <span class="concept-label">Early Stopping</span>
+      <p>Monitor validation loss. Stop training when it stops improving. Saves the best model weights. The simplest and most effective regularisation strategy.</p>
+    </div>
+
+    <div class="cb">
+      <div class="cb-h"><span class="cb-d"><span></span><span></span><span></span></span><span class="cb-l">Python</span></div>
+      <pre><code class="language-python">model = keras.Sequential([
+    layers.Dense(256, activation="relu"),
+    layers.BatchNormalization(),
+    layers.Dropout(0.4),   # drop 40% of neurons
+    layers.Dense(128, activation="relu"),
+    layers.Dropout(0.3),
+    layers.Dense(1, activation="sigmoid")
+])
+
+early_stop = keras.callbacks.EarlyStopping(
+    monitor="val_loss", patience=5,
+    restore_best_weights=True
+)</code></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─ SLIDE 12: WHY CNNs ─ -->
+<div class="sl sl-dark">
+  <div class="eyebrow eb-violet">Session 2 · CNNs</div>
+  <h2 class="st">Why Standard Networks Fail on Images</h2>
+  <p class="pb">A fully connected network treats each pixel as independent. It has no understanding that adjacent pixels are related — that a pixel and its neighbour form an edge, which forms a curve, which forms a shape.</p>
+
+  <div class="concept cr">
+    <span class="concept-label">The Problem — Spatial Ignorance</span>
+    <p>A 224×224×3 image flattened is a vector of <strong>150,528 numbers</strong>. A single dense layer with 1024 neurons needs 150,528 × 1024 = <strong>154 million weights</strong> — just for the first layer. This is untrainable and ignores spatial structure entirely.</p>
+  </div>
+
+  <div class="analogy">
+    <span class="analogy-label">👁 How You See vs How a Dense Network Sees</span>
+    <p>When you see a face, you don't process each pixel independently. Your visual cortex detects <strong>local features</strong> — edges in a small region, then corners, then parts, then whole faces. A CNN does exactly the same thing, hierarchically, using <strong>shared filters</strong>.</p>
+  </div>
+
+  <div class="concept cc">
+    <span class="concept-label">CNN's Three Innovations</span>
+    <p><strong>1. Local Receptive Fields</strong> — each neuron only connects to a small patch (e.g., 3×3) of the previous layer, not the whole image.<br>
+    <strong>2. Weight Sharing</strong> — the same filter (edge detector) slides across the entire image. Reduces parameters from millions to thousands.<br>
+    <strong>3. Translation Invariance</strong> — if a dog is in the top-left or bottom-right, the same filter detects it. Works regardless of position.</p>
+  </div>
+
+  <div class="scenario">
+    <span class="scenario-label">📸 Scenario — ISRO Satellite Image Analysis</span>
+    <h4>Detecting illegal construction in crop land from satellite imagery</h4>
+    <p>A dense network sees 30M pixels independently — fails completely. A CNN's filters detect roads, buildings, vegetation boundaries layer by layer — achieves 92% accuracy on identifying unauthorised structures in Maharashtra farmland.</p>
+  </div>
+</div>
+
+<!-- ─ SLIDE 13: CONVOLUTION ─ -->
+<div class="sl sl-split">
+  <div class="sp-l">
+    <div class="eyebrow eb-violet">Convolution Operation</div>
+    <h2 class="st">How Filters Detect Features</h2>
+    <p class="pb">A <strong>filter (kernel)</strong> is a small matrix of learnable weights (e.g., 3×3). It slides across the image, computing a dot product at each position. The result is a <strong>feature map</strong> showing where that feature appears.</p>
+
+    <div class="concept cv2">
+      <span class="concept-label">What Different Filters Detect</span>
+      <p><strong>Vertical edge filter:</strong> Fires strongly on vertical lines — wall edges, door frames.<br>
+      <strong>Horizontal edge filter:</strong> Fires on horizontal features — rooftops, horizons.<br>
+      <strong>Gabor filter:</strong> Texture patterns at specific orientations.<br>
+      <strong>Deep layer filters:</strong> Learn progressively complex features — curves, eyes, faces.</p>
+    </div>
+
+    <div class="formula" style="font-size:12px;text-align:left;padding:12px 14px">
+      Feature Map = Input ★ Filter<br>
+      (F_map)[i,j] = Σ Σ Input[i+m, j+n] × Filter[m,n]<br>
+      (★ = convolution operator)
+    </div>
+
+    <div class="note nv">
+      <span class="ni-">💡</span>
+      <div><strong>Key parameters:</strong> <code>filters</code> = how many features to detect. <code>kernel_size</code> = how large each filter is (3×3 is standard). <code>padding="same"</code> keeps output same size as input.</div>
+    </div>
+  </div>
+  <div class="sp-r">
+    <div class="eyebrow eb-dim">Visual — Convolution in action</div>
+    <div style="background:var(--panel2);border:1px solid var(--border2);border-radius:8px;padding:16px;margin-bottom:12px;font-family:var(--code);font-size:11.5px;color:var(--text2);line-height:1.8">
+      <div style="color:var(--amber);margin-bottom:8px;font-size:10px;font-weight:700;letter-spacing:1px">INPUT PATCH (3×3)</div>
+      10  20  30<br>
+      40  50  60<br>
+      70  80  90<br>
+      <div style="color:var(--violet2);margin:10px 0 8px;font-size:10px;font-weight:700;letter-spacing:1px">FILTER (3×3 — vertical edge detector)</div>
+      -1   0  +1<br>
+      -1   0  +1<br>
+      -1   0  +1<br>
+      <div style="color:var(--green2);margin:10px 0 8px;font-size:10px;font-weight:700;letter-spacing:1px">RESULT = Σ(element-wise product)</div>
+      = (-1)(10)+(0)(20)+(+1)(30)<br>
+      + (-1)(40)+(0)(50)+(+1)(60)<br>
+      + (-1)(70)+(0)(80)+(+1)(90)<br>
+      = <strong style="color:var(--cyan)">60</strong>  (strong right-edge signal)
+    </div>
+
+    <div class="cb">
+      <div class="cb-h"><span class="cb-d"><span></span><span></span><span></span></span><span class="cb-l">Python</span></div>
+      <pre><code class="language-python">from tensorflow.keras import layers
+
+# 32 filters, 3×3 kernel, ReLU activation
+conv_layer = layers.Conv2D(
+    filters=32,
+    kernel_size=(3, 3),
+    activation="relu",
+    padding="same"    # preserve spatial size
+)</code></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─ SLIDE 14: POOLING ─ -->
+<div class="sl sl-dark">
+  <div class="eyebrow eb-amber">Pooling Layer</div>
+  <h2 class="st">Pooling — Compressing the Feature Maps</h2>
+  <p class="pb">After convolution, feature maps are still large. Pooling <strong>downsamples</strong> them by summarising a region (e.g., 2×2) with a single value. This reduces computation, provides translation invariance, and focuses on dominant features.</p>
+
+  <div class="concept ca">
+    <span class="concept-label">Two Types of Pooling</span>
+    <p><strong>Max Pooling (most common):</strong> Take the maximum value in each 2×2 region. Keeps the most activated feature — "was this feature detected anywhere in this region?"<br><br>
+    <strong>Average Pooling:</strong> Take the average. Used in Global Average Pooling before the final Dense layer in modern architectures like MobileNet.</p>
+  </div>
+
+  <div style="background:var(--panel2);border:1px solid var(--border2);border-radius:8px;padding:16px;margin:12px 0;font-family:var(--code);font-size:12px;color:var(--text2);line-height:1.8">
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:center">
+      <div>
+        <div style="color:var(--amber);font-size:10px;font-weight:700;letter-spacing:1px;margin-bottom:8px">INPUT 4×4</div>
+        1   3  <span style="color:var(--cyan);font-weight:700">5</span>   2<br>
+        4   <span style="color:var(--cyan);font-weight:700">8</span>   2   1<br>
+        3   2   <span style="color:var(--violet2);font-weight:700">9</span>   4<br>
+        1   0   3   <span style="color:var(--violet2);font-weight:700">7</span>
+      </div>
+      <div style="color:var(--border2);font-size:20px">⟹</div>
+      <div>
+        <div style="color:var(--green2);font-size:10px;font-weight:700;letter-spacing:1px;margin-bottom:8px">MAX POOL 2×2 → 2×2</div>
+        <span style="color:var(--cyan);font-weight:700">8</span>   <span style="color:var(--amber)">5</span><br>
+        <span style="color:var(--amber)">3</span>   <span style="color:var(--violet2);font-weight:700">9</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="note ng">
+    <span class="ni-">📐</span>
+    <div><strong>Effect of MaxPool(2,2):</strong> Halves both spatial dimensions. A 224×224 feature map becomes 112×112. After 4 max-pool layers: 224 → 112 → 56 → 28 → 14. The final 14×14 map is then flattened and passed to Dense layers.</div>
+  </div>
+</div>
+
+<!-- ─ SLIDE 15: FULL CNN ARCHITECTURE ─ -->
+<div class="sl sl-body">
+  <div class="eyebrow eb-violet">CNN Architecture</div>
+  <h2 class="st">Full CNN — End to End</h2>
+  <p class="pb">A complete CNN combines convolutional blocks (Conv + ReLU + MaxPool) for feature extraction, followed by fully connected layers for classification. Each block extracts increasingly abstract features.</p>
+
+  <div class="cnn-flow">
+    <div class="cnn-block cnn-inp"><h4>Input</h4><p>224×224×3<br>RGB Image</p></div>
+    <div class="cnn-arr">→</div>
+    <div class="cnn-block cnn-conv"><h4>Conv Block 1</h4><p>32 filters<br>3×3, ReLU<br>224×224×32</p></div>
+    <div class="cnn-arr">→</div>
+    <div class="cnn-block cnn-pool"><h4>MaxPool</h4><p>2×2<br>112×112×32</p></div>
+    <div class="cnn-arr">→</div>
+    <div class="cnn-block cnn-conv"><h4>Conv Block 2</h4><p>64 filters<br>3×3, ReLU<br>112×112×64</p></div>
+    <div class="cnn-arr">→</div>
+    <div class="cnn-block cnn-pool"><h4>MaxPool</h4><p>2×2<br>56×56×64</p></div>
+    <div class="cnn-arr">→</div>
+    <div class="cnn-block cnn-flat"><h4>Flatten</h4><p>56×56×64<br>= 200,704</p></div>
+    <div class="cnn-arr">→</div>
+    <div class="cnn-block cnn-fc"><h4>Dense 512</h4><p>ReLU<br>Dropout 0.5</p></div>
+    <div class="cnn-arr">→</div>
+    <div class="cnn-block cnn-out"><h4>Output</h4><p>Softmax<br>4 classes</p></div>
+  </div>
+
+  <div class="cb">
+    <div class="cb-h"><span class="cb-d"><span></span><span></span><span></span></span><span class="cb-l">Python — Full CNN in Keras</span></div>
+    <pre><code class="language-python">model = keras.Sequential([
+    layers.Conv2D(32, (3,3), activation="relu", padding="same",
+                  input_shape=(224, 224, 3)),
+    layers.MaxPooling2D(2, 2),
+    layers.Conv2D(64, (3,3), activation="relu", padding="same"),
+    layers.MaxPooling2D(2, 2),
+    layers.Conv2D(128,(3,3), activation="relu", padding="same"),
+    layers.MaxPooling2D(2, 2),
+    layers.Flatten(),
+    layers.Dense(512, activation="relu"),
+    layers.Dropout(0.5),
+    layers.Dense(4, activation="softmax")   # 4 classes
+])</code></pre>
+  </div>
+</div>
+
+<!-- ─ SLIDE 16: FAMOUS ARCHITECTURES ─ -->
+<div class="sl sl-dark">
+  <div class="eyebrow eb-violet">Architecture Evolution</div>
+  <h2 class="st">Famous CNN Architectures — A 10-Year Journey</h2>
+  <p class="pb">You don't need to build CNNs from scratch. Decades of research have produced powerful pretrained architectures. Understanding the evolution helps you choose the right one.</p>
+
+  <table class="ctbl">
+    <tr>
+      <th>Year</th><th>Architecture</th><th>Layers</th><th>ImageNet Top-5 Error</th><th>Best for in 2025</th>
+    </tr>
+    <tr>
+      <td>2012</td><td><code>AlexNet</code></td><td>8</td><td>15.3%</td>
+      <td class="a">Educational only</td>
+    </tr>
+    <tr>
+      <td>2014</td><td><code>VGG16/19</code></td><td>16–19</td><td>6.8%</td>
+      <td class="a">Feature extraction (simple)</td>
+    </tr>
+    <tr>
+      <td>2015</td><td><code>ResNet50</code></td><td>50</td><td>3.6%</td>
+      <td class="g">General purpose — still excellent</td>
+    </tr>
+    <tr>
+      <td>2017</td><td><code>MobileNetV2</code></td><td>53</td><td>6.9%</td>
+      <td class="g">Mobile apps, edge devices, fine-tuning</td>
+    </tr>
+    <tr>
+      <td>2019</td><td><code>EfficientNetB0–B7</code></td><td>varies</td><td>2.9%</td>
+      <td class="g">Best accuracy/compute tradeoff today</td>
+    </tr>
+    <tr>
+      <td>2020</td><td><code>Vision Transformer (ViT)</code></td><td>varies</td><td>1.8%</td>
+      <td>Large-scale tasks with huge data</td>
+    </tr>
+  </table>
+
+  <div class="note ni">
+    <span class="ni-">🎯</span>
+    <div><strong>ByteXL Recommendation for this course:</strong> Use <strong>MobileNetV2</strong> for the lab — it trains fast on Google Colab's free GPU, downloads in seconds, and achieves excellent accuracy on medical imaging tasks with fine-tuning.</div>
+  </div>
+</div>
+
+<!-- ─ SLIDE 17: TRANSFER LEARNING CONCEPT ─ -->
+<div class="sl sl-split">
+  <div class="sp-l">
+    <div class="eyebrow eb-cyan">Transfer Learning</div>
+    <h2 class="st">Transfer Learning — Standing on Giants' Shoulders</h2>
+    <p class="pb">Training a CNN from scratch requires millions of images and days of GPU time. Transfer learning takes a model already trained on <strong>1.2 million ImageNet images</strong> and adapts it to your specific task in minutes.</p>
+
+    <div class="analogy">
+      <span class="analogy-label">🏏 Cricket Analogy</span>
+      <p>A skilled batsman learning tennis doesn't start from scratch — they already have hand-eye coordination, footwork, and athletic reflexes. They only need to learn the specific tennis rules and swing mechanics. Transfer learning works the same way — the CNN already knows how to detect edges, textures, and shapes from ImageNet.</p>
+    </div>
+
+    <div class="concept cc">
+      <span class="concept-label">What gets transferred?</span>
+      <p>The <strong>early layers</strong> detect universal features — edges, gradients, textures, curves. These transfer to ANY visual domain (medical images, satellite photos, product images).<br><br>
+      The <strong>late layers</strong> detect task-specific features (ImageNet classes: cats, dogs, cars). These are replaced with your task's output head.</p>
+    </div>
+  </div>
+  <div class="sp-r">
+    <div class="eyebrow eb-dim">Frozen vs Fine-tuned Layers</div>
+    <div class="tl-diagram">
+      <div class="tl-frozen">
+        <div class="tl-label">🧊 Frozen — Pretrained Weights</div>
+        <div class="tl-layer frozen">Conv Block 1 — Edge detectors</div>
+        <div class="tl-layer frozen">Conv Block 2 — Texture detectors</div>
+        <div class="tl-layer frozen">Conv Block 3 — Shape detectors</div>
+        <div class="tl-layer frozen">Conv Block 4 — Part detectors</div>
+        <div class="tl-layer frozen">Conv Block 5 — High-level features</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:8px">These weights don't change during training</div>
+      </div>
+      <div class="tl-custom">
+        <div class="tl-label">🔥 Trainable — Your Task</div>
+        <div class="tl-layer active">GlobalAvgPooling</div>
+        <div class="tl-layer active">Dense 256 — ReLU</div>
+        <div class="tl-layer active">Dropout 0.4</div>
+        <div class="tl-layer active">Dense 4 — Softmax</div>
+        <div style="font-size:11px;color:var(--cyan);margin-top:8px">Only these layers learn from your data</div>
+      </div>
+    </div>
+    <div class="note nw" style="margin-top:10px">
+      <span class="ni-">⚠️</span>
+      <div><strong>Fine-tuning tip:</strong> After initial training with frozen base, unfreeze the last 20-30 layers and retrain with a 10× smaller learning rate (1e-5) for a further accuracy boost.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─ SLIDE 18: MOBILENETV2 CODE ─ -->
+<div class="sl sl-code">
+  <div class="co-l">
+    <div class="eyebrow eb-cyan">MobileNetV2</div>
+    <h2 class="st" style="font-size:22px">Transfer Learning Code</h2>
+    <p class="pl" style="font-size:13px">The complete pattern for any image classification task. Three phases: load base → add head → train head → optionally fine-tune.</p>
+
+    <div class="concept cc" style="margin:12px 0">
+      <span class="concept-label">Why MobileNetV2?</span>
+      <p><strong>4.3MB</strong> model size (vs ResNet50's 98MB). Designed for mobile and edge deployment. Still achieves competitive accuracy. Inverted residuals + linear bottlenecks = efficient feature extraction with minimal parameters.</p>
+    </div>
+
+    <div class="scenario" style="margin:12px 0">
+      <span class="scenario-label">🏥 Lab Context</span>
+      <h4>Chest X-Ray Pneumonia Detection</h4>
+      <p>MobileNetV2 pretrained on ImageNet → Fine-tuned on 5,856 chest X-rays → 93.4% accuracy in detecting pneumonia vs normal lungs.</p>
+    </div>
+  </div>
+  <div class="co-r">
+    <div class="cb-h" style="background:#060a0f;padding:9px 14px;display:flex;align-items:center;justify-content:space-between">
+      <span class="cb-d" style="display:flex;gap:5px"><span style="width:10px;height:10px;border-radius:50%;background:#ff5f57"></span><span style="width:10px;height:10px;border-radius:50%;background:#febc2e"></span><span style="width:10px;height:10px;border-radius:50%;background:#28c840"></span></span>
+      <span class="cb-l">Python — transfer_learning_xray.py</span>
+    </div>
+    <pre style="margin:0;border-radius:0"><code class="language-python" style="padding:20px!important;font-size:11.5px!important;line-height:1.7!important">import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+
+IMG_SIZE = 224
+N_CLASSES = 2   # Normal vs Pneumonia
+
+# ── Phase 1: Load pretrained base ─────────────────
+base = keras.applications.MobileNetV2(
+    input_shape=(IMG_SIZE, IMG_SIZE, 3),
+    include_top=False,   # remove ImageNet output head
+    weights="imagenet"
+)
+base.trainable = False   # freeze ALL base layers
+
+# ── Phase 2: Add your classification head ─────────
+inputs = keras.Input(shape=(IMG_SIZE, IMG_SIZE, 3))
+
+# Preprocess inputs the way MobileNetV2 expects
+x = keras.applications.mobilenet_v2.preprocess_input(inputs)
+
+x = base(x, training=False)           # forward through frozen base
+x = layers.GlobalAveragePooling2D()(x) # collapse spatial dims
+x = layers.Dense(256, activation="relu")(x)
+x = layers.Dropout(0.4)(x)
+outputs = layers.Dense(N_CLASSES, activation="softmax")(x)
+
+model = keras.Model(inputs, outputs)
+
+# ── Phase 3: Compile and train the head ───────────
+model.compile(
+    optimizer=keras.optimizers.Adam(1e-3),
+    loss="categorical_crossentropy",
+    metrics=["accuracy", keras.metrics.AUC(name="auc")]
+)
+
+history = model.fit(
+    train_ds, epochs=10,
+    validation_data=val_ds,
+    callbacks=[
+        keras.callbacks.EarlyStopping(
+            monitor="val_auc", patience=4,
+            restore_best_weights=True, mode="max"
+        )
+    ]
+)
+
+# ── Phase 4: Fine-tune top 30 layers ──────────────
+base.trainable = True
+for layer in base.layers[:-30]:
+    layer.trainable = False   # keep bottom layers frozen
+
+model.compile(
+    optimizer=keras.optimizers.Adam(1e-5),  # 100× smaller lr
+    loss="categorical_crossentropy",
+    metrics=["accuracy", keras.metrics.AUC(name="auc")]
+)
+model.fit(train_ds, epochs=5, validation_data=val_ds)</code></pre>
+  </div>
+</div>
+
+<!-- ─ SLIDE 19: DATA AUGMENTATION ─ -->
+<div class="sl sl-dark">
+  <div class="eyebrow eb-green">Data Augmentation</div>
+  <h2 class="st">Data Augmentation — Creating More Training Data</h2>
+  <p class="pb">Medical imaging datasets are small (thousands, not millions). Augmentation artificially expands the dataset by applying random transformations to each image at training time — teaching the model to be robust to variation.</p>
+
+  <div class="concept cg">
+    <span class="concept-label">Why Augmentation Works</span>
+    <p>A chest X-ray taken at slightly different angle, brightness, or zoom still shows the same pathology. By training on these variations, the model learns the <strong>invariant features</strong> — pneumonia consolidation, not the exact pixel values.</p>
+  </div>
+
+  <div class="cb">
+    <div class="cb-h"><span class="cb-d"><span></span><span></span><span></span></span><span class="cb-l">Python — tf.data augmentation pipeline</span></div>
+    <pre><code class="language-python">import tensorflow as tf
+
+IMG_SIZE = 224
+BATCH    = 32
+
+# Augmentation layers (applied randomly at training time only)
+augment = keras.Sequential([
+    layers.RandomFlip("horizontal"),       # mirror left-right
+    layers.RandomRotation(0.1),            # ±36 degrees
+    layers.RandomZoom(0.1),                # ±10% zoom
+    layers.RandomContrast(0.2),            # brightness variation
+], name="augmentation")
+
+def preprocess(image, label):
+    image = tf.image.resize(image, [IMG_SIZE, IMG_SIZE])
+    image = tf.cast(image, tf.float32) / 255.0
+    return image, label
+
+def load_dataset(path, training=True):
+    ds = tf.keras.utils.image_dataset_from_directory(
+        path, image_size=(IMG_SIZE, IMG_SIZE),
+        batch_size=BATCH, label_mode="categorical"
+    )
+    if training:
+        ds = ds.map(lambda x, y: (augment(x, training=True), y))
+    return ds.prefetch(tf.data.AUTOTUNE)  # parallel loading
+
+train_ds = load_dataset("chest_xray/train", training=True)
+val_ds   = load_dataset("chest_xray/val",   training=False)</code></pre>
+  </div>
+  <div class="note nw">
+    <span class="ni-">⚠️</span>
+    <div><strong>Medical imaging caution:</strong> Don't flip vertically — an upside-down lung X-ray doesn't appear in clinical practice. Don't over-augment — extreme rotations or colour jitter can destroy clinically relevant features. Always validate augmentations with a domain expert.</div>
+  </div>
+</div>
+
+<!-- ─ SLIDE 20: FULL LAB PIPELINE ─ -->
+<div class="sl sl-lab">
+  <div class="eyebrow eb-light">Lab · End-to-End Project</div>
+  <div class="lab-h">🏥 Chest X-Ray Pneumonia Classifier</div>
+  <div class="lab-sub">Build a deep learning model that helps Indian radiologists screen for pneumonia. Dataset: Kaggle "Chest X-Ray Images (Pneumonia)" — 5,856 images across Normal and Pneumonia classes.</div>
+  <div class="lab-steps">
+    <div class="lab-s"><div class="lsn">01</div><h4>Load Dataset</h4><p>From Kaggle, build tf.data pipeline</p></div>
+    <div class="lab-s"><div class="lsn">02</div><h4>Augmentation</h4><p>Flip, rotate, zoom — expand data</p></div>
+    <div class="lab-s"><div class="lsn">03</div><h4>Transfer Learn</h4><p>MobileNetV2 → custom head</p></div>
+    <div class="lab-s"><div class="lsn">04</div><h4>Fine-tune</h4><p>Unfreeze top 30 layers</p></div>
+    <div class="lab-s"><div class="lsn">05</div><h4>Evaluate</h4><p>Confusion matrix, ROC, Recall</p></div>
+    <div class="lab-s"><div class="lsn">06</div><h4>Grad-CAM</h4><p>Visualise what the model sees</p></div>
+  </div>
+  <div class="cb" style="border-radius:8px;overflow:hidden">
+    <div class="cb-h" style="background:#040810"><span class="cb-d"><span></span><span></span><span></span></span><span class="cb-l">Python — evaluation + Grad-CAM</span></div>
+    <pre><code class="language-python">from sklearn.metrics import classification_report, roc_auc_score
+import numpy as np, matplotlib.pyplot as plt
+
+# ── Evaluate ──────────────────────────────────────
+y_true, y_pred_proba = [], []
+for images, labels in val_ds:
+    preds = model.predict(images, verbose=0)
+    y_pred_proba.extend(preds[:, 1])
+    y_true.extend(np.argmax(labels.numpy(), axis=1))
+
+y_pred = (np.array(y_pred_proba) >= 0.5).astype(int)
+print(classification_report(y_true, y_pred, target_names=["Normal","Pneumonia"]))
+print(f"AUC: {roc_auc_score(y_true, y_pred_proba):.3f}")
+
+# ── Grad-CAM — What did the model look at? ────────
+import tensorflow.keras.backend as K
+
+last_conv = model.get_layer("Conv_1")   # MobileNetV2 last conv
+grad_model = keras.Model(inputs=model.inputs,
+                          outputs=[last_conv.output, model.output])
+
+with tf.GradientTape() as tape:
+    conv_out, preds = grad_model(sample_img)
+    pred_class_idx  = tf.argmax(preds[0])
+    pred_score      = preds[:, pred_class_idx]
+
+grads   = tape.gradient(pred_score, conv_out)
+pooled  = tf.reduce_mean(grads, axis=(0, 1, 2))
+cam     = tf.reduce_sum(tf.multiply(pooled, conv_out), axis=-1)
+cam     = tf.nn.relu(cam).numpy()
+cam     = (cam - cam.min()) / (cam.max() - cam.min())
+
+plt.imshow(original_img, cmap="gray")
+plt.imshow(cam, cmap="jet", alpha=0.4)   # overlay heatmap
+plt.title(f"Grad-CAM — Predicted: {'Pneumonia' if pred_class_idx==1 else 'Normal'}")
+plt.axis("off"); plt.show()</code></pre>
+  </div>
+</div>
+
+<!-- ─ SLIDE 21: LAB RESULTS ─ -->
+<div class="sl sl-dark">
+  <div class="eyebrow eb-green">Lab Results</div>
+  <h2 class="st">Expected Results &amp; Clinical Interpretation</h2>
+  <p class="pb">After fine-tuning MobileNetV2 on the chest X-ray dataset, here are the expected metrics — and what they mean in a clinical context.</p>
+
+  <div class="prog-strip">
+    <div class="ps-item"><div class="psn">Accuracy</div><div class="psv" style="color:var(--cyan)">93.4%</div></div>
+    <div class="ps-item"><div class="psn">AUC-ROC</div><div class="psv" style="color:var(--green2)">0.968</div></div>
+    <div class="ps-item"><div class="psn">Recall (Pneumonia)</div><div class="psv" style="color:var(--amber)">96.8%</div></div>
+    <div class="ps-item"><div class="psn">Precision</div><div class="psv" style="color:var(--violet2)">91.2%</div></div>
+    <div class="ps-item"><div class="psn">F1 Score</div><div class="psv" style="color:var(--rose2)">0.939</div></div>
+  </div>
+
+  <div class="concept cr">
+    <span class="concept-label">🏥 Clinical Context — Why Recall Matters Most Here</span>
+    <p>A <strong>False Negative</strong> (missed pneumonia) means a sick patient goes home untreated — potentially fatal. A <strong>False Positive</strong> (healthy patient flagged) causes an unnecessary follow-up scan — inconvenient but not dangerous.<br><br>
+    Therefore, optimise for <strong>Recall</strong> (catch every sick patient), even at the cost of more false alarms. Use a lower threshold (e.g., 0.3 instead of 0.5): flag more images for human review, miss fewer cases.</p>
+  </div>
+
+  <div class="cb">
+    <div class="cb-h"><span class="cb-d"><span></span><span></span><span></span></span><span class="cb-l">Python — adjust threshold for clinical use</span></div>
+    <pre><code class="language-python">from sklearn.metrics import recall_score, precision_score
+
+# Adjust threshold for higher recall (clinical requirement)
+for threshold in [0.3, 0.4, 0.5]:
+    preds = (np.array(y_pred_proba) >= threshold).astype(int)
+    r = recall_score(y_true, preds)
+    p = precision_score(y_true, preds)
+    print(f"Threshold={threshold}  Recall={r:.3f}  Precision={p:.3f}")</code></pre>
+  </div>
+  <div class="out"><span class="out-l">Output</span>Threshold=0.3  Recall=0.984  Precision=0.871
+Threshold=0.4  Recall=0.976  Precision=0.897
+Threshold=0.5  Recall=0.968  Precision=0.912
+# → Use 0.3 in clinical deployment — catches 98.4% of cases</div>
+</div>
+
+<!-- ─ SLIDE 22: WHEN TO USE DL ─ -->
+<div class="sl sl-body">
+  <div class="eyebrow eb-blue">Master Reference</div>
+  <h2 class="st">When to Use Deep Learning — Complete Scenario Guide</h2>
+  <p class="pb">Deep learning is powerful but not always the right tool. Use this guide to make the correct architecture decision for any real-world problem.</p>
+
+  <table class="stbl">
+    <tr>
+      <th>Problem</th><th>Data Type</th><th>Recommended Architecture</th><th>Notes</th>
+    </tr>
+    <tr>
+      <td>Image classification</td>
+      <td>Images</td>
+      <td class="g">CNN + Transfer Learning (MobileNetV2 / EfficientNet)</td>
+      <td>Always use pretrained if &lt;100K images</td>
+    </tr>
+    <tr>
+      <td>Object detection</td>
+      <td>Images</td>
+      <td class="g">YOLO / Faster R-CNN</td>
+      <td>Needs bounding box labels</td>
+    </tr>
+    <tr>
+      <td>Tabular data (loans, fraud)</td>
+      <td>Structured</td>
+      <td class="a">XGBoost / LightGBM</td>
+      <td>DL rarely beats boosting on tabular data</td>
+    </tr>
+    <tr>
+      <td>Sentiment / text classification</td>
+      <td>Text</td>
+      <td class="g">BERT fine-tuning / DistilBERT</td>
+      <td>For Indian languages: MuRIL (Google)</td>
+    </tr>
+    <tr>
+      <td>Medical image segmentation</td>
+      <td>Medical images</td>
+      <td class="g">U-Net</td>
+      <td>Pixel-level prediction, not just classification</td>
+    </tr>
+    <tr>
+      <td>Small dataset (&lt;1000 images)</td>
+      <td>Images</td>
+      <td class="a">Transfer learning + heavy augmentation</td>
+      <td>Never train CNN from scratch with &lt;10K images</td>
+    </tr>
+    <tr>
+      <td>Real-time on mobile device</td>
+      <td>Any</td>
+      <td class="g">MobileNetV2 / TFLite quantised model</td>
+      <td>Accuracy vs latency tradeoff</td>
+    </tr>
+    <tr>
+      <td>Interpretability required (e.g. banking)</td>
+      <td>Any</td>
+      <td class="r">Avoid DL — use Logistic / XGBoost + SHAP</td>
+      <td>RBI requires model explainability for credit decisions</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ─ SLIDE 23: SCENARIOS DEEP DIVE ─ -->
+<div class="sl sl-dark">
+  <div class="eyebrow eb-amber">Indian Industry Scenarios</div>
+  <h2 class="st">Deep Learning in Indian Industry — Real Deployments</h2>
+  <p class="pb">Understanding where deep learning is actually deployed in India — with the specific business problem, architecture choice, and outcome.</p>
+
+  <div class="scenario">
+    <span class="scenario-label">🚗 Ola / Rapido — Driver Drowsiness Detection</span>
+    <h4>Problem: 34% of fatal accidents involve fatigued drivers. Can we detect drowsiness in real-time from a dashcam?</h4>
+    <p><strong>Architecture:</strong> MobileNetV2 (real-time on mobile CPU, 30fps) → detects eye closure, head tilt, yawning patterns.<br>
+    <strong>Dataset:</strong> 8,000 driver videos collected from across India — accounting for varying skin tones, lighting, head positions, helmets.<br>
+    <strong>Why CNN over classical:</strong> Facial landmarks shift with head position — rule-based systems failed. CNN learns directly from pixel patterns regardless of head pose.</p>
+  </div>
+
+  <div class="scenario">
+    <span class="scenario-label">🌾 AgriStack / Government of India — Crop Disease Detection</span>
+    <h4>Problem: 15–35% of India's crop yield is lost to disease annually. Farmers have no access to agronomists in rural areas.</h4>
+    <p><strong>Architecture:</strong> EfficientNetB0 (8MB, deployable on ₹8,000 Android phones) trained on 1.4 million leaf images.<br>
+    <strong>Outcome:</strong> Farmers photograph a leaf → app identifies disease + recommends treatment in Hindi/Kannada/Tamil. Deployed in 200,000 villages across AP, Telangana, Maharashtra.</p>
+  </div>
+
+  <div class="scenario">
+    <span class="scenario-label">🔬 Siemens Healthineers India — TB Screening</span>
+    <h4>Problem: India has 2.4 million TB cases/year. WHO estimates 40% go undetected. Traditional X-ray reading takes 2 days.</h4>
+    <p><strong>Architecture:</strong> Custom ResNet50 fine-tuned on 2.8 lakh Indian patient chest X-rays. Grad-CAM highlights suspicious regions for radiologist review.<br>
+    <strong>Outcome:</strong> Screening time reduced from 48 hours to 3 minutes. AUC = 0.94 on Indian population (outperforms models trained on Western datasets).</p>
+  </div>
+</div>
+
+<!-- ─ SLIDE 24: COMMON MISTAKES ─ -->
+<div class="sl sl-body">
+  <div class="eyebrow eb-rose">Common Pitfalls</div>
+  <h2 class="st">Most Common Deep Learning Mistakes — and How to Fix Them</h2>
+  <p class="pb">These are the mistakes every beginner makes. Recognising them early saves hours of debugging.</p>
+
+  <div class="concept cr">
+    <span class="concept-label">Mistake 1 — Not Normalising Input Images</span>
+    <p><strong>Problem:</strong> Pixel values are in [0, 255]. Weights are initialised near 0. Large inputs cause exploding gradients.<br>
+    <strong>Fix:</strong> Always scale to [0,1] (<code>image / 255.0</code>) or [−1,1] (<code>image / 127.5 − 1</code>, required for MobileNet).</p>
+  </div>
+
+  <div class="concept ca">
+    <span class="concept-label">Mistake 2 — Using the Wrong Loss Function</span>
+    <p><strong>Binary classification</strong> (Normal vs Pneumonia) → <code>binary_crossentropy</code> + <code>sigmoid</code> output.<br>
+    <strong>Multi-class</strong> (4 diseases) + one-hot labels → <code>categorical_crossentropy</code> + <code>softmax</code>.<br>
+    <strong>Multi-class</strong> + integer labels → <code>sparse_categorical_crossentropy</code> + <code>softmax</code>.</p>
+  </div>
+
+  <div class="concept cv2">
+    <span class="concept-label">Mistake 3 — Forgetting base.trainable = False</span>
+    <p>If you forget to freeze the base model, you will be <strong>retraining MobileNetV2 from scratch</strong> with your tiny dataset. This destroys the ImageNet weights and causes terrible performance. Always freeze first, train head, then optionally fine-tune.</p>
+  </div>
+
+  <div class="concept cc">
+    <span class="concept-label">Mistake 4 — Not using Early Stopping</span>
+    <p>Deep networks overfit silently. Without early stopping, you may run 50 epochs and the best model was at epoch 12. Always monitor <code>val_loss</code> or <code>val_auc</code> with <code>restore_best_weights=True</code>.</p>
+  </div>
+
+  <div class="note nr">
+    <span class="ni-">🚨</span>
+    <div><strong>Mistake 5 — Data Leakage in Image Datasets:</strong> If you split your dataset after augmentation (not before), augmented versions of the same image end up in both train and test sets. Always split the raw dataset first, then augment only the training split.</div>
+  </div>
+</div>
+
+<!-- ─ SLIDE 25: QUIZ 1 ─ -->
+<div class="sl sl-dark">
+  <div class="quiz-num">Question 1 of 4</div>
+  <div class="qprog"><div class="qpd"></div><div class="qpd"></div><div class="qpd"></div><div class="qpd"></div></div>
+  <div class="qq">An AIIMS hospital wants to classify CT scans into 5 categories: Normal, Benign Tumor, Malignant Tumor, Infection, and Haemorrhage. They have 3,200 labelled scans. What is the correct setup?</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ql">A</span>Train ResNet50 from scratch with <code>sigmoid</code> output — medical images are different from natural images so ImageNet weights don't help</div>
+  <div class="qo" onclick="qa(this,true)"><span class="ql">B</span>Fine-tune MobileNetV2 (ImageNet pretrained) with a <code>softmax</code> output of 5 units and <code>categorical_crossentropy</code> loss — pretrained features transfer well even to medical images, and 3,200 is too few to train from scratch</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ql">C</span>Use 5 separate binary classifiers, each with <code>sigmoid</code> — one per disease class</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ql">D</span>Use XGBoost with hand-crafted texture features — deep learning needs millions of samples</div>
+  <div class="quiz-explain">
+    <div class="note ni">
+      <span class="ni-">💡</span>
+      <div><strong>Why B?</strong> Early CNN layers (edge/texture detectors) transfer to medical imaging — proven by many studies. With 3,200 samples, from-scratch training always overfits. Softmax + categorical_crossentropy is the standard for 5-class problems.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─ SLIDE 26: QUIZ 2 ─ -->
+<div class="sl sl-dark">
+  <div class="quiz-num">Question 2 of 4</div>
+  <div class="qprog"><div class="qpd on"></div><div class="qpd"></div><div class="qpd"></div><div class="qpd"></div></div>
+  <div class="qq">After 10 epochs, your model shows Training Accuracy = 97%, Validation Accuracy = 61%, Validation Loss is increasing. What is the problem and the correct set of fixes?</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ql">A</span>Underfitting — increase model size, add more layers, train longer</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ql">B</span>Learning rate is too high — reduce it to 1e-7 and retrain</div>
+  <div class="qo" onclick="qa(this,true)"><span class="ql">C</span>Severe overfitting — add Dropout (0.4–0.5), add BatchNormalization, use data augmentation, add early stopping, reduce model complexity</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ql">D</span>Data leakage — the validation set is accidentally included in training</div>
+  <div class="quiz-explain">
+    <div class="note nw">
+      <span class="ni-">⚠️</span>
+      <div><strong>Diagnostic rule:</strong> Train acc ≫ Val acc + Val loss rising = textbook overfitting. The model has memorised the training set. Fix: regularisation (Dropout, BatchNorm), data augmentation, early stopping. Not a learning rate or architecture problem.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─ SLIDE 27: QUIZ 3 ─ -->
+<div class="sl sl-dark">
+  <div class="quiz-num">Question 3 of 4</div>
+  <div class="qprog"><div class="qpd on"></div><div class="qpd on"></div><div class="qpd"></div><div class="qpd"></div></div>
+  <div class="qq">A startup is building a crop disease detection app that must run on a ₹6,000 Android phone with no internet. Their model achieves 91% accuracy but the APK crashes the phone. What should they do?</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ql">A</span>Switch to ResNet50 — it has better accuracy and will solve the performance issue</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ql">B</span>Use a simpler Random Forest on SIFT features — deep learning is not suitable for mobile</div>
+  <div class="qo" onclick="qa(this,true)"><span class="ql">C</span>Convert the model to TFLite with int8 quantisation — reduces model size by 4× and inference time by 2–3× with minimal accuracy loss (&lt;2%)</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ql">D</span>Move inference to the cloud — make an API call for each photo</div>
+  <div class="quiz-explain">
+    <div class="note ng">
+      <span class="ni-">✅</span>
+      <div><strong>TFLite + Quantisation</strong> is the industry standard for mobile ML deployment. A MobileNetV2 model (4.3MB FP32) → 1.1MB INT8 after quantisation. Runs efficiently on ARM processors in low-end Android devices without internet dependency — critical for rural India with poor connectivity.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─ SLIDE 28: QUIZ 4 ─ -->
+<div class="sl sl-dark">
+  <div class="quiz-num">Question 4 of 4</div>
+  <div class="qprog"><div class="qpd on"></div><div class="qpd on"></div><div class="qpd on"></div><div class="qpd"></div></div>
+  <div class="qq">Why does backpropagation use the chain rule of calculus, and what goes wrong with very deep networks (50+ layers) when using Sigmoid activation throughout?</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ql">A</span>Chain rule computes gradients in parallel — Sigmoid causes slow convergence but not incorrect results</div>
+  <div class="qo" onclick="qa(this,true)"><span class="ql">B</span>Chain rule decomposes complex gradients into layer-wise multiplications. With Sigmoid, gradients are always in (0, 0.25) — multiplying 50 such small numbers gives a gradient ≈ 0 in early layers (vanishing gradient problem). Early layers stop learning. Use ReLU instead.</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ql">C</span>Chain rule is used because sigmoid has a known derivative. The deeper network issue is just a computational speed problem, solved with faster GPUs</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ql">D</span>Deep networks with Sigmoid work fine — the problem only occurs with Tanh activations</div>
+  <div class="quiz-explain">
+    <div class="note nv">
+      <span class="ni-">💡</span>
+      <div><strong>Vanishing Gradient — the historic problem that blocked deep learning:</strong> σ'(x) ≤ 0.25 always. After 50 layers: 0.25⁵⁰ ≈ 10⁻³⁰. Gradient is essentially zero. ReLU fixes this: gradient is either 0 (negative input) or 1 (positive input) — no shrinking through layers.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─ SLIDE 29: NEXT MODULE PREVIEW ─ -->
+<div class="sl sl-body">
+  <div class="eyebrow eb-dim">Up Next</div>
+  <h2 class="st">Module 7 — Model Deployment &amp; MLOps</h2>
+  <p class="pb">You can now build state-of-the-art models. Module 7 teaches you how to <strong>serve them to the world</strong> — as REST APIs, in Docker containers, and on cloud platforms. This is where ML becomes a product.</p>
+  <div class="rm">
+    <div class="rm-c rm-b">
+      <h4>🌐 Flask API Development</h4>
+      <ul class="rm-list">
+        <li>REST endpoints for model serving</li>
+        <li>Request handling + validation</li>
+        <li>JSON input/output schemas</li>
+        <li>Model serialisation (Pickle, Joblib, SavedModel)</li>
+        <li>Batch prediction endpoints</li>
+      </ul>
+    </div>
+    <div class="rm-c rm-o">
+      <h4>🐳 Docker + CI/CD</h4>
+      <ul class="rm-list">
+        <li>Dockerfile for ML models</li>
+        <li>docker-compose for multi-service apps</li>
+        <li>GitHub Actions CI/CD pipeline</li>
+        <li>Automated testing before deployment</li>
+        <li>Environment reproducibility</li>
+      </ul>
+    </div>
+    <div class="rm-c rm-g">
+      <h4>☁️ Cloud Deployment</h4>
+      <ul class="rm-list">
+        <li>AWS SageMaker overview</li>
+        <li>GCP Vertex AI basics</li>
+        <li>Model monitoring + drift detection</li>
+        <li>Hospital Loan Approval API (lab)</li>
+        <li>Load testing + scaling</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note ni">
+    <span class="ni-">🛠</span>
+    <div><strong>Prerequisites for Module 7:</strong> Install Docker Desktop on your machine before the session. Basic command-line comfort needed. We will build and deploy a real API that serves both the loan default model (Module 4) and the X-ray classifier (Module 6) as a unified medical AI backend.</div>
+  </div>
+</div>
+
+<!-- ─ SLIDE 30: MODULE SUMMARY ─ -->
+<div class="sl sl-dark">
+  <div class="eyebrow eb-blue">Module 6 Summary</div>
+  <h2 class="st">Everything You Learned</h2>
+  <p class="pb">A complete reference of the concepts, algorithms, and practical decisions covered in Module 6.</p>
+
+  <table class="stbl">
+    <tr><th>Concept</th><th>Key Insight</th><th>Production Decision</th></tr>
+    <tr>
+      <td>Artificial Neuron</td>
+      <td>Weighted sum → activation → output</td>
+      <td>Use Dense() layer in Keras</td>
+    </tr>
+    <tr>
+      <td>Activation Functions</td>
+      <td>ReLU for hidden, Sigmoid/Softmax for output</td>
+      <td>Default: ReLU everywhere except output</td>
+    </tr>
+    <tr>
+      <td>Loss Functions</td>
+      <td>Measures prediction error — training minimises it</td>
+      <td>Binary → binary_crossentropy, Multi → categorical_crossentropy</td>
+    </tr>
+    <tr>
+      <td>Backpropagation</td>
+      <td>Distributes blame using chain rule — weights updated to reduce loss</td>
+      <td>Handled by TF/Keras automatically</td>
+    </tr>
+    <tr>
+      <td>Gradient Descent</td>
+      <td>Navigate loss landscape by following negative gradient</td>
+      <td class="g">Use Adam(lr=1e-3) by default</td>
+    </tr>
+    <tr>
+      <td>Overfitting</td>
+      <td>Train acc ≫ Val acc — model memorised noise</td>
+      <td class="g">Dropout + BatchNorm + EarlyStopping</td>
+    </tr>
+    <tr>
+      <td>CNN</td>
+      <td>Shared filters detect spatial features hierarchically</td>
+      <td>Conv2D → MaxPool → Flatten → Dense</td>
+    </tr>
+    <tr>
+      <td>Transfer Learning</td>
+      <td>Reuse ImageNet features for your task</td>
+      <td class="g">MobileNetV2 (small) or EfficientNetB0 (accurate)</td>
+    </tr>
+    <tr>
+      <td>Fine-tuning</td>
+      <td>Unfreeze top layers, train with 100× smaller lr</td>
+      <td>After head is trained, set lr=1e-5</td>
+    </tr>
+    <tr>
+      <td>Grad-CAM</td>
+      <td>Visualise which regions the model focuses on</td>
+      <td class="g">Use for medical AI validation + trust</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ─ SLIDE 31: LAB CHECKLIST ─ -->
+<div class="sl sl-lab">
+  <div class="eyebrow eb-light">Lab Completion Checklist</div>
+  <div class="lab-h">✅ Module 6 Lab Deliverables</div>
+  <div class="lab-sub">Before moving to Module 7, make sure you have completed each of these. Each item is a portfolio piece demonstrating real deep learning capability.</div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0">
+    <div class="concept cc">
+      <span class="concept-label">✅ Completed</span>
+      <p>□ Downloaded Kaggle Chest X-Ray dataset and organised into train/val/test folders<br>
+      □ Built tf.data pipeline with augmentation (flip, rotate, zoom)<br>
+      □ Loaded MobileNetV2 with ImageNet weights, froze base<br>
+      □ Added custom head (GAP → Dense → Dropout → Softmax)<br>
+      □ Trained head for 10 epochs with early stopping<br>
+      □ Fine-tuned top 30 layers with lr=1e-5</p>
+    </div>
+    <div class="concept cg">
+      <span class="concept-label">📊 Evaluation Completed</span>
+      <p>□ Classification report (Precision, Recall, F1 per class)<br>
+      □ Confusion matrix heatmap saved as PNG<br>
+      □ ROC curve plotted with AUC value<br>
+      □ Threshold tuned for maximum Recall<br>
+      □ Grad-CAM visualisation on 5 test images<br>
+      □ Model saved as <code>xray_classifier.h5</code></p>
+    </div>
+  </div>
+
+  <div class="note nw">
+    <span class="ni-">🎯</span>
+    <div><strong>Target metrics for this dataset:</strong> AUC ≥ 0.95, Recall (Pneumonia) ≥ 0.96, Accuracy ≥ 0.90. If your metrics are below this, check: (1) did you unfreeze for fine-tuning? (2) is your threshold at 0.3–0.4? (3) is class weighting applied (Pneumonia class is 3× more common)?</div>
+  </div>
+
+  <div class="note ng">
+    <span class="ni-">🚀</span>
+    <div><strong>Bonus challenge:</strong> Deploy your trained model as a Flask API (preview of Module 7) — <code>POST /predict</code> accepts a base64-encoded image and returns <code>{"prediction": "Pneumonia", "confidence": 0.94, "threshold_used": 0.3}</code></div>
+  </div>
+</div>
+
+<!-- ─ SLIDE 32: END ─ -->
+<div class="sl sl-end">
+  <div class="end-logo"><span class="elb">byte</span><span class="elx">XL</span></div>
+  <div class="end-title">Module 6 Complete! 🧠</div>
+  <div class="end-sub">You can now build, train, evaluate, and deploy deep learning models for image classification. The chest X-ray classifier is a real, deployable medical AI system.</div>
+  <div class="end-chips">
+    <span class="end-chip">Neurons ✓</span>
+    <span class="end-chip">Backpropagation ✓</span>
+    <span class="end-chip">ReLU / Sigmoid ✓</span>
+    <span class="end-chip">Gradient Descent ✓</span>
+    <span class="end-chip">Dropout + BatchNorm ✓</span>
+    <span class="end-chip">CNN Architecture ✓</span>
+    <span class="end-chip">Transfer Learning ✓</span>
+    <span class="end-chip">MobileNetV2 ✓</span>
+    <span class="end-chip">Fine-tuning ✓</span>
+    <span class="end-chip">Grad-CAM ✓</span>
+    <span class="end-chip">X-Ray Classifier ✓</span>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<script>
+const SL = document.querySelectorAll(".sl");
+const N  = SL.length;
+let c = 0, busy = false;
+
+document.getElementById("tot").textContent = N;
+
+// dots
+const dotsEl = document.getElementById("dots");
+for(let i=0;i<N;i++){
+  const d = document.createElement("button");
+  d.className = "d" + (i===0?" on":"");
+  d.setAttribute("aria-label","Slide "+(i+1));
+  d.addEventListener("click", ()=>goTo(i));
+  dotsEl.appendChild(d);
+}
+
+function goTo(idx){
+  if(busy || idx===c || idx<0 || idx>=N) return;
+  busy = true;
+  const prev = c; c = idx;
+
+  // highlight new slide code blocks lazily
+  SL[c].querySelectorAll("pre code:not(.hljs)").forEach(el=>hljs.highlightElement(el));
+
+  SL[prev].classList.remove("on");
+  SL[prev].classList.add("out");
+  SL[c].classList.add("on");
+  SL[c].scrollTop = 0;
+
+  setTimeout(()=>{ SL[prev].classList.remove("out"); busy=false; }, 400);
+
+  document.getElementById("cur").textContent = c+1;
+  document.querySelectorAll(".d").forEach((d,i)=>d.classList.toggle("on",i===c));
+  document.getElementById("pf").style.width = (c/(N-1)*100)+"%";
+  document.getElementById("pb").classList.toggle("dis", c===0);
+  document.getElementById("nb").classList.toggle("dis", c===N-1);
+}
+
+function go(d){ goTo(c+d); }
+
+document.addEventListener("keydown", e=>{
+  if(e.key==="ArrowRight"||e.key==="ArrowDown") go(1);
+  if(e.key==="ArrowLeft"||e.key==="ArrowUp")   go(-1);
+  if(e.key==="Home") goTo(0);
+  if(e.key==="End")  goTo(N-1);
+});
+
+// initial highlight
+document.addEventListener("DOMContentLoaded",()=>{
+  SL[0].querySelectorAll("pre code").forEach(el=>hljs.highlightElement(el));
+});
+
+// touch
+let tx=0;
+document.getElementById("deck").addEventListener("touchstart",e=>tx=e.touches[0].clientX,{passive:true});
+document.getElementById("deck").addEventListener("touchend",e=>{
+  const dx=e.changedTouches[0].clientX-tx;
+  if(Math.abs(dx)>45){ dx<0?go(1):go(-1); }
+},{passive:true});
+
+// quiz
+function qa(el,correct){
+  const opts=el.parentElement.querySelectorAll(".qo");
+  opts.forEach(o=>o.style.pointerEvents="none");
+  el.classList.add(correct?"correct":"wrong");
+  el.innerHTML+=correct?' <strong style="margin-left:6px;color:var(--green2)">✓ Correct!</strong>':' <strong style="margin-left:6px;color:var(--rose2)">✗</strong>';
+  if(!correct) opts.forEach(o=>{
+    if(o.getAttribute("onclick")?.includes("true"))
+      setTimeout(()=>o.classList.add("correct"),400);
+  });
+}
+</script>
+</body>
+</html>

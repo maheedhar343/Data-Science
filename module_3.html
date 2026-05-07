@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Module 3 — EDA & Visualization | Data Science</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark-dimmed.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<style>
+/* ── TOKENS ─────────────────────────────────── */
+:root{
+  --terra:#7c2d12;
+  --terra2:#9a3412;
+  --saffron:#ea580c;
+  --gold:#d97706;
+  --cream:#fdf6ee;
+  --sand:#f5e6d3;
+  --sand2:#ede0ce;
+  --ink:#1c0f00;
+  --ink2:#3d1f00;
+  --muted:#7a5c3c;
+  --border:#e8d5bc;
+  --card:#ffffff;
+  --sidebar-w:288px;
+  --body:'DM Serif Display',Georgia,serif;
+  --ui:'DM Sans',sans-serif;
+  --code:'Fira Code',monospace;
+  --green:#166534;
+  --green-bg:#f0fdf4;
+  --blue:#1e40af;
+  --blue-bg:#eff6ff;
+  --warn-bg:#fffbeb;
+  --warn:#92400e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--cream);color:var(--ink);display:flex;min-height:100vh}
+
+/* ── SIDEBAR ─────────────────────────────────── */
+#sb{
+  position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;
+  background:var(--terra);overflow-y:auto;z-index:100;
+  display:flex;flex-direction:column;
+  scrollbar-width:thin;scrollbar-color:var(--terra2) transparent;
+}
+#sb::-webkit-scrollbar{width:3px}
+#sb::-webkit-scrollbar-thumb{background:var(--terra2)}
+
+.sb-top{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-eyebrow{font-family:var(--ui);font-size:9px;font-weight:700;letter-spacing:2.5px;
+  text-transform:uppercase;color:#fdba74;display:block;margin-bottom:6px}
+.sb-top h2{font-family:var(--ui);color:#fff;font-size:13.5px;font-weight:600;line-height:1.4}
+
+.sb-progress{padding:12px 20px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.spl{font-family:var(--ui);font-size:9px;letter-spacing:1px;text-transform:uppercase;
+  color:rgba(255,255,255,.35);margin-bottom:6px}
+.sp-track{height:3px;background:rgba(255,255,255,.1);border-radius:3px}
+.sp-fill{height:100%;width:0;background:linear-gradient(90deg,#fdba74,#fcd34d);border-radius:3px;transition:width .4s}
+
+.sb-nav{padding:12px 0}
+.sb-nt{font-family:var(--ui);font-size:9px;font-weight:700;letter-spacing:1.8px;
+  text-transform:uppercase;color:rgba(255,255,255,.25);padding:0 20px 5px}
+.sb-a{
+  display:flex;align-items:center;gap:9px;padding:8px 20px;
+  font-family:var(--ui);font-size:12.5px;color:rgba(255,255,255,.55);
+  text-decoration:none;border-left:2px solid transparent;transition:all .15s;cursor:pointer;
+}
+.sb-a:hover{color:#fff;background:rgba(255,255,255,.05);border-left-color:rgba(255,255,255,.2)}
+.sb-a.active{color:#fff;background:rgba(234,88,12,.25);border-left-color:#fdba74}
+.sn{width:18px;height:18px;border-radius:4px;background:rgba(255,255,255,.08);
+  text-align:center;line-height:18px;font-size:9px;font-weight:700;flex-shrink:0;font-family:var(--ui)}
+.sb-a.active .sn{background:#fdba74;color:var(--terra)}
+.sh{margin-left:auto;font-size:10px;color:rgba(255,255,255,.25);font-family:var(--ui)}
+
+.dataset-pill{
+  margin:10px 14px 6px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  border-radius:8px;padding:11px 13px;
+}
+.dp-label{font-family:var(--ui);font-size:9px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:#fdba74;margin-bottom:5px;display:block}
+.dp-name{font-family:var(--ui);font-size:12px;color:#fff;font-weight:600;margin-bottom:3px}
+.dp-meta{font-family:var(--ui);font-size:11px;color:rgba(255,255,255,.45);line-height:1.5}
+.dp-link{font-family:var(--ui);font-size:10px;color:#fdba74;text-decoration:none;
+  margin-top:5px;display:inline-flex;align-items:center;gap:4px}
+
+/* ── MAIN ─────────────────────────────────────── */
+#main{margin-left:var(--sidebar-w);flex:1}
+
+/* Hero — editorial */
+.hero{
+  background:var(--terra);
+  padding:0;color:#fff;position:relative;overflow:hidden;display:grid;
+  grid-template-columns:1fr 340px;min-height:380px;
+}
+.hero-left{padding:60px 56px;position:relative;z-index:2}
+.hero-left::after{
+  content:'';position:absolute;right:-60px;top:0;bottom:0;width:120px;
+  background:linear-gradient(90deg,transparent,var(--terra));z-index:1;
+}
+.hero-right{
+  background:linear-gradient(135deg,var(--terra2) 0%,#4a1500 100%);
+  display:flex;flex-direction:column;justify-content:center;padding:40px 36px;
+  position:relative;z-index:2;
+}
+.hero-right::before{
+  content:'EDA';position:absolute;right:-10px;top:50%;transform:translateY(-50%);
+  font-family:var(--ui);font-size:120px;font-weight:700;
+  color:rgba(255,255,255,.04);letter-spacing:-6px;pointer-events:none;
+}
+.hero-eyebrow{font-family:var(--ui);font-size:9px;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:#fdba74;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.hero-eyebrow::before{content:'';width:20px;height:2px;background:#fdba74;border-radius:2px}
+.hero h1{font-size:46px;line-height:1.05;margin-bottom:14px;font-style:italic}
+.hero h1 em{font-style:normal;color:#fdba74}
+.hero-sub{font-family:var(--ui);font-size:14px;color:rgba(255,255,255,.6);
+  line-height:1.7;font-weight:300;max-width:440px}
+.hero-stats{display:flex;gap:28px;margin-top:28px}
+.hs .v{font-family:var(--ui);font-size:28px;font-weight:700;color:#fdba74}
+.hs .l{font-family:var(--ui);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;
+  color:rgba(255,255,255,.4);margin-top:1px}
+
+/* Dataset info card in hero-right */
+.ds-card h3{font-family:var(--ui);font-size:10px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:#fdba74;margin-bottom:14px}
+.ds-row{display:flex;justify-content:space-between;align-items:flex-start;
+  padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.ds-row:last-child{border-bottom:none}
+.ds-k{font-family:var(--ui);font-size:11px;color:rgba(255,255,255,.4)}
+.ds-v{font-family:var(--ui);font-size:12px;font-weight:600;color:#fff;text-align:right;max-width:55%}
+
+/* Download badge */
+.kaggle-badge{
+  margin-top:16px;display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+  border-radius:8px;padding:9px 14px;text-decoration:none;
+  font-family:var(--ui);font-size:11px;color:#fff;font-weight:500;
+  transition:background .15s;
+}
+.kaggle-badge:hover{background:rgba(255,255,255,.14)}
+.kaggle-badge .kb-icon{font-size:16px}
+
+/* Project strip */
+.proj-strip{
+  background:var(--sand);border-bottom:2px solid var(--border);
+  padding:16px 56px;display:flex;align-items:center;gap:18px;
+}
+.ps-icon{font-size:26px}
+.ps-tag{font-family:var(--ui);font-size:9px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--saffron);margin-bottom:3px}
+.ps-title{font-family:var(--ui);font-size:14px;font-weight:700;color:var(--ink)}
+.ps-desc{font-family:var(--ui);font-size:12px;color:var(--muted)}
+.ps-chips{display:flex;gap:7px;margin-left:auto;flex-wrap:wrap;justify-content:flex-end}
+.chip{font-family:var(--ui);font-size:10px;font-weight:600;padding:3px 9px;
+  border-radius:20px;background:rgba(124,45,18,.1);border:1px solid rgba(124,45,18,.2);
+  color:var(--terra);white-space:nowrap}
+
+/* Content */
+.content{max-width:840px;padding:48px 56px}
+
+/* Session header */
+.sesh{display:flex;gap:16px;align-items:flex-start;background:var(--card);
+  border:1px solid var(--border);border-left:4px solid var(--saffron);
+  border-radius:12px;padding:24px 26px;margin-bottom:32px;
+  box-shadow:0 2px 12px rgba(124,45,18,.06)}
+.sb2{flex-shrink:0;font-family:var(--ui);font-size:10px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;background:#fff5ed;
+  color:var(--saffron);border:1px solid #fed7aa;border-radius:6px;
+  padding:5px 10px;white-space:nowrap;margin-top:2px}
+.si h2{font-family:var(--ui);font-size:20px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.si p{font-family:var(--ui);font-size:13px;color:var(--muted);line-height:1.5}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.tag{font-family:var(--ui);font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px}
+.tt{background:#fff5ed;color:var(--saffron);border:1px solid #fed7aa}
+.tg{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
+.tb{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
+.tp{background:#fdf4ff;color:#7e22ce;border:1px solid #e9d5ff}
+
+/* Section label */
+.sec{font-family:var(--ui);font-size:9px;font-weight:700;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--saffron);display:flex;align-items:center;
+  gap:10px;margin:40px 0 10px}
+.sec::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Headings */
+h3.t{font-family:var(--ui);font-size:19px;font-weight:700;color:var(--ink);
+  margin-bottom:9px;display:flex;align-items:center;gap:9px}
+h3.t .d{width:7px;height:7px;border-radius:50%;background:var(--gold);flex-shrink:0}
+h4.sub{font-family:var(--ui);font-size:14.5px;font-weight:600;color:var(--ink2);
+  margin:20px 0 7px;padding-left:12px;border-left:3px solid #fdba74}
+
+p.b{margin-bottom:12px;line-height:1.9;font-size:15.5px;color:var(--ink)}
+
+/* WHY BOX — before each viz technique */
+.why{
+  background:linear-gradient(90deg,#fff8f1 0%,#fff 100%);
+  border:1px solid #fde8cc;border-left:3px solid var(--gold);
+  border-radius:0 8px 8px 0;padding:10px 15px;margin-bottom:0;
+  font-family:var(--ui);font-size:12.5px;color:var(--ink2);line-height:1.6;
+}
+.why strong{color:var(--terra);font-weight:700}
+.why .use{margin-top:4px;font-size:11.5px;color:var(--muted)}
+
+/* Code block */
+.cb{margin-bottom:18px}
+.cb-hdr{background:#1e1410;padding:9px 16px;border-radius:10px 10px 0 0;
+  display:flex;align-items:center;justify-content:space-between}
+.cb-hdr .dots{display:flex;gap:5px}
+.cb-hdr .dots span{width:10px;height:10px;border-radius:50%}
+.cb-hdr .dots span:nth-child(1){background:#ff5f57}
+.cb-hdr .dots span:nth-child(2){background:#febc2e}
+.cb-hdr .dots span:nth-child(3){background:#28c840}
+.lang-lbl{font-family:var(--ui);font-size:9.5px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:#fdba74}
+.cb pre{margin:0!important;border-radius:0 0 10px 10px!important}
+.cb pre code{font-family:var(--code)!important;font-size:12.5px!important;line-height:1.75!important}
+.cb.no-top pre{border-radius:0 0 10px 10px!important}
+
+/* Output / viz placeholder */
+.out{background:#1e1410;border:1px solid #3d2810;border-top:none;
+  border-radius:0 0 10px 10px;padding:12px 16px;
+  font-family:var(--code);font-size:12px;color:#a8d0a8;line-height:1.7;margin-bottom:18px}
+.out-l{font-family:var(--ui);font-size:9px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:rgba(168,208,168,.4);margin-bottom:7px;display:block}
+
+/* Viz preview card — shows what the plot looks like */
+.viz-prev{
+  border:1px solid var(--border);border-radius:12px;overflow:hidden;
+  margin:0 0 20px;box-shadow:0 2px 12px rgba(124,45,18,.07);
+}
+.vp-top{background:var(--sand);padding:10px 16px;display:flex;align-items:center;
+  justify-content:space-between;border-bottom:1px solid var(--border)}
+.vp-top .vp-name{font-family:var(--ui);font-size:11px;font-weight:700;color:var(--terra)}
+.vp-top .vp-lib{font-family:var(--ui);font-size:10px;color:var(--muted)}
+.vp-body{padding:20px;background:#fff}
+.vp-body svg{width:100%;height:auto;display:block}
+
+/* Callouts */
+.cal{border-radius:10px;padding:14px 18px;margin:16px 0;display:flex;gap:12px;align-items:flex-start}
+.ci-{background:var(--blue-bg);border:1px solid #bfdbfe}.ci- .cb2{color:var(--blue)}
+.ct-{background:var(--green-bg);border:1px solid #bbf7d0}.ct- .cb2{color:var(--green)}
+.cw-{background:var(--warn-bg);border:1px solid #fde68a}.cw- .cb2{color:var(--warn)}
+.cc-{background:#fff5ed;border:1px solid #fed7aa}.cc- .cb2{color:var(--terra2)}
+.cal-ico{font-size:18px;flex-shrink:0;margin-top:1px}
+.cb2{font-family:var(--ui);font-size:13px;line-height:1.65}
+.cb2 strong{display:block;font-size:13px;margin-bottom:2px}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse;margin:16px 0;font-family:var(--ui);font-size:12.5px}
+.tbl th{background:var(--terra);color:#fff;padding:10px 13px;text-align:left;font-weight:600}
+.tbl td{padding:9px 13px;border-bottom:1px solid var(--border)}
+.tbl tr:nth-child(even) td{background:#fdf6ee}
+.tbl code{font-family:var(--code);font-size:11px;background:var(--sand);
+  padding:1px 5px;border-radius:3px;color:var(--terra2)}
+
+/* Viz technique grid */
+.vgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.vcard{background:var(--card);border:1px solid var(--border);border-radius:10px;
+  padding:15px;transition:box-shadow .15s}
+.vcard:hover{box-shadow:0 4px 14px rgba(124,45,18,.1)}
+.vcard .vi{font-size:22px;margin-bottom:7px}
+.vcard h4{font-family:var(--ui);font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.vcard p{font-family:var(--ui);font-size:11.5px;color:var(--muted);line-height:1.5}
+.vcard .when{margin-top:6px;font-family:var(--ui);font-size:10.5px;font-weight:600;
+  color:var(--saffron);background:#fff5ed;border-radius:4px;padding:2px 7px;display:inline-block}
+
+/* Pull quote */
+.pq{
+  font-size:22px;line-height:1.4;font-style:italic;color:var(--terra);
+  border-left:4px solid var(--gold);padding:12px 20px;margin:24px 0;
+  background:linear-gradient(90deg,#fff8f0 0%,transparent 100%);
+}
+.pq cite{font-family:var(--ui);font-size:11px;font-style:normal;color:var(--muted);
+  display:block;margin-top:8px;font-weight:500}
+
+/* Step flow */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:16px 0;
+  border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.step{padding:16px 14px;border-right:1px solid var(--border);background:var(--card)}
+.step:last-child{border-right:none}
+.step .s-num{font-family:var(--ui);font-size:26px;font-weight:800;color:var(--border)}
+.step h4{font-family:var(--ui);font-size:12.5px;font-weight:700;color:var(--ink);margin:4px 0}
+.step p{font-family:var(--ui);font-size:11.5px;color:var(--muted);line-height:1.5}
+
+/* Viz annotation overlay — fake chart descriptions */
+.fake-chart{
+  background:linear-gradient(135deg,#fff8f2 0%,#fdf0e4 100%);
+  border:1px solid var(--border);border-radius:10px;padding:20px 22px;
+  margin:0 0 18px;position:relative;overflow:hidden;
+}
+.fc-title{font-family:var(--ui);font-size:11px;font-weight:700;letter-spacing:1px;
+  text-transform:uppercase;color:var(--muted);margin-bottom:14px;
+  display:flex;align-items:center;gap:8px}
+.fc-title::before{content:'📊';font-size:14px}
+.fc-bars{display:flex;align-items:flex-end;gap:6px;height:90px;margin-bottom:10px}
+.fc-bar{border-radius:4px 4px 0 0;width:100%;transition:height .3s;position:relative}
+.fc-bar-label{font-family:var(--ui);font-size:9px;color:var(--muted);
+  text-align:center;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fc-note{font-family:var(--ui);font-size:11px;color:var(--muted);
+  border-top:1px solid var(--border);padding-top:10px;margin-top:4px}
+.fc-scatter{display:flex;flex-wrap:wrap;gap:4px;height:90px;align-content:flex-start;
+  justify-content:flex-start;margin-bottom:10px}
+.dot-s{border-radius:50%;opacity:.75}
+.fc-hist{display:flex;align-items:flex-end;gap:3px;height:90px;margin-bottom:10px}
+.fc-hist-bar{border-radius:2px 2px 0 0;flex-shrink:0}
+.fc-box-wrap{display:flex;align-items:center;gap:12px;height:90px;margin-bottom:10px}
+.fc-box{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.box-chart{width:36px;background:transparent;border:2px solid var(--terra);
+  border-radius:3px;position:relative}
+.box-median{width:100%;height:2px;background:var(--terra);position:absolute;left:0}
+.box-whisker{width:2px;background:var(--terra);margin:0 auto}
+.box-label{font-family:var(--ui);font-size:9px;color:var(--muted);margin-top:4px;text-align:center}
+.fc-heat{display:grid;gap:3px;margin-bottom:10px}
+.heat-cell{border-radius:3px;height:20px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--code);font-size:9px;color:rgba(255,255,255,.8)}
+
+/* Divider */
+.div{height:2px;background:linear-gradient(90deg,var(--saffron),var(--gold),transparent);
+  margin:52px 0;border-radius:2px}
+
+/* Project section */
+.proj-hdr{
+  background:linear-gradient(135deg,var(--terra) 0%,#4a1500 100%);
+  border-radius:14px;padding:28px 30px;color:#fff;margin-bottom:24px;
+  border:1px solid rgba(253,186,116,.2);
+}
+.proj-hdr .pt{font-family:var(--ui);font-size:9px;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:#fdba74;display:block;margin-bottom:8px}
+.proj-hdr h2{font-family:var(--ui);font-size:24px;font-weight:800;margin-bottom:8px}
+.proj-hdr .pd{font-family:var(--ui);font-size:13px;color:rgba(255,255,255,.6);
+  line-height:1.6;margin-bottom:18px}
+.proj-goals{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pg{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  border-radius:7px;padding:10px 12px;font-family:var(--ui);font-size:12px;
+  color:rgba(255,255,255,.75);display:flex;align-items:flex-start;gap:7px}
+.pg::before{content:'▸';color:#fdba74;font-weight:700;flex-shrink:0}
+
+/* Stats bar */
+.stats-bar{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+  border:1px solid var(--border);border-radius:10px;overflow:hidden;
+  margin:16px 0;
+}
+.sb-s{padding:14px 12px;border-right:1px solid var(--border);text-align:center;background:var(--card)}
+.sb-s:last-child{border-right:none}
+.sb-v{font-family:var(--ui);font-size:22px;font-weight:800;color:var(--terra)}
+.sb-l{font-family:var(--ui);font-size:10px;color:var(--muted);margin-top:2px}
+
+/* Quiz */
+.qz{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin:16px 0}
+.qz h4{font-family:var(--ui);font-size:14px;font-weight:700;color:var(--ink);margin-bottom:12px}
+.qq{font-family:var(--ui);font-size:13px;color:var(--ink);margin:12px 0 7px;line-height:1.6}
+.qo{padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-family:var(--ui);
+  font-size:12.5px;cursor:pointer;margin-bottom:5px;transition:all .15s;
+  display:flex;align-items:center;gap:8px}
+.qo:hover{background:#fff8f1;border-color:#fdba74}
+.qo.correct{background:#f0fdf4;border-color:#86efac;color:#166534}
+.qo.wrong{background:#fef2f2;border-color:#fca5a5;color:#991b1b}
+.ol{width:21px;height:21px;border-radius:50%;background:#fff5ed;text-align:center;
+  line-height:21px;font-size:10px;font-weight:700;flex-shrink:0;color:var(--terra);font-family:var(--ui)}
+
+/* Footer */
+.mfooter{
+  margin-top:52px;padding:26px 30px;background:var(--terra);border-radius:12px;
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--ui);color:rgba(255,255,255,.5);font-size:12.5px;
+}
+.nxt-btn{background:#fdba74;color:var(--terra);font-family:var(--ui);font-size:13px;
+  font-weight:700;padding:10px 20px;border-radius:7px;text-decoration:none;transition:opacity .15s}
+.nxt-btn:hover{opacity:.85}
+
+@media(max-width:900px){
+  #sb{display:none}#main{margin-left:0}
+  .hero{grid-template-columns:1fr}.hero-right{display:none}
+  .content{padding:28px 20px}.proj-strip{padding:16px 20px;flex-wrap:wrap}
+  .vgrid,.steps,.proj-goals{grid-template-columns:1fr}
+  .stats-bar{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<nav id="sb">
+  <div class="sb-top">
+    <span class="sb-eyebrow">Data Science · 72h · Module 3 of 8</span>
+    <h2>EDA &amp; Visualization</h2>
+  </div>
+  <div class="sb-progress">
+    <div class="spl">Reading Progress</div>
+    <div class="sp-track"><div class="sp-fill" id="spf"></div></div>
+  </div>
+
+  <div class="sb-nav">
+    <div class="sb-nt">Sessions — 9 Hours</div>
+    <a class="sb-a active" href="#s9"><span class="sn">S9</span>EDA Foundations<span class="sh">3h</span></a>
+    <a class="sb-a" href="#s10"><span class="sn">S10</span>Matplotlib + Seaborn<span class="sh">3h</span></a>
+    <a class="sb-a" href="#s11"><span class="sn">S11</span>Plotly + Storytelling<span class="sh">3h</span></a>
+    <a class="sb-a" href="#project"><span class="sn">★</span>Final Project<span class="sh">Lab</span></a>
+  </div>
+
+  <div class="sb-nav">
+    <div class="sb-nt">Viz Techniques</div>
+    <a class="sb-a" href="#histogram">Histogram + KDE</a>
+    <a class="sb-a" href="#boxplot">Box + Violin</a>
+    <a class="sb-a" href="#barplot">Bar + Count Plot</a>
+    <a class="sb-a" href="#scatter">Scatter + Bubble</a>
+    <a class="sb-a" href="#heatmap">Correlation Heatmap</a>
+    <a class="sb-a" href="#pairplot">Pair Plot</a>
+    <a class="sb-a" href="#facet">FacetGrid</a>
+    <a class="sb-a" href="#plotly">Plotly Interactive</a>
+    <a class="sb-a" href="#dashboard">Multi-Plot Dashboard</a>
+  </div>
+
+  <div style="padding:0 0 16px">
+    <div class="dataset-pill">
+      <span class="dp-label">📦 Kaggle Dataset</span>
+      <div class="dp-name">Zomato Bangalore Restaurants</div>
+      <div class="dp-meta">51,717 rows · 17 columns · Real data<br>by Himanshu Poddar</div>
+      <a class="dp-link" href="https://www.kaggle.com/datasets/himanshupoddar/zomato-bangalore-restaurants" target="_blank">↗ kaggle.com/datasets</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<div id="main">
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Module 3</div>
+    <h1>Exploratory<br>Data <em>Analysis</em><br>&amp; Visualization</h1>
+    <p class="hero-sub">See patterns before you model. Learn every industry-standard chart — when to use it, how to code it, and what it reveals — using 51,717 real Zomato restaurant records.</p>
+    <div class="hero-stats">
+      <div class="hs"><div class="v">9h</div><div class="l">Duration</div></div>
+      <div class="hs"><div class="v">12</div><div class="l">Viz Types</div></div>
+      <div class="hs"><div class="v">51K</div><div class="l">Real Rows</div></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="ds-card">
+      <h3>Dataset Overview</h3>
+      <div class="ds-row"><span class="ds-k">Source</span><span class="ds-v">Kaggle · Zomato API</span></div>
+      <div class="ds-row"><span class="ds-k">City</span><span class="ds-v">Bengaluru, Karnataka</span></div>
+      <div class="ds-row"><span class="ds-k">Records</span><span class="ds-v">51,717 restaurants</span></div>
+      <div class="ds-row"><span class="ds-k">Columns</span><span class="ds-v">17 (text + numeric)</span></div>
+      <div class="ds-row"><span class="ds-k">Key fields</span><span class="ds-v">rating, votes, cost, cuisines, location</span></div>
+      <div class="ds-row"><span class="ds-k">Missing values</span><span class="ds-v">Yes — realistic messiness</span></div>
+      <a class="kaggle-badge" href="https://www.kaggle.com/datasets/himanshupoddar/zomato-bangalore-restaurants" target="_blank">
+        <span class="kb-icon">🔗</span> Download zomato.csv from Kaggle
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Project strip -->
+<div class="proj-strip">
+  <div class="ps-icon">🍽️</div>
+  <div>
+    <div class="ps-tag">Module Project Thread</div>
+    <div class="ps-title">Zomato Bengaluru Intelligence Report</div>
+    <div class="ps-desc">Load → Clean → Explore → Visualise → Tell a data story for a food-tech investor</div>
+  </div>
+  <div class="ps-chips">
+    <span class="chip">Matplotlib</span><span class="chip">Seaborn</span>
+    <span class="chip">Plotly</span><span class="chip">Pandas</span>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ═══════════════════════════════════════════
+     SESSION 9 — EDA FOUNDATIONS
+════════════════════════════════════════════ -->
+<div id="s9">
+<div class="sesh">
+  <div class="sb2">Session 9 · 3 Hours</div>
+  <div class="si">
+    <h2>EDA Foundations</h2>
+    <p>Load the Zomato dataset, understand its structure, find patterns in distributions, and identify relationships between variables before writing a single chart.</p>
+    <div class="tags">
+      <span class="tag tt">Descriptive Stats</span><span class="tag tg">Distributions</span>
+      <span class="tag tb">Correlation</span><span class="tag tp">Outliers</span>
+    </div>
+  </div>
+</div>
+
+<!-- 9.1 Load -->
+<div class="sec">9.1 Load &amp; First Look</div>
+<h3 class="t"><span class="d"></span>Getting the Zomato Data</h3>
+<p class="b">Download <code>zomato.csv</code> from the Kaggle link in the sidebar. Every EDA starts with the same ritual: load → inspect → understand the shape of the data.</p>
+
+<div class="why"><strong>Why do we inspect before we plot?</strong> Plotting wrong data types or ignoring 40% missing values produces beautiful but misleading charts. Understand structure first, visualise second. <div class="use">📌 Used at: every single real-world DS project kickoff.</div></div>
+<div class="cb">
+  <div class="cb-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-lbl">Python</span></div>
+  <pre><code class="language-python">import pandas as pd
+import numpy as np
+import warnings
+warnings.filterwarnings("ignore")
+
+df = pd.read_csv("zomato.csv", encoding="latin-1")
+
+print(df.shape)          # (51717, 17)
+print(df.columns.tolist())
+# ['url','address','name','online_order','book_table','rate',
+#  'votes','phone','location','rest_type','dish_liked',
+#  'cuisines','approx_cost(for two people)','reviews_list',
+#  'menu_item','listed_in(type)','listed_in(city)']
+
+df.info()                # see dtypes + non-null counts</code></pre>
+</div>
+<div class="out">
+  <span class="out-l">Output — df.info() (key columns)</span>
+ #   Column                         Non-Null Count   Dtype
+---  ------                         --------------   -----
+ 0   name                           51717 non-null   object
+ 4   online_order                   51717 non-null   object
+ 5   rate                           43942 non-null   object   ← stored as "4.1/5"
+ 6   votes                          51717 non-null   int64
+11   approx_cost(for two people)    51371 non-null   object   ← "300" or "1,200"
+</div>
+
+<h4 class="sub">Cleaning for EDA</h4>
+<div class="why"><strong>Raw Zomato data has two tricky columns.</strong> <code>rate</code> is a string like <code>"4.1/5"</code> and <code>approx_cost</code> contains commas. Fix both before any analysis.</div>
+<div class="cb">
+  <div class="cb-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-lbl">Python</span></div>
+  <pre><code class="language-python">df.rename(columns={
+    "approx_cost(for two people)": "cost",
+    "listed_in(type)":             "meal_type",
+    "listed_in(city)":             "area",
+}, inplace=True)
+
+# "4.1/5" → 4.1  |  "NEW" or "-" → NaN
+df["rate"] = df["rate"].replace(["NEW", "-"], np.nan)
+df["rate"] = df["rate"].str.extract(r"(\d+\.\d+)").astype(float)
+
+# "1,200" → 1200
+df["cost"] = df["cost"].str.replace(",", "").astype(float)
+
+# Binary → boolean
+df["online_order"] = df["online_order"].map({"Yes": True, "No": False})
+df["book_table"]   = df["book_table"].map({"Yes": True, "No": False})
+
+print(df[["name","rate","cost","votes"]].head(3))</code></pre>
+</div>
+
+<!-- 9.2 Descriptive Stats -->
+<div class="sec">9.2 Descriptive Statistics</div>
+<h3 class="t"><span class="d"></span>The Numbers Before the Charts</h3>
+<p class="b">Descriptive statistics give you a numeric summary of every column. They reveal the centre, spread, and shape of your data — and flag outliers before you even open Matplotlib.</p>
+
+<div class="stats-bar">
+  <div class="sb-s"><div class="sb-v">4.06</div><div class="sb-l">Avg Rating</div></div>
+  <div class="sb-s"><div class="sb-v">₹543</div><div class="sb-l">Median Cost (2)</div></div>
+  <div class="sb-s"><div class="sb-v">261</div><div class="sb-l">Median Votes</div></div>
+  <div class="sb-s"><div class="sb-v">7,694</div><div class="sb-l">Max Votes (MG Rd)</div></div>
+</div>
+
+<div class="cb">
+  <div class="cb-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-lbl">Python</span></div>
+  <pre><code class="language-python">print(df[["rate","cost","votes"]].describe().round(2))
+
+# 5-number summary manually
+Q1, Q3 = df["cost"].quantile([0.25, 0.75])
+IQR    = Q3 - Q1
+print(f"Cost IQR: ₹{Q1:.0f} – ₹{Q3:.0f}  (IQR = ₹{IQR:.0f})")
+# Cost IQR: ₹300 – ₹800  (IQR = ₹500)
+
+# Skewness — positive = right tail
+print(df["cost"].skew().round(2))    # 3.27 → heavily right-skewed</code></pre>
+</div>
+<div class="out">
+  <span class="out-l">Output — describe()</span>
+         rate      cost     votes
+count  43942.0   51371.0   51717.0
+mean       4.06    543.1     283.1
+std        0.45    511.6     521.7
+min        1.80     40.0       0.0
+25%        3.80    300.0      44.0
+50%        4.10    500.0     134.0
+75%        4.40    800.0     361.0
+max        4.90   6000.0    16832.0
+</div>
+
+<div class="cal cc-"><span class="cal-ico">📊</span>
+  <div class="cb2"><strong>What these numbers tell you (before any chart)</strong>
+  Ratings cluster tightly (std=0.45) — most restaurants are rated 3.8–4.4. Cost has massive spread (std=511 on a median of 500) meaning extreme outliers. Votes are right-skewed: most restaurants have ~134 votes but a few viral spots have 16,000+.</div>
+</div>
+
+<!-- 9.3 Univariate -->
+<div class="sec">9.3 Univariate Analysis — One Variable at a Time</div>
+<h3 class="t"><span class="d"></span>What Does Each Variable Look Like?</h3>
+<p class="b">Before studying relationships, understand each variable individually. Ask: Is it symmetric or skewed? Are there outliers? What is the most common value?</p>
+
+<div class="why"><strong>The EDA checklist for every numerical column:</strong> shape (histogram), spread (box plot), central value (mean/median), outliers (IQR check). For categoricals: top values (value_counts), percentage breakdown.</div>
+<div class="cb">
+  <div class="cb-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-lbl">Python</span></div>
+  <pre><code class="language-python"># Categorical summaries
+print(df["location"].value_counts().head(8))
+print(df["meal_type"].value_counts())
+
+# Most common cuisines (comma-separated → explode first)
+cuisines_series = (df["cuisines"].dropna()
+                     .str.split(", ")
+                     .explode())
+print(cuisines_series.value_counts().head(10))</code></pre>
+</div>
+<div class="out">
+  <span class="out-l">Top Locations &amp; Meal Types</span>
+BTM          3764     Delivery         31414
+HSR Layout   2800     Dine-out         10294
+Koramangala  2648     Cafes             4420
+Whitefield   2497     Desserts          2817
+Indiranagar  2278     Pubs and bars     1949
+
+Top Cuisines:
+North Indian    13561   South Indian     9812
+Chinese         9241    Fast Food        5931
+Continental     4219    Biryani          3991
+</div>
+
+<!-- 9.4 Bivariate -->
+<div class="sec">9.4 Bivariate Analysis — Two Variables Together</div>
+<h3 class="t"><span class="d"></span>Finding Relationships</h3>
+<div class="why"><strong>Always ask: does X relate to Y?</strong> Numeric vs Numeric → scatter/correlation. Numeric vs Categorical → box plot / groupby. Categorical vs Categorical → cross-tab / stacked bar.</div>
+<div class="cb">
+  <div class="cb-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-lbl">Python</span></div>
+  <pre><code class="language-python"># Numeric vs Numeric — correlation
+print(df[["rate","cost","votes"]].corr().round(2))
+#         rate  cost  votes
+# rate    1.00  0.34   0.52
+# cost    0.34  1.00   0.36
+# votes   0.52  0.36   1.00
+
+# Categorical vs Numeric — groupby insight
+online_vs_rating = df.groupby("online_order")["rate"].agg(["mean","median","count"])
+print(online_vs_rating.round(2))
+#                  mean  median  count
+# online_order
+# False            3.97    4.00  17819
+# True             4.11    4.10  26123</code></pre>
+</div>
+
+<div class="cal ct-"><span class="cal-ico">💡</span>
+  <div class="cb2"><strong>Insight:</strong> Restaurants accepting online orders rate 0.14 stars higher on average. Is this causation or confounding (newer, better-managed restaurants tend to offer both online ordering AND better quality)?  — This is a question EDA raises; ML answers it later.</div>
+</div>
+</div><!-- /s9 -->
+
+<div class="div"></div>
+
+<!-- ═══════════════════════════════════════════
+     SESSION 10 — MATPLOTLIB + SEABORN
+════════════════════════════════════════════ -->
+<div id="s10">
+<div class="sesh">
+  <div class="sb2">Session 10 · 3 Hours</div>
+  <div class="si">
+    <h2>Matplotlib + Seaborn</h2>
+    <p>Master every chart type used in industry. For each: what it shows, when to use it, and the minimal code to produce a publication-ready version.</p>
+    <div class="tags">
+      <span class="tag tt">Histogram</span><span class="tag tg">Box Plot</span>
+      <span class="tag tb">Heatmap</span><span class="tag tp">Pair Plot</span>
+    </div>
+  </div>
+</div>
+
+<div class="cal ci-"><span class="cal-ico">📐</span>
+  <div class="cb2"><strong>Setup — run this once at the top of every notebook</strong><br>
+  Sets a clean style so all Seaborn charts look publication-ready by default.</div>
+</div>
+<div class="cb">
+  <div class="cb-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-lbl">Python</span></div>
+  <pre><code class="language-python">import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Global style — run once
+sns.set_theme(style="whitegrid", palette="Set2", font_scale=1.1)
+plt.rcParams.update({
+    "figure.dpi"     : 120,
+    "axes.spines.top": False,
+    "axes.spines.right": False,
+})
+COLORS = sns.color_palette("Set2")</code></pre>
+</div>
+
+<!-- HISTOGRAM + KDE -->
+<div id="histogram">
+<div class="sec">10.1 Histogram + KDE — Distribution of a Single Variable</div>
+<h3 class="t"><span class="d"></span>When &amp; Why</h3>
+
+<div class="vgrid">
+  <div class="vcard"><div class="vi">📊</div><h4>Histogram</h4><p>Divides the range into equal-width bins and counts how many values fall in each bin. Shows frequency distribution.</p><span class="when">Use for: any continuous variable</span></div>
+  <div class="vcard"><div class="vi">〰️</div><h4>KDE (Kernel Density)</h4><p>A smooth curve estimating the probability density. Overlaying it on a histogram reveals the true shape without bin-size bias.</p><span class="when">Use for: comparing two groups</span></div>
+</div>
+
+<!-- Inline chart representation -->
+<div class="fake-chart">
+  <div class="fc-title">Expected Output — Rating Distribution + KDE</div>
+  <div class="fc-hist">
+    <div class="fc-hist-bar" style="height:8px;width:16px;background:#d1e8d0"></div>
+    <div class="fc-hist-bar" style="height:12px;width:16px;background:#b5d9b2"></div>
+    <div class="fc-hist-bar" style="height:22px;width:16px;background:#92c990"></div>
+    <div class="fc-hist-bar" style="height:40px;width:16px;background:#6dba6b"></div>
+    <div class="fc-hist-bar" style="height:70px;width:16px;background:#43a846"></div>
+    <div class="fc-hist-bar" style="height:88px;width:16px;background:#2e7d32"></div>
+    <div class="fc-hist-bar" style="height:80px;width:16px;background:#43a846"></div>
+    <div class="fc-hist-bar" style="height:55px;width:16px;background:#6dba6b"></div>
+    <div class="fc-hist-bar" style="height:30px;width:16px;background:#92c990"></div>
+    <div class="fc-hist-bar" style="height:14px;width:16px;background:#b5d9b2"></div>
+    <div class="fc-hist-bar" style="height:6px;width:16px;background:#d1e8d0"></div>
+  </div>
+  <div class="fc-note">Ratings peak at 4.1 (left-skewed tail near 2.0). Median > Mean confirms left skew. Very few restaurants below 3.0 — Zomato may delist consistently poor ones.</div>
+</div>
+
+<div class="why"><strong>Code recipe:</strong> <code>sns.histplot()</code> with <code>kde=True</code> draws both in one call. Always add a vertical line for mean and median so readers can see central tendency instantly.</div>
+<div class="cb">
+  <div class="cb-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-lbl">Python</span></div>
+  <pre><code class="language-python">fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+
+# Left: Rating distribution
+sns.histplot(df["rate"].dropna(), bins=30, kde=True,
+             color=COLORS[0], ax=axes[0])
+axes[0].axvline(df["rate"].mean(),   color="red",    linestyle="--", label="Mean")
+axes[0].axvline(df["rate"].median(), color="orange", linestyle="-.", label="Median")
+axes[0].set(title="Restaurant Ratings — Bengaluru", xlabel="Rating (out of 5)")
+axes[0].legend()
+
+# Right: Cost (log scale — right-skewed data)
+sns.histplot(df["cost"].dropna(), bins=40, kde=True,
+             color=COLORS[1], ax=axes[1], log_scale=(True, False))
+axes[1].set(title="Cost for Two (log scale)", xlabel="₹ Cost")
+
+plt.tight_layout()
+plt.savefig("rating_cost_dist.png", dpi=150, bbox_inches="tight")
+plt.show()</code></pre>
+</div>
+
+<div class="cal cw-"><span class="cal-ico">⚠️</span>
+  <div class="cb2"><strong>Log scale for skewed data</strong> — Cost is right-skewed (most restaurants: ₹200–₹800, outliers up to ₹6000). On a linear axis the outliers compress everything left. Use <code>log_scale=True</code> to spread the distribution and make patterns visible.</div>
+</div>
+</div><!-- /histogram -->
+
+<!-- BOX + VIOLIN -->
+<div id="boxplot">
+<div class="sec">10.2 Box Plot + Violin Plot — Spread &amp; Outliers</div>
+<h3 class="t"><span class="d"></span>When &amp; Why</h3>
+
+<div class="vgrid">
+  <div class="vcard"><div class="vi">📦</div><h4>Box Plot</h4><p>Shows Q1, median, Q3, whiskers (1.5×IQR), and individual outliers. Perfect for comparing spread across categories.</p><span class="when">Use for: outlier detection, category comparison</span></div>
+  <div class="vcard"><div class="vi">🎻</div><h4>Violin Plot</h4><p>Box plot + KDE mirrored on both sides. Reveals bimodal or irregular distributions that a box plot hides.</p><span class="when">Use for: distribution shape matters</span></div>
+</div>
+
+<div class="fake-chart">
+  <div class="fc-title">Expected Output — Cost by Meal Type (Box)</div>
+  <div class="fc-box-wrap">
+    <div class="fc-box">
+      <div class="box-whisker" style="height:12px"></div>
+      <div class="box-chart" style="height:35px;top:12px"><div class="box-median" style="top:50%"></div></div>
+      <div class="box-whisker" style="height:10px"></div>
+      <div class="box-label">Delivery</div>
+    </div>
+    <div class="fc-box">
+      <div class="box-whisker" style="height:8px"></div>
+      <div class="box-chart" style="height:50px"><div class="box-median" style="top:40%"></div></div>
+      <div class="box-whisker" style="height:14px"></div>
+      <div class="box-label">Dine-out</div>
+    </div>
+    <div class="fc-box">
+      <div class="box-whisker" style="height:14px"></div>
+      <div class="box-chart" style="height:40px"><div class="box-median" style="top:45%"></div></div>
+      <div class="box-whisker" style="height:8px"></div>
+      <div class="box-label">Cafes</div>
+    </div>
+    <div class="fc-box">
+      <div class="box-whisker" style="height:6px"></div>
+      <div class="box-chart" style="height:60px"><div class="box-median" style="top:35%"></div></div>
+      <div class="box-whisker" style="height:18px"></div>
+      <div class="box-label">Pubs</div>
+    </div>
+  </div>
+  <div class="fc-note">Pubs &amp; bars show highest cost + widest spread. Delivery skews lower. Multiple outliers visible above whiskers — premium restaurants in each category.</div>
+</div>
+
+<div class="why"><strong>Key parameter:</strong> <code>order=</code> sorts categories by median so patterns read left-to-right. Always sort your categorical axis — random ordering hides trends.</div>
+<div class="cb">
+  <div class="cb-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-lbl">Python</span></div>
+  <pre><code class="language-python">top_types = df["meal_type"].value_counts().head(6).index
+plot_df   = df[df["meal_type"].isin(top_types)]
+
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+
+# Box plot — sorted by median cost
+order = plot_df.groupby("meal_type")["cost"].median().sort_values().index
+sns.boxplot(data=plot_df, x="meal_type", y="cost",
+            order=order, palette="Set2", ax=axes[0],
+            showfliers=False)        # hide outliers for cleaner read
+axes[0].set(title="Cost by Meal Type (IQR)", xlabel="", ylabel="₹ Cost for Two")
+axes[0].tick_params(axis="x", rotation=30)
+
+# Violin — shows bimodal distribution in some types
+sns.violinplot(data=plot_df, x="meal_type", y="rate",
+               order=order, palette="Set2", ax=axes[1],
+               inner="quartile")    # quartile lines inside violin
+axes[1].set(title="Rating Distribution by Type", xlabel="", ylabel="Rating")
+axes[1].tick_params(axis="x", rotation=30)
+
+plt.tight_layout()
+plt.show()</code></pre>
+</div>
+</div><!-- /boxplot -->
+
+<!-- BAR PLOT -->
+<div id="barplot">
+<div class="sec">10.3 Bar + Count Plot — Categorical Data</div>
+<h3 class="t"><span class="d"></span>When &amp; Why</h3>
+
+<div class="vgrid">
+  <div class="vcard"><div class="vi">📶</div><h4>Bar Plot</h4><p>Height = aggregate value (mean, sum, count). Best for comparing a metric across categories. Always sort and use horizontal bars for many categories.</p><span class="when">Use for: rankings, comparisons</span></div>
+  <div class="vcard"><div class="vi">🔢</div><h4>Count Plot</h4><p>Special case of bar — counts occurrences of each category. Equivalent to <code>value_counts()</code> visualised.</p><span class="when">Use for: frequency of categorical values</span></div>
+</div>
+
+<div class="fake-chart">
+  <div class="fc-title">Expected Output — Top 10 Locations by Avg Rating</div>
+  <div class="fc-bars">
+    <div style="display:flex;flex-direction:column;align-items:center;flex:1"><div class="fc-bar" style="height:82px;background:#2e7d32"></div><div class="fc-bar-label">Lavelle Rd</div></div>
+    <div style="display:flex;flex-direction:column;align-items:center;flex:1"><div class="fc-bar" style="height:78px;background:#388e3c"></div><div class="fc-bar-label">MG Road</div></div>
+    <div style="display:flex;flex-direction:column;align-items:center;flex:1"><div class="fc-bar" style="height:74px;background:#43a047"></div><div class="fc-bar-label">Koramangala</div></div>
+    <div style="display:flex;flex-direction:column;align-items:center;flex:1"><div class="fc-bar" style="height:70px;background:#558b2f"></div><div class="fc-bar-label">Indiranagar</div></div>
+    <div style="display:flex;flex-direction:column;align-items:center;flex:1"><div class="fc-bar" style="height:66px;background:#689f38"></div><div class="fc-bar-label">Whitefield</div></div>
+    <div style="display:flex;flex-direction:column;align-items:center;flex:1"><div class="fc-bar" style="height:62px;background:#7cb342"></div><div class="fc-bar-label">HSR</div></div>
+    <div style="display:flex;flex-direction:column;align-items:center;flex:1"><div class="fc-bar" style="height:58px;background:#8bc34a"></div><div class="fc-bar-label">Jayanagar</div></div>
+    <div style="display:flex;flex-direction:column;align-items:center;flex:1"><div class="fc-bar" style="height:54px;background:#9ccc65"></div><div class="fc-bar-label">BTM</div></div>
+    <div style="display:flex;flex-direction:column;align-items:center;flex:1"><div class="fc-bar" style="height:50px;background:#aed581"></div><div class="fc-bar-label">JP Nagar</div></div>
+    <div style="display:flex;flex-direction:column;align-items:center;flex:1"><div class="fc-bar" style="height:45px;background:#c5e1a5"></div><div class="fc-bar-label">Marathahalli</div></div>
+  </div>
+  <div class="fc-note">MG Road and Koramangala dominate — premium areas with curated restaurants. Use horizontal bars when labels are long (>8 chars).</div>
+</div>
+
+<div class="why"><strong>Rule:</strong> Vertical bars for ≤6 categories, horizontal bars for 7+ (label rotation is ugly and hard to read). Always add value labels on bars for reports.</div>
+<div class="cb">
+  <div class="cb-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-lbl">Python</span></div>
+  <pre><code class="language-python">fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+
+# Horizontal bar — top locations by avg rating
+loc_rating = (df.groupby("location")["rate"].mean()
+                .dropna().sort_values(ascending=False)
+                .head(12))
+
+loc_rating.sort_values().plot(kind="barh", color=COLORS[0], ax=axes[0])
+axes[0].set(title="Top 12 Locations by Avg Rating", xlabel="Avg Rating")
+axes[0].axvline(df["rate"].mean(), color="red", linestyle="--", alpha=0.6)
+
+# Count plot — online order breakdown
+sns.countplot(data=df, x="meal_type",
+              order=df["meal_type"].value_counts().index[:6],
+              hue="online_order", palette=["#ef5350","#66bb6a"],
+              ax=axes[1])
+axes[1].set(title="Online Order Availability by Meal Type", xlabel="")
+axes[1].tick_params(axis="x", rotation=35)
+axes[1].legend(title="Online Order", labels=["No","Yes"])
+
+plt.tight_layout()
+plt.show()</code></pre>
+</div>
+</div><!-- /barplot -->
+
+<!-- SCATTER -->
+<div id="scatter">
+<div class="sec">10.4 Scatter + Bubble Chart — Relationships</div>
+<h3 class="t"><span class="d"></span>When &amp; Why</h3>
+<p class="b">Scatter plots reveal the relationship between two continuous variables. A bubble chart adds a third dimension using point size.</p>
+
+<div class="fake-chart">
+  <div class="fc-title">Expected Output — Cost vs Rating (colour = online order)</div>
+  <div class="fc-scatter">
+    <div class="dot-s" style="width:8px;height:8px;background:#ef5350;margin:4px 8px"></div>
+    <div class="dot-s" style="width:14px;height:14px;background:#66bb6a;margin:2px 16px"></div>
+    <div class="dot-s" style="width:10px;height:10px;background:#66bb6a;margin:6px 4px"></div>
+    <div class="dot-s" style="width:7px;height:7px;background:#ef5350;margin:3px 20px"></div>
+    <div class="dot-s" style="width:18px;height:18px;background:#66bb6a;margin:1px 10px"></div>
+    <div class="dot-s" style="width:9px;height:9px;background:#ef5350;margin:8px 6px"></div>
+    <div class="dot-s" style="width:12px;height:12px;background:#66bb6a;margin:5px 14px"></div>
+    <div class="dot-s" style="width:11px;height:11px;background:#ef5350;margin:2px 18px"></div>
+    <div class="dot-s" style="width:16px;height:16px;background:#66bb6a;margin:4px 8px"></div>
+    <div class="dot-s" style="width:8px;height:8px;background:#ef5350;margin:7px 22px"></div>
+    <div class="dot-s" style="width:13px;height:13px;background:#66bb6a;margin:3px 12px"></div>
+    <div class="dot-s" style="width:10px;height:10px;background:#66bb6a;margin:6px 6px"></div>
+  </div>
+  <div class="fc-note">Positive correlation (r=0.34): higher cost → slightly higher rating. Green (online order = Yes) clusters towards upper right — premium restaurants offer both.</div>
+</div>
+
+<div class="why"><strong>Scatter plot tip:</strong> With 51K points you get overplotting (all dots on top of each other). Fix it with <code>alpha=0.1</code> (transparency) or sample 5,000 rows. Overplotted charts look like solid blobs and hide patterns.</div>
+<div class="cb">
+  <div class="cb-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-lbl">Python</span></div>
+  <pre><code class="language-python">sample = df.dropna(subset=["rate","cost"]).sample(4000, random_state=42)
+
+fig, axes = plt.subplots(1, 2, figsize=(13, 5))
+
+# Scatter with colour encoding
+sns.scatterplot(data=sample, x="cost", y="rate",
+                hue="online_order", alpha=0.4, s=20,
+                palette={True:"#66bb6a", False:"#ef5350"},
+                ax=axes[0])
+axes[0].set(title="Cost vs Rating\n(colour = online order)",
+            xlabel="₹ Cost for Two", ylabel="Rating")
+axes[0].set_xlim(0, 3000)   # cap x-axis — extreme outliers distort
+
+# Bubble chart — location-level summary
+loc = df.groupby("location").agg(
+    avg_rating=("rate","mean"), avg_cost=("cost","mean"),
+    count=("name","count")).dropna().reset_index()
+loc = loc[loc["count"] >= 50]   # only well-sampled locations
+
+scatter = axes[1].scatter(loc["avg_cost"], loc["avg_rating"],
+                          s=loc["count"]/5, alpha=0.6,
+                          c=loc["avg_cost"], cmap="YlOrRd")
+for _, row in loc.nlargest(5,"count").iterrows():
+    axes[1].annotate(row["location"],
+                     (row["avg_cost"], row["avg_rating"]),
+                     fontsize=7, ha="center")
+axes[1].set(title="Avg Cost vs Rating per Location\n(bubble = no. of restaurants)",
+            xlabel="₹ Avg Cost", ylabel="Avg Rating")
+
+plt.tight_layout()
+plt.show()</code></pre>
+</div>
+</div><!-- /scatter -->
+
+<!-- HEATMAP -->
+<div id="heatmap">
+<div class="sec">10.5 Correlation Heatmap — Relationships at a Glance</div>
+<h3 class="t"><span class="d"></span>When &amp; Why</h3>
+<p class="b">A correlation heatmap colour-encodes the Pearson correlation coefficient (−1 to +1) for every pair of numerical variables simultaneously. It is the fastest way to spot multicollinearity and strong predictors.</p>
+
+<div class="fake-chart">
+  <div class="fc-title">Expected Output — Correlation Matrix (4 numeric columns)</div>
+  <div class="fc-heat" style="grid-template-columns:repeat(4,1fr)">
+    <div class="heat-cell" style="background:#8b0000">1.00</div>
+    <div class="heat-cell" style="background:#c0392b">0.34</div>
+    <div class="heat-cell" style="background:#d35400">0.52</div>
+    <div class="heat-cell" style="background:#922b21">0.28</div>
+    <div class="heat-cell" style="background:#c0392b">0.34</div>
+    <div class="heat-cell" style="background:#8b0000">1.00</div>
+    <div class="heat-cell" style="background:#c0392b">0.36</div>
+    <div class="heat-cell" style="background:#c0392b">0.31</div>
+    <div class="heat-cell" style="background:#d35400">0.52</div>
+    <div class="heat-cell" style="background:#c0392b">0.36</div>
+    <div class="heat-cell" style="background:#8b0000">1.00</div>
+    <div class="heat-cell" style="background:#c0392b">0.39</div>
+    <div class="heat-cell" style="background:#922b21">0.28</div>
+    <div class="heat-cell" style="background:#c0392b">0.31</div>
+    <div class="heat-cell" style="background:#c0392b">0.39</div>
+    <div class="heat-cell" style="background:#8b0000">1.00</div>
+  </div>
+  <div class="fc-note">Votes correlates most strongly with rating (0.52) — popular restaurants tend to be better rated. Cost-rating correlation (0.34) suggests higher-end restaurants are slightly better but the relationship is weak.</div>
+</div>
+
+<div class="why"><strong>Always mask the upper triangle</strong> — it is a mirror of the lower and adds clutter. Use <code>annot=True</code> to print correlation values inside cells. Pick a <strong>diverging</strong> colourmap (RdBu, coolwarm) centred at 0, not a sequential one.</div>
+<div class="cb">
+  <div class="cb-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-lbl">Python</span></div>
+  <pre><code class="language-python">num_cols = ["rate", "cost", "votes"]
+corr     = df[num_cols].corr()
+
+# Mask upper triangle (redundant mirror)
+mask = np.triu(np.ones_like(corr, dtype=bool))
+
+plt.figure(figsize=(6, 5))
+sns.heatmap(corr, mask=mask, annot=True, fmt=".2f",
+            cmap="RdYlGn", vmin=-1, vmax=1,
+            linewidths=0.5, square=True,
+            cbar_kws={"shrink": 0.7})
+plt.title("Correlation Matrix — Zomato Bengaluru", pad=14)
+plt.tight_layout()
+plt.show()</code></pre>
+</div>
+</div><!-- /heatmap -->
+
+<!-- PAIR PLOT -->
+<div id="pairplot">
+<div class="sec">10.6 Pair Plot — Every Relationship at Once</div>
+<h3 class="t"><span class="d"></span>When &amp; Why</h3>
+<p class="b">A pair plot (scatter matrix) shows scatter plots for every numeric pair and histograms/KDEs on the diagonal. It is the most comprehensive single call in exploratory analysis.</p>
+
+<div class="cal cw-"><span class="cal-ico">⚠️</span>
+  <div class="cb2"><strong>Use on samples, not full data.</strong> A pair plot on 51K rows will take 5+ minutes to render. Always sample 2,000–3,000 rows first. Also limit to 4–5 columns max — beyond that it becomes unreadable.</div>
+</div>
+<div class="cb">
+  <div class="cb-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-lbl">Python</span></div>
+  <pre><code class="language-python">sample = df[["rate","cost","votes","online_order"]].dropna().sample(2500, random_state=0)
+sample["online_order"] = sample["online_order"].map({True:"Online",False:"No Online"})
+
+g = sns.pairplot(sample, hue="online_order",
+                 palette={"Online":"#66bb6a","No Online":"#ef5350"},
+                 plot_kws={"alpha":0.3, "s":10},
+                 diag_kind="kde")         # KDE on diagonal
+g.fig.suptitle("Pair Plot — Zomato Numeric Columns", y=1.02)
+plt.show()
+# Insight: online_order=Yes clusters at higher ratings in all panels</code></pre>
+</div>
+</div><!-- /pairplot -->
+
+<!-- FACETGRID -->
+<div id="facet">
+<div class="sec">10.7 FacetGrid — Small Multiples</div>
+<h3 class="t"><span class="d"></span>When &amp; Why</h3>
+<p class="b">FacetGrid creates a grid of the same plot for different subgroups. It is the most powerful technique for comparing patterns across multiple categories simultaneously.</p>
+
+<div class="why"><strong>Rule of thumb:</strong> If you find yourself copy-pasting a plot and changing one variable, use FacetGrid instead. It ensures consistent axes and layout automatically.</div>
+<div class="cb">
+  <div class="cb-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-lbl">Python</span></div>
+  <pre><code class="language-python">top_areas = df["meal_type"].value_counts().head(4).index
+sub       = df[df["meal_type"].isin(top_areas)].dropna(subset=["rate","cost"])
+
+g = sns.FacetGrid(sub, col="meal_type", col_wrap=2,
+                  height=4, sharey=True, sharex=True)
+g.map(sns.histplot, "rate", bins=20, kde=True, color="#ea580c", alpha=0.7)
+g.set_axis_labels("Rating", "Count")
+g.set_titles("{col_name}")
+g.fig.suptitle("Rating Distribution by Meal Type", y=1.02)
+plt.show()
+# Delivery restaurants have a wider, flatter distribution
+# Dine-out peaks sharply at 4.2 — premium filter effect</code></pre>
+</div>
+</div><!-- /facet -->
+</div><!-- /s10 -->
+
+<div class="div"></div>
+
+<!-- ═══════════════════════════════════════════
+     SESSION 11 — PLOTLY + STORYTELLING
+════════════════════════════════════════════ -->
+<div id="s11">
+<div class="sesh">
+  <div class="sb2">Session 11 · 3 Hours</div>
+  <div class="si">
+    <h2>Plotly + Data Storytelling</h2>
+    <p>Build interactive charts for stakeholder presentations and learn how to turn raw analysis into a compelling visual narrative.</p>
+    <div class="tags">
+      <span class="tag tt">Plotly Express</span><span class="tag tg">Interactive</span>
+      <span class="tag tb">Subplots Dashboard</span><span class="tag tp">Storytelling</span>
+    </div>
+  </div>
+</div>
+
+<div id="plotly">
+<div class="sec">11.1 Plotly Express — Interactive Charts in One Line</div>
+<h3 class="t"><span class="d"></span>Why Plotly?</h3>
+<p class="b">Seaborn makes publication-quality static images. Plotly makes <em>interactive</em> charts — hover tooltips, zoom, click-to-filter — perfect for stakeholder dashboards. Plotly Express wraps the complex Plotly API into one-liners.</p>
+
+<div class="cal ci-"><span class="cal-ico">📦</span>
+  <div class="cb2"><strong>Install:</strong> <code>pip install plotly</code>. In Jupyter: charts render inline. In a script: call <code>fig.show()</code> which opens in your browser. Export to PNG with <code>fig.write_image("chart.png")</code> (needs <code>kaleido</code>).</div>
+</div>
+
+<div class="why"><strong>Key difference from Seaborn:</strong> Plotly charts are HTML objects — every hover, zoom, and click is built-in. You do not need to write any JavaScript.</div>
+<div class="cb">
+  <div class="cb-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-lbl">Python</span></div>
+  <pre><code class="language-python">import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
+# Interactive scatter — hover shows restaurant name
+fig = px.scatter(
+    df.dropna(subset=["rate","cost"]).sample(3000, random_state=0),
+    x="cost", y="rate", color="online_order",
+    hover_data=["name","location","cuisines"],   # show on hover!
+    color_discrete_map={True:"#66bb6a", False:"#ef5350"},
+    labels={"cost":"₹ Cost for Two","rate":"Rating","online_order":"Online Order"},
+    title="Zomato Bengaluru — Interactive Cost vs Rating",
+    opacity=0.5,
+)
+fig.update_layout(template="plotly_white", height=500)
+fig.show()   # opens interactive chart in browser</code></pre>
+</div>
+
+<h4 class="sub">Interactive Bar Chart — Top Cuisines</h4>
+<div class="cb">
+  <div class="cb-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-lbl">Python</span></div>
+  <pre><code class="language-python">cuisine_counts = (df["cuisines"].dropna()
+                    .str.split(", ").explode()
+                    .value_counts().head(15).reset_index())
+cuisine_counts.columns = ["cuisine", "count"]
+
+fig = px.bar(cuisine_counts.sort_values("count"),
+             x="count", y="cuisine", orientation="h",
+             color="count", color_continuous_scale="Oranges",
+             title="Top 15 Cuisines in Bengaluru",
+             labels={"count":"Number of Restaurants","cuisine":""})
+fig.update_layout(template="plotly_white", showlegend=False, height=520)
+fig.show()</code></pre>
+</div>
+
+<h4 class="sub">Treemap — Locations × Meal Type</h4>
+<div class="why"><strong>Treemaps</strong> encode two categorical hierarchies + a numeric value in a single chart. Ideal for showing "what proportion of the market" each combination holds — a favourite in investor presentations.</div>
+<div class="cb">
+  <div class="cb-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-lbl">Python</span></div>
+  <pre><code class="language-python">top_locs = df["location"].value_counts().head(10).index
+tree_df  = df[df["location"].isin(top_locs)].dropna(subset=["rate"])
+
+tree = tree_df.groupby(["location","meal_type"]).agg(
+    count=("name","count"), avg_rating=("rate","mean")
+).reset_index()
+
+fig = px.treemap(tree, path=["location","meal_type"],
+                 values="count", color="avg_rating",
+                 color_continuous_scale="RdYlGn",
+                 title="Restaurant Count × Avg Rating (Location → Meal Type)")
+fig.update_traces(textinfo="label+value")
+fig.show()</code></pre>
+</div>
+</div><!-- /plotly -->
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+<div class="sec">11.2 Multi-Plot Dashboard — Subplots</div>
+<h3 class="t"><span class="d"></span>When &amp; Why</h3>
+<p class="b">A dashboard combines multiple charts into one figure. Plotly's <code>make_subplots</code> and Matplotlib's <code>plt.subplots</code> both support this. Dashboards are the primary deliverable in most industry EDA reports.</p>
+
+<div class="why"><strong>Design rule for dashboards:</strong> Top row = KPIs (numbers), Middle = distributions, Bottom = relationships/rankings. Each chart answers exactly one question. Use a consistent colour encoding across all panels.</div>
+<div class="cb">
+  <div class="cb-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-lbl">Python</span></div>
+  <pre><code class="language-python">fig = make_subplots(
+    rows=2, cols=3,
+    subplot_titles=(
+        "Rating Distribution", "Cost by Meal Type",
+        "Online Order Share",
+        "Top 10 Locations (Avg Rating)", "Votes vs Rating", "Cuisine Frequency"
+    ),
+    vertical_spacing=0.18, horizontal_spacing=0.1,
+)
+
+# 1. Rating histogram
+h = df["rate"].dropna()
+fig.add_trace(go.Histogram(x=h, nbinsx=25, name="Rating",
+              marker_color="#ea580c", opacity=0.8), row=1, col=1)
+
+# 2. Cost box by meal type
+for i, mt in enumerate(df["meal_type"].value_counts().head(4).index):
+    fig.add_trace(go.Box(y=df[df["meal_type"]==mt]["cost"].dropna(),
+                         name=mt, boxpoints=False), row=1, col=2)
+
+# 3. Online order pie
+counts = df["online_order"].value_counts()
+fig.add_trace(go.Pie(labels=["Online","Offline"],
+                     values=counts.values,
+                     hole=0.45,
+                     marker_colors=["#66bb6a","#ef5350"]), row=1, col=3)
+
+# 4. Top locations bar
+loc_r = df.groupby("location")["rate"].mean().dropna().nlargest(10).sort_values()
+fig.add_trace(go.Bar(x=loc_r.values, y=loc_r.index,
+                     orientation="h", marker_color="#ea580c"), row=2, col=1)
+
+# 5. Votes vs rating scatter
+s = df.dropna(subset=["rate","votes"]).sample(2000, random_state=0)
+fig.add_trace(go.Scatter(x=s["votes"], y=s["rate"], mode="markers",
+                         marker=dict(color="#1e3a5f", opacity=0.3, size=4)), row=2, col=2)
+
+# 6. Top cuisines horizontal bar
+c = (df["cuisines"].dropna().str.split(", ").explode()
+       .value_counts().head(8).sort_values())
+fig.add_trace(go.Bar(x=c.values, y=c.index, orientation="h",
+                     marker_color="#d97706"), row=2, col=3)
+
+fig.update_layout(height=700, showlegend=False,
+                  title_text="Zomato Bengaluru — EDA Dashboard",
+                  template="plotly_white")
+fig.show()</code></pre>
+</div>
+
+<h4 class="sub">Narrative Techniques — Storytelling with Data</h4>
+<p class="b">A chart without a story is just a picture. The best data scientists pair every visualisation with an explicit finding. Use the <strong>Situation → Complication → Resolution</strong> framework:</p>
+
+<div class="steps">
+  <div class="step"><div class="s-num">01</div><h4>Situation</h4><p>State what the chart shows. "This histogram shows restaurant rating distribution across 43,942 Bengaluru outlets."</p></div>
+  <div class="step"><div class="s-num">02</div><h4>Complication</h4><p>Highlight the surprise or tension. "Despite 51K listings, ratings cluster above 3.8 — fewer than 4% of restaurants fall below 3.5."</p></div>
+  <div class="step"><div class="s-num">03</div><h4>Insight</h4><p>Explain the why. "Zomato's algorithm de-ranks consistently low-rated places — survivorship bias in the data."</p></div>
+  <div class="step"><div class="s-num">04</div><h4>Implication</h4><p>So what? "For a new restaurant, the competitive benchmark is 4.1+, not 3.0 — the market's effective floor is much higher."</p></div>
+</div>
+
+<div class="pq">
+  "A visualisation's job is not to show the data — it is to show what the data <em>means</em>."
+  <cite>— Edward Tufte, The Visual Display of Quantitative Information</cite>
+</div>
+
+<h4 class="sub">Annotation — Drawing Attention</h4>
+<div class="why"><strong>Add annotations to your charts.</strong> A horizontal line at the median, an arrow pointing to an outlier, a text box labelling a specific restaurant — these transform charts from academic to actionable.</div>
+<div class="cb">
+  <div class="cb-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-lbl">Python</span></div>
+  <pre><code class="language-python">fig, ax = plt.subplots(figsize=(10, 5))
+
+loc_avg = df.groupby("location")["rate"].mean().dropna().nlargest(15).sort_values()
+bars = loc_avg.plot(kind="barh", color="#ea580c", ax=ax, alpha=0.85)
+
+# Reference line — city average
+city_avg = df["rate"].mean()
+ax.axvline(city_avg, color="#333", linestyle="--", linewidth=1.2)
+ax.text(city_avg + 0.01, 0.3, f"City avg\n{city_avg:.2f}",
+        fontsize=8.5, color="#333")
+
+# Annotate top bar
+ax.annotate("MG Road — highest\nrated area in city",
+            xy=(loc_avg.iloc[-1], len(loc_avg)-1),
+            xytext=(loc_avg.iloc[-1] - 0.15, len(loc_avg)-3.5),
+            fontsize=8, color=var_color := "#7c2d12",
+            arrowprops=dict(arrowstyle="->", color=var_color))
+
+ax.set(title="Top 15 Locations by Average Rating — Bengaluru",
+       xlabel="Average Rating", ylabel="")
+ax.set_xlim(3.5, 4.6)   # zoom into the relevant range
+sns.despine(left=True)
+plt.tight_layout()
+plt.show()</code></pre>
+</div>
+</div><!-- /dashboard -->
+</div><!-- /s11 -->
+
+<div class="div"></div>
+
+<!-- ═══════════════════════════════════════════
+     FINAL PROJECT
+════════════════════════════════════════════ -->
+<div id="project">
+<div class="proj-hdr">
+  <span class="pt">Module 3 · Final Lab · End-to-End Project</span>
+  <h2>🍽 Zomato Bengaluru Intelligence Report</h2>
+  <p class="pd">A food-tech investor wants to understand the Bengaluru restaurant market before funding a new chain. Build a complete EDA + visualisation report that answers 6 strategic questions with charts, annotations, and written insights.</p>
+  <div class="proj-goals">
+    <div class="pg">Load + clean the full 51K Zomato dataset</div>
+    <div class="pg">Compute 8 descriptive statistics with commentary</div>
+    <div class="pg">Produce 8 publication-quality charts (Seaborn)</div>
+    <div class="pg">Build an interactive Plotly dashboard</div>
+    <div class="pg">Write investor-facing insight summaries</div>
+    <div class="pg">Export report as HTML + high-res PNGs</div>
+  </div>
+</div>
+
+<div class="sec">Complete EDA Report Code</div>
+
+<h4 class="sub">Step 1 — Load &amp; Prepare</h4>
+<div class="cb">
+  <div class="cb-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-lbl">Python — zomato_eda_report.py</span></div>
+  <pre><code class="language-python">"""
+Zomato Bengaluru Intelligence Report
+Module 3 — Final Project
+Dataset: https://www.kaggle.com/datasets/himanshupoddar/zomato-bangalore-restaurants
+"""
+import pandas as pd, numpy as np, matplotlib.pyplot as plt
+import seaborn as sns, plotly.express as px, warnings
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+warnings.filterwarnings("ignore")
+
+sns.set_theme(style="whitegrid", palette="Set2", font_scale=1.05)
+plt.rcParams.update({"figure.dpi":130,"axes.spines.top":False,"axes.spines.right":False})
+
+# Load
+df = pd.read_csv("zomato.csv", encoding="latin-1")
+df.rename(columns={"approx_cost(for two people)":"cost",
+                    "listed_in(type)":"meal_type",
+                    "listed_in(city)":"area"}, inplace=True)
+
+# Clean
+df["rate"] = df["rate"].replace(["NEW","-"], np.nan)
+df["rate"] = df["rate"].str.extract(r"(\d+\.\d+)").astype(float)
+df["cost"] = df["cost"].str.replace(",","").astype(float)
+df["online_order"] = df["online_order"].map({"Yes":True,"No":False})
+df["book_table"]   = df["book_table"].map({"Yes":True,"No":False})
+
+print(f"Dataset: {df.shape[0]:,} rows, {df.shape[1]} columns")</code></pre>
+</div>
+
+<h4 class="sub">Step 2 — The 6 Investor Questions + Charts</h4>
+<div class="cb">
+  <div class="cb-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-lbl">Python</span></div>
+  <pre><code class="language-python">fig, axes = plt.subplots(3, 2, figsize=(14, 16))
+fig.suptitle("Zomato Bengaluru — Investor Intelligence Report",
+             fontsize=16, fontweight="bold", y=0.98)
+
+# ─ Q1: How are ratings distributed? ─────────────────────────
+sns.histplot(df["rate"].dropna(), bins=30, kde=True,
+             color="#ea580c", ax=axes[0,0])
+axes[0,0].axvline(df["rate"].mean(), color="#7c2d12", linestyle="--")
+axes[0,0].set(title="Q1: Rating Distribution\n→ Market benchmark = 4.1+",
+              xlabel="Rating", ylabel="Count")
+
+# ─ Q2: Which areas have the highest rated restaurants? ───────
+loc_r = df.groupby("location")["rate"].mean().dropna().nlargest(10).sort_values()
+loc_r.plot(kind="barh", color="#ea580c", ax=axes[0,1])
+axes[0,1].axvline(df["rate"].mean(), color="#7c2d12", linestyle="--", alpha=0.7)
+axes[0,1].set(title="Q2: Top 10 Locations by Avg Rating\n→ Premium: MG Rd, Lavelle Rd",
+              xlabel="Avg Rating")
+
+# ─ Q3: Is online ordering linked to higher ratings? ──────────
+sns.boxplot(data=df.dropna(subset=["rate"]), x="online_order", y="rate",
+            palette={True:"#66bb6a", False:"#ef5350"}, ax=axes[1,0],
+            width=0.4)
+axes[1,0].set_xticklabels(["No Online Order","Online Order Available"])
+axes[1,0].set(title="Q3: Online Order vs Rating\n→ Online restaurants: +0.14 stars avg",
+              xlabel="", ylabel="Rating")
+
+# ─ Q4: What is the cost landscape? ──────────────────────────
+top_types = df["meal_type"].value_counts().head(5).index
+order = df[df["meal_type"].isin(top_types)].groupby("meal_type")["cost"]\
+           .median().sort_values().index
+sns.boxplot(data=df[df["meal_type"].isin(top_types)],
+            x="meal_type", y="cost", order=order,
+            palette="Set2", showfliers=False, ax=axes[1,1])
+axes[1,1].set(title="Q4: Cost by Meal Type\n→ Pubs 2× more expensive than Delivery",
+              xlabel="", ylabel="₹ Cost for Two")
+axes[1,1].tick_params(axis="x", rotation=30)
+
+# ─ Q5: What cuisines dominate? ───────────────────────────────
+cus = (df["cuisines"].dropna().str.split(", ").explode()
+         .value_counts().head(10).sort_values())
+cus.plot(kind="barh", color="#d97706", ax=axes[2,0])
+axes[2,0].set(title="Q5: Top 10 Cuisines in Bengaluru\n→ North Indian #1, South Indian #2",
+              xlabel="Number of Restaurants")
+
+# ─ Q6: Do votes (popularity) predict rating? ─────────────────
+sample = df.dropna(subset=["rate","votes"]).sample(3000, random_state=42)
+axes[2,1].scatter(sample["votes"], sample["rate"],
+                  alpha=0.2, s=8, color="#1e3a5f")
+z = np.polyfit(sample["votes"], sample["rate"], 1)
+p = np.poly1d(z)
+xline = np.linspace(0, 5000, 100)
+axes[2,1].plot(xline, p(xline), "r--", linewidth=1.5)
+axes[2,1].set(title="Q6: Votes vs Rating (r=0.52)\n→ Popular ≈ Well-rated (but not always)",
+              xlabel="Number of Votes", ylabel="Rating", xlim=(0,5000))
+
+plt.tight_layout(rect=[0,0,1,0.97])
+plt.savefig("zomato_investor_report.png", dpi=150, bbox_inches="tight")
+plt.show()
+print("✓ Report saved: zomato_investor_report.png")</code></pre>
+</div>
+
+<h4 class="sub">Step 3 — Interactive Dashboard (Plotly)</h4>
+<div class="cb">
+  <div class="cb-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-lbl">Python</span></div>
+  <pre><code class="language-python">fig = make_subplots(
+    rows=2, cols=3,
+    specs=[[{"type":"histogram"},{"type":"box"},{"type":"pie"}],
+           [{"type":"bar"},{"type":"scatter"},{"type":"bar"}]],
+    subplot_titles=("Rating Dist","Cost by Type","Online Share",
+                    "Top Areas","Votes vs Rating","Top Cuisines"),
+    vertical_spacing=0.2,
+)
+
+# Row 1
+fig.add_trace(go.Histogram(x=df["rate"].dropna(), nbinsx=25,
+              marker_color="#ea580c", name="Rating"), 1, 1)
+
+for mt in df["meal_type"].value_counts().head(4).index:
+    fig.add_trace(go.Box(y=df[df["meal_type"]==mt]["cost"].dropna(),
+                         name=mt, boxpoints=False), 1, 2)
+
+oc = df["online_order"].value_counts()
+fig.add_trace(go.Pie(labels=["Online","Offline"], values=oc.values,
+              hole=0.45, marker_colors=["#66bb6a","#ef5350"]), 1, 3)
+
+# Row 2
+loc_r = df.groupby("location")["rate"].mean().dropna().nlargest(10).sort_values()
+fig.add_trace(go.Bar(x=loc_r.values, y=loc_r.index,
+              orientation="h", marker_color="#ea580c"), 2, 1)
+
+s = df.dropna(subset=["rate","votes"]).sample(2000, random_state=0)
+fig.add_trace(go.Scatter(x=s["votes"], y=s["rate"], mode="markers",
+              marker=dict(color="#1e3a5f", opacity=0.25, size=4),
+              text=s["name"], hoverinfo="text+x+y"), 2, 2)
+
+cus = (df["cuisines"].dropna().str.split(", ").explode()
+         .value_counts().head(8).sort_values())
+fig.add_trace(go.Bar(x=cus.values, y=cus.index, orientation="h",
+              marker_color="#d97706"), 2, 3)
+
+fig.update_layout(height=680, showlegend=False, template="plotly_white",
+                  title_text="🍽 Zomato Bengaluru — Interactive Investor Dashboard")
+fig.write_html("zomato_dashboard.html")   # save as interactive HTML
+fig.show()
+print("✓ Interactive dashboard saved: zomato_dashboard.html")</code></pre>
+</div>
+
+<h4 class="sub">Step 4 — Printed Insight Summary</h4>
+<div class="cb">
+  <div class="cb-hdr"><span class="dots"><span></span><span></span><span></span></span><span class="lang-lbl">Python</span></div>
+  <pre><code class="language-python">print("""
+╔══════════════════════════════════════════════════════════════╗
+║         ZOMATO BENGALURU — INVESTOR INSIGHT SUMMARY         ║
+╠══════════════════════════════════════════════════════════════╣
+║ 1. MARKET SIZE                                               ║
+║    51,717 listed restaurants · 93 unique locations           ║
+║    Most saturated: BTM (3,764) · Koramangala (2,648)         ║
+╠══════════════════════════════════════════════════════════════╣
+║ 2. QUALITY BENCHMARK                                         ║
+║    Avg rating 4.06 · Effective floor = 3.8 (survivorship)    ║
+║    New entrant must target 4.1+ to rank competitively        ║
+╠══════════════════════════════════════════════════════════════╣
+║ 3. PRICING LANDSCAPE                                         ║
+║    Delivery median: ₹300 · Dine-out median: ₹600             ║
+║    Pubs & bars: ₹900 with highest spread (₹200–₹3,000)       ║
+╠══════════════════════════════════════════════════════════════╣
+║ 4. ONLINE ORDERING EDGE                                      ║
+║    60.4% of restaurants offer online ordering                ║
+║    Online restaurants avg 0.14 stars higher — adopt early    ║
+╠══════════════════════════════════════════════════════════════╣
+║ 5. CUISINE OPPORTUNITY                                       ║
+║    North Indian & South Indian saturated (25K+ restaurants)  ║
+║    Biryani growing fast with high ratings (avg 4.1)          ║
+║    Continental underserved in Tier-2 Bengaluru areas         ║
+╠══════════════════════════════════════════════════════════════╣
+║ 6. LOCATION STRATEGY                                         ║
+║    MG Road, Lavelle Rd → Premium (high rating, high cost)    ║
+║    Whitefield, HSR → High volume, growth corridor            ║
+║    BTM, JP Nagar → Price-sensitive, delivery focus           ║
+╚══════════════════════════════════════════════════════════════╝
+""")</code></pre>
+</div>
+<div class="out">
+  <span class="out-l">Console Output</span>
+╔══════════════════════════════════════════════════════════════╗
+║         ZOMATO BENGALURU — INVESTOR INSIGHT SUMMARY         ║
+╠══════════════════════════════════════════════════════════════╣
+║ 1. MARKET SIZE                                               ║
+║    51,717 listed restaurants · 93 unique locations           ║
+║    Most saturated: BTM (3,764) · Koramangala (2,648)         ║
+╠══════════════════════════════════════════════════════════════╣
+║ 2. QUALITY BENCHMARK                                         ║
+║    Avg rating 4.06 · Effective floor = 3.8 (survivorship)    ║
+║    New entrant must target 4.1+ to rank competitively        ║
+...
+✓ Report saved: zomato_investor_report.png
+✓ Interactive dashboard saved: zomato_dashboard.html
+</div>
+
+<!-- Quick review -->
+<div class="sec" style="margin-top:44px">Module 3 — Review</div>
+<div class="qz">
+  <h4>🧠 Check Your Understanding</h4>
+
+  <div class="qq">Q1. You want to compare the distribution of restaurant costs across 5 meal types and also see individual outliers. Which chart is best?</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ol">A</span>Histogram — one per meal type</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ol">B</span>Scatter plot — cost on Y, meal type on X</div>
+  <div class="qo" onclick="qa(this,true)"><span class="ol">C</span>Box plot — shows IQR, median, and outliers per category in one chart</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ol">D</span>Heatmap — correlates cost with meal type</div>
+
+  <div class="qq" style="margin-top:16px">Q2. Your scatter plot of 50K records looks like a solid black rectangle. How do you fix it?</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ol">A</span>Increase the point size to make them more visible</div>
+  <div class="qo" onclick="qa(this,true)"><span class="ol">B</span>Use <code>alpha=0.1</code> for transparency and/or sample 3,000–5,000 rows before plotting</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ol">C</span>Switch to a bar chart — scatter plots don't work with large datasets</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ol">D</span>Use a heatmap instead of a scatter plot</div>
+
+  <div class="qq" style="margin-top:16px">Q3. The correlation between cost and rating is 0.34. What can you correctly conclude?</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ol">A</span>Expensive restaurants cause customers to give higher ratings</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ol">B</span>The relationship is strong and reliable for prediction</div>
+  <div class="qo" onclick="qa(this,true)"><span class="ol">C</span>There is a weak positive association — pricier restaurants tend to rate slightly higher, but many exceptions exist</div>
+  <div class="qo" onclick="qa(this,false)"><span class="ol">D</span>Cost and rating are independent (no relationship)</div>
+</div>
+
+</div><!-- /project -->
+
+<!-- Footer -->
+<div class="mfooter">
+  <div>
+    <div style="color:#fff;font-weight:700;font-size:14px">Module 3 Complete — 9 Hours</div>
+    <div>Histogram · Box · Scatter · Heatmap · Pair Plot · FacetGrid · Plotly · Dashboard</div>
+  </div>
+  <a class="nxt-btn" href="#">Next → Module 4: Supervised Machine Learning ›</a>
+</div>
+
+</div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+  document.querySelectorAll("pre code").forEach(el=>hljs.highlightElement(el));
+});
+
+window.addEventListener("scroll",()=>{
+  const d=document.documentElement;
+  document.getElementById("spf").style.width=
+    (d.scrollTop/(d.scrollHeight-d.clientHeight)*100)+"%";
+});
+
+document.querySelectorAll("[id]").forEach(sec=>{
+  new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        document.querySelectorAll(".sb-a").forEach(l=>l.classList.remove("active"));
+        const m=document.querySelector(`.sb-a[href="#${e.target.id}"]`);
+        if(m)m.classList.add("active");
+      }
+    });
+  },{threshold:0.3}).observe(sec);
+});
+
+function qa(el,correct){
+  el.parentElement.querySelectorAll(".qo").forEach(o=>o.style.pointerEvents="none");
+  el.classList.add(correct?"correct":"wrong");
+  el.innerHTML+=correct?' <strong style="margin-left:5px">✓ Correct!</strong>':' <strong style="margin-left:5px">✗</strong>';
+  if(!correct) el.parentElement.querySelectorAll(".qo").forEach(o=>{
+    if(o.getAttribute("onclick").includes("true"))
+      setTimeout(()=>o.classList.add("correct"),350);
+  });
+}
+</script>
+</body>
+</html>

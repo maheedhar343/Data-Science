@@ -1,0 +1,597 @@
+
+<h2 class="sr-only">Data Science Lesson Plan Tracker</h2>
+
+<style>
+:root {
+  --nav: #1a1a2e;
+  --teal: #0f3460;
+  --acc: #e94560;
+  --done-bg: #eaf3de; --done-fg: #27500a; --done-bd: #639922;
+  --prog-bg: #faeeda; --prog-fg: #633806; --prog-bd: #ef9f27;
+  --pend-bg: #e6f1fb; --pend-fg: #0c447c; --pend-bd: #378add;
+  --delay-bg: #fcebeb; --delay-fg: #791f1f; --delay-bd: #e24b4a;
+  --skip-bg: #f1efe8; --skip-fg: #444441; --skip-bd: #888780;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+
+.app { display: flex; flex-direction: column; gap: 0; }
+
+/* ── header ── */
+.hdr {
+  background: var(--nav);
+  padding: 16px 20px 12px;
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+}
+.hdr h1 { font-size: 16px; font-weight: 500; color: #fff; margin-bottom: 4px; }
+.hdr p  { font-size: 12px; color: #8899aa; }
+
+/* ── tabs ── */
+.tabs { display: flex; background: var(--teal); }
+.tab-btn {
+  flex: 1; padding: 10px 6px; border: none; background: transparent;
+  color: #7ba0c0; font-size: 12px; font-weight: 500; cursor: pointer;
+  border-bottom: 2px solid transparent; transition: all .15s;
+}
+.tab-btn.active { color: #fff; border-bottom-color: var(--acc); }
+.tab-btn:hover:not(.active) { color: #cde; }
+
+/* ── dashboard ── */
+.dash { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+.kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.kpi {
+  background: var(--color-background-secondary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md);
+  padding: 10px 8px; text-align: center;
+}
+.kpi-label { font-size: 10px; color: var(--color-text-secondary); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .04em; }
+.kpi-val   { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+.kpi.done  { border-color: var(--done-bd); }
+.kpi.done .kpi-val  { color: var(--done-fg); }
+.kpi.prog  { border-color: var(--prog-bd); }
+.kpi.prog .kpi-val  { color: var(--prog-fg); }
+.kpi.pend  { border-color: var(--pend-bd); }
+.kpi.pend .kpi-val  { color: var(--pend-fg); }
+.kpi.delay { border-color: var(--delay-bd); }
+.kpi.delay .kpi-val { color: var(--delay-fg); }
+
+.section-hdr {
+  font-size: 11px; font-weight: 500; color: var(--color-text-secondary);
+  text-transform: uppercase; letter-spacing: .06em;
+  border-bottom: 0.5px solid var(--color-border-tertiary); padding-bottom: 6px;
+}
+
+/* module progress bars */
+.mod-rows { display: flex; flex-direction: column; gap: 6px; }
+.mod-row {
+  display: grid; grid-template-columns: 160px 1fr 52px 44px;
+  align-items: center; gap: 10px;
+}
+.mod-name { font-size: 12px; color: var(--color-text-primary); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar-track {
+  height: 8px; background: var(--color-background-secondary);
+  border-radius: 4px; overflow: hidden;
+  border: 0.5px solid var(--color-border-tertiary);
+}
+.bar-fill { height: 100%; border-radius: 4px; transition: width .4s ease; background: #1d9e75; }
+.bar-fill.partial { background: var(--prog-bd); }
+.bar-fill.zero    { background: var(--pend-bd); width: 6px !important; }
+.mod-pct  { font-size: 11px; color: var(--color-text-secondary); text-align: right; }
+.mod-done { font-size: 11px; font-weight: 500; color: var(--done-fg); text-align: center; }
+
+/* overall bar */
+.overall-bar { display: flex; flex-direction: column; gap: 6px; }
+.overall-track {
+  height: 14px; background: var(--color-background-secondary);
+  border-radius: 7px; overflow: hidden; border: 0.5px solid var(--color-border-tertiary);
+}
+.overall-fill { height: 100%; border-radius: 7px; background: #1d9e75; transition: width .4s ease; }
+.overall-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--color-text-secondary); }
+
+/* ── tracker table ── */
+.tracker-wrap { overflow-x: auto; }
+.tracker-tools {
+  display: flex; gap: 8px; padding: 10px 16px;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+  background: var(--color-background-secondary);
+  align-items: center; flex-wrap: wrap;
+}
+.filter-label { font-size: 11px; color: var(--color-text-secondary); }
+.filter-btns  { display: flex; gap: 4px; flex-wrap: wrap; }
+.fbtn {
+  padding: 3px 10px; border-radius: 20px; border: 0.5px solid var(--color-border-tertiary);
+  background: transparent; font-size: 11px; cursor: pointer; color: var(--color-text-secondary);
+  transition: all .12s;
+}
+.fbtn.active { border-color: var(--teal); background: var(--teal); color: #fff; }
+.search-box { margin-left: auto; }
+.search-box input {
+  font-size: 12px; padding: 4px 10px; border-radius: var(--border-radius-md);
+  border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-primary);
+  color: var(--color-text-primary); width: 160px;
+}
+
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+th {
+  background: var(--nav); color: #8899aa;
+  padding: 8px 10px; text-align: left; font-weight: 500; font-size: 11px;
+  position: sticky; top: 0; z-index: 2;
+  border-bottom: 0.5px solid #2a3a5a;
+  white-space: nowrap;
+}
+td { padding: 6px 10px; border-bottom: 0.5px solid var(--color-border-tertiary); vertical-align: top; }
+tr.mod-hdr td {
+  background: var(--teal); color: #a0c4e8;
+  font-size: 11px; font-weight: 500; padding: 5px 10px;
+}
+tr.topic-row { cursor: default; transition: background .1s; }
+tr.topic-row:hover td { background: var(--color-background-secondary); }
+tr.topic-row.filtered-out { display: none; }
+
+.sno { font-size: 11px; color: var(--color-text-secondary); text-align: center; }
+
+.topic-cell { max-width: 260px; }
+.topic-main { font-size: 12px; font-weight: 500; color: var(--color-text-primary); line-height: 1.4; }
+.topic-meta { font-size: 10px; color: var(--color-text-secondary); margin-top: 2px; }
+
+/* status pill dropdown */
+.status-wrap { position: relative; }
+.status-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 8px 3px 8px; border-radius: 20px; border: 0.5px solid;
+  font-size: 11px; font-weight: 500; cursor: pointer; white-space: nowrap;
+  transition: opacity .1s;
+}
+.status-pill:hover { opacity: .85; }
+.status-pill.done  { background:var(--done-bg);  color:var(--done-fg);  border-color:var(--done-bd);  }
+.status-pill.prog  { background:var(--prog-bg);  color:var(--prog-fg);  border-color:var(--prog-bd);  }
+.status-pill.pend  { background:var(--pend-bg);  color:var(--pend-fg);  border-color:var(--pend-bd);  }
+.status-pill.delay { background:var(--delay-bg); color:var(--delay-fg); border-color:var(--delay-bd); }
+.status-pill.skip  { background:var(--skip-bg);  color:var(--skip-fg);  border-color:var(--skip-bd);  }
+
+.status-menu {
+  position: absolute; top: calc(100% + 4px); left: 0; z-index: 10;
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-secondary);
+  border-radius: var(--border-radius-md);
+  box-shadow: 0 4px 16px rgba(0,0,0,.12);
+  min-width: 160px; overflow: hidden;
+  display: none;
+}
+.status-menu.open { display: block; }
+.smenu-item {
+  padding: 7px 12px; font-size: 12px; cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  transition: background .1s;
+}
+.smenu-item:hover { background: var(--color-background-secondary); }
+
+/* hours input */
+.hrs-input {
+  width: 48px; text-align: center; border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md); padding: 3px 4px; font-size: 12px;
+  background: var(--color-background-primary); color: var(--color-text-primary);
+}
+
+/* date cell */
+.date-input {
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md); padding: 3px 5px; font-size: 11px;
+  background: var(--color-background-primary); color: var(--color-text-primary);
+  width: 110px;
+}
+
+/* comment cell */
+.comment-cell { min-width: 160px; max-width: 200px; }
+.comment-text {
+  font-size: 11px; color: var(--color-text-secondary); line-height: 1.4;
+  font-style: italic; display: -webkit-box;
+  -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.note-input {
+  width: 100%; border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md); padding: 4px 6px; font-size: 11px;
+  resize: vertical; min-height: 40px; display: none;
+  background: var(--color-background-primary); color: var(--color-text-primary);
+  font-family: var(--font-sans);
+}
+.edit-btn {
+  font-size: 10px; color: var(--color-text-secondary); border: none;
+  background: transparent; cursor: pointer; padding: 1px 4px;
+  border-radius: 3px;
+}
+.edit-btn:hover { background: var(--color-background-secondary); }
+
+/* variance badge */
+.var-badge {
+  display: inline-block; padding: 2px 7px; border-radius: 20px;
+  font-size: 11px; font-weight: 500;
+}
+.var-green { background: var(--done-bg); color: var(--done-fg); }
+.var-red   { background: var(--delay-bg); color: var(--delay-fg); }
+.var-zero  { background: var(--skip-bg); color: var(--skip-fg); }
+
+.export-btn {
+  margin-left: auto; padding: 4px 12px; font-size: 11px;
+  border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary);
+  background: transparent; color: var(--color-text-secondary); cursor: pointer;
+}
+.export-btn:hover { background: var(--color-background-secondary); }
+</style>
+
+<div class="app">
+  <div class="hdr">
+    <h1><i class="ti ti-school" aria-hidden="true" style="margin-right:6px;font-size:16px;vertical-align:-2px;"></i>Data Science — 72-hour lesson plan tracker</h1>
+    <p>8 modules · 27 sessions · Faculty dashboard with live dropdowns &amp; progress tracking</p>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('dash')"><i class="ti ti-chart-bar" aria-hidden="true"></i> Dashboard</button>
+    <button class="tab-btn" onclick="switchTab('tracker')"><i class="ti ti-list-check" aria-hidden="true"></i> Lesson Tracker</button>
+    <button class="tab-btn" onclick="switchTab('rationale')"><i class="ti ti-notes" aria-hidden="true"></i> Curriculum Notes</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="tab-dash" class="dash">
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-label">Total topics</div><div class="kpi-val" id="k-total">27</div></div>
+      <div class="kpi"><div class="kpi-label">Plan hours</div><div class="kpi-val">72</div></div>
+      <div class="kpi done"><div class="kpi-label">Completed</div><div class="kpi-val" id="k-done">0</div></div>
+      <div class="kpi prog"><div class="kpi-label">In progress</div><div class="kpi-val" id="k-prog">0</div></div>
+      <div class="kpi delay"><div class="kpi-label">Delayed</div><div class="kpi-val" id="k-delay">0</div></div>
+    </div>
+
+    <div class="overall-bar">
+      <div class="section-hdr">Overall completion</div>
+      <div class="overall-track"><div class="overall-fill" id="overall-fill" style="width:0%"></div></div>
+      <div class="overall-meta">
+        <span id="overall-done-lbl">0 of 27 topics completed</span>
+        <span id="overall-pct-lbl">0%</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-hdr" style="margin-bottom:10px">Module-wise progress</div>
+      <div class="mod-rows" id="mod-rows"></div>
+    </div>
+  </div>
+
+  <!-- TRACKER -->
+  <div id="tab-tracker" style="display:none; flex-direction:column;">
+    <div class="tracker-tools">
+      <span class="filter-label">Filter by status:</span>
+      <div class="filter-btns">
+        <button class="fbtn active" data-filter="all" onclick="setFilter('all',this)">All</button>
+        <button class="fbtn" data-filter="done"  onclick="setFilter('done',this)">Completed</button>
+        <button class="fbtn" data-filter="prog"  onclick="setFilter('prog',this)">In Progress</button>
+        <button class="fbtn" data-filter="pend"  onclick="setFilter('pend',this)">Pending</button>
+        <button class="fbtn" data-filter="delay" onclick="setFilter('delay',this)">Delayed</button>
+        <button class="fbtn" data-filter="skip"  onclick="setFilter('skip',this)">Skipped</button>
+      </div>
+      <div class="search-box"><input type="text" placeholder="Search topics…" oninput="doSearch(this.value)"></div>
+      <button class="export-btn" onclick="exportCSV()"><i class="ti ti-download" aria-hidden="true"></i> Export CSV</button>
+    </div>
+    <div class="tracker-wrap">
+      <table id="tracker-table">
+        <thead>
+          <tr>
+            <th style="width:32px">#</th>
+            <th style="width:260px">Topic</th>
+            <th style="width:52px">Plan hrs</th>
+            <th style="width:108px">Scheduled</th>
+            <th style="width:108px">Actual</th>
+            <th style="width:140px">Status</th>
+            <th style="width:52px">Hrs used</th>
+            <th style="width:60px">Variance</th>
+            <th>Faculty comments</th>
+          </tr>
+        </thead>
+        <tbody id="tracker-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- RATIONALE -->
+  <div id="tab-rationale" style="display:none; padding:16px; display:none; flex-direction:column; gap:10px;">
+    <div id="rationale-content"></div>
+  </div>
+</div>
+
+<script>
+const MODULES = [
+  {code:"Mod 1",name:"Python & Data Foundations",hrs:15,color:"#1F3864",topics:[
+    {id:1,topic:"Python Essentials: Syntax, Variables, Data Types, Control Flow, Functions & Collections",hrs:3,notes:"Cover IDLE/Jupyter setup, list vs tuple, dict comprehensions. Run quick quiz on collections.",resources:"Python.org Tutorial · Real Python Basics",assessment:"5 MCQs on data types + list-comprehension coding exercise"},
+    {id:2,topic:"OOP Essentials: Classes, Objects, Inheritance & Encapsulation (condensed)",hrs:2,notes:"Connect OOP to sklearn estimator pattern — show how fit/predict map to class methods.",resources:"Real Python OOP · Corey Schafer OOP Series",assessment:"Code task: BankAccount class with deposit/withdraw"},
+    {id:3,topic:"NumPy + Pandas: Arrays, Vectorised Ops, DataFrames, Indexing, Merging, GroupBy",hrs:3,notes:"timeit demo: loop vs vectorised. Emphasise iloc vs loc distinction.",resources:"NumPy Quickstart · Pandas 10-min Guide · Kaggle Pandas micro-course",assessment:"Load Titanic CSV → filter, groupby, merge with port data"},
+    {id:4,topic:"Data Cleaning: Missing Values, Duplicates, Outliers, Type Conversion",hrs:3,notes:"Use deliberately messy real-world dataset. Cover isnull(), fillna(), IQR-based outlier removal.",resources:"Towards DS Data Cleaning Checklist · Pandas Missing Data docs",assessment:"Clean provided dirty CSV with 6 known issues — document each fix"},
+    {id:5,topic:"File I/O & APIs: CSV, JSON, Excel; Working with the Requests Library",hrs:2,notes:"Use Open-Meteo weather API (free). Demonstrate try/except for error handling.",resources:"Python requests docs · OpenWeatherMap API · pandas read_csv/read_json",assessment:"Pull weather data → save to CSV → reload and plot temperature"},
+    {id:6,topic:"Lab: Retail Sales Analysis — Loading, Cleaning & Summarisation (Mini Project)",hrs:2,notes:"Full pipeline from raw CSV to summary. Students submit Jupyter notebook.",resources:"Kaggle Superstore Sales · Matplotlib quickstart",assessment:"Mini Project: cleaned notebook with 3 key insights"},
+  ]},
+  {code:"Mod 2",name:"Data Collection & Storage",hrs:6,color:"#1D5C8B",topics:[
+    {id:7,topic:"Web Scraping: BeautifulSoup + REST APIs & JSON Parsing (Auth, Rate Limiting)",hrs:3,notes:"Use quotes.toscrape.com as safe practice site. Emphasise robots.txt ethics. Scrapy/Selenium removed.",resources:"BeautifulSoup docs · Requests-HTML · HTTPBin.org",assessment:"Scrape book-listing site → store title, price, rating in DataFrame"},
+    {id:8,topic:"SQL Fundamentals + ETL Concepts: Queries, Joins, PostgreSQL Basics",hrs:3,notes:"SQLAlchemy ORM removed. Cover SELECT/WHERE/GROUP BY/JOIN thoroughly. Use SQLiteOnline.com.",resources:"SQLZoo (interactive) · Mode SQL Tutorial · W3Schools SQL",assessment:"Write 5 SQL queries (JOIN, aggregation, subquery) on HR database"},
+  ]},
+  {code:"Mod 3",name:"EDA & Visualization",hrs:9,color:"#156082",topics:[
+    {id:9,topic:"EDA Foundations: Descriptive Stats, Distributions, Skewness, Kurtosis, Correlation",hrs:3,notes:"Use scipy.stats for skewness. Show real income distribution as right-skewed example.",resources:"StatQuest Statistics Fundamentals · Towards DS EDA Guide",assessment:"EDA report on Gapminder dataset — dist plots, correlation matrix, 3 insights"},
+    {id:10,topic:"Matplotlib + Seaborn: Line, Bar, Histogram, Scatter, Heatmaps, Pairplots, Violin",hrs:3,notes:"Teach WHEN to use each chart type — not just HOW. Common mistake: bar chart for distributions.",resources:"Matplotlib Gallery · Seaborn Gallery · Python Graph Gallery",assessment:"Reproduce 6 chart types from a dataset — graded on labels, titles, aesthetics"},
+    {id:11,topic:"Storytelling with Data: Plotly Intro, Interactive Charts, Narrative + Colour Theory",hrs:3,notes:"Show Plotly Express vs Graph Objects complexity. Discuss colour-blindness accessibility.",resources:"Plotly Express docs · Colorbrewer2.org · Storytelling with Data (Medium)",assessment:"Build interactive Plotly dashboard — present 2-min data story"},
+  ]},
+  {code:"Mod 4",name:"Supervised Learning",hrs:18,color:"#375623",topics:[
+    {id:12,topic:"ML Fundamentals: Bias-Variance Tradeoff, Train/Val/Test Split, Overfitting",hrs:3,notes:"Draw bias-variance bullseye live. Show overfitting visually. Emphasise data leakage.",resources:"StatQuest Bias-Variance · Google ML Crash Course · sklearn train_test_split",assessment:"8-Q concept quiz: bias-variance, overfitting scenarios, correct split strategies"},
+    {id:13,topic:"Linear & Logistic Regression: Math Intuition, Sklearn Implementation",hrs:3,notes:"Derive MSE loss intuitively. For logistic: sigmoid → probability → threshold.",resources:"Khan Academy Linear Regression · StatQuest Logistic Regression · sklearn linear_model",assessment:"Predict house prices (linear) + spam classification (logistic) — interpret coefficients"},
+    {id:14,topic:"Decision Trees & Random Forests: Gini, Entropy, Feature Importance",hrs:3,notes:"Visualise tree with plot_tree(). Explain why RF reduces variance (bagging).",resources:"StatQuest Decision Trees · sklearn DT docs · Towards DS RF explained",assessment:"Train RF on Heart Disease dataset → plot feature importance → compare DT vs RF"},
+    {id:15,topic:"Gradient Boosting: XGBoost, LightGBM — Theory & Tuning",hrs:3,notes:"Contrast with RF: boosting sequential, bagging parallel. Use early_stopping_rounds.",resources:"XGBoost docs · LightGBM docs · Kaggle Guide to XGBoost Tuning",assessment:"Competition-style: Tune XGBoost — best AUC wins class leaderboard"},
+    {id:16,topic:"Model Evaluation: Confusion Matrix, ROC-AUC, Precision-Recall, F1 + GridSearchCV",hrs:3,notes:"Use imbalanced dataset to show accuracy paradox. Precision vs recall for medical vs fraud.",resources:"sklearn metrics docs · Google ML Crash Course Classification · cross_val_score guide",assessment:"Calculate all metrics manually → verify with sklearn"},
+    {id:17,topic:"Lab: Loan Default Risk — End-to-End ML Pipeline (Case Study)",hrs:3,notes:"Full pipeline: load → clean → EDA → feature engineer → train → evaluate → interpret.",resources:"Kaggle Home Credit Dataset · sklearn Pipeline docs · SHAP GitHub",assessment:"Case Study: notebook + 1-page model card (accuracy, recall, business rationale)"},
+  ]},
+  {code:"Mod 5",name:"Unsupervised & Advanced ML",hrs:9,color:"#7B3F00",topics:[
+    {id:18,topic:"Clustering: K-Means, Hierarchical, DBSCAN + PCA, Silhouette Evaluation",hrs:3,notes:"Elbow method demo. PCA variance-explained plot. DBSCAN for spatial GPS cluster example.",resources:"StatQuest K-Means, PCA · sklearn clustering docs · Towards DS DBSCAN",assessment:"Apply 3 clustering algos to mall customer data → compare silhouette → visualise with PCA"},
+    {id:19,topic:"Ensemble Methods (Bagging, Stacking), Imbalanced Data (SMOTE), Pipeline Architecture",hrs:3,notes:"SMOTE only on training set — never test set (data leakage!). StackingClassifier demo.",resources:"imbalanced-learn docs · sklearn Pipeline guide · Towards DS Stacking",assessment:"Handle imbalanced fraud dataset: class weights vs SMOTE vs threshold — compare F1"},
+    {id:20,topic:"Lab: Customer Segmentation Engine — RFM + Clustering (Case Study)",hrs:3,notes:"Build RFM features from transaction data. Map K-Means segments to business personas.",resources:"Online Retail II (UCI) · RFM Analysis — Towards DS",assessment:"Segment customers → name each cluster → recommend 1 marketing action per segment"},
+  ]},
+  {code:"Mod 6",name:"Deep Learning: Introduction",hrs:6,color:"#4B2E83",topics:[
+    {id:21,topic:"Neural Networks: Perceptrons, Activation Functions, Backpropagation (TF/Keras Intro)",hrs:3,notes:"Use TF Playground for intuition before code. RNN/LSTM removed from scope.",resources:"TensorFlow Playground · 3Blue1Brown Neural Networks · Keras Sequential API",assessment:"Build 3-layer Keras NN for MNIST digit recognition → plot accuracy curves"},
+    {id:22,topic:"CNN Architecture + Transfer Learning (MobileNetV2 / ResNet)",hrs:3,notes:"Visualise filter activations. Transfer learning reduces training to minutes on CPU.",resources:"CS231n CNN notes · Keras Transfer Learning tutorial · TensorFlow Hub",assessment:"Fine-tune MobileNetV2 on 5-class image dataset → achieve >85% accuracy"},
+  ]},
+  {code:"Mod 7",name:"Deployment & MLOps Basics",hrs:6,color:"#4A4A4A",topics:[
+    {id:23,topic:"Flask API: REST Endpoints, JSON Responses + Model Serialisation (Pickle, Joblib, ONNX)",hrs:3,notes:"Teach Postman for API testing. ONNX for cross-framework portability — demo Joblib.",resources:"Flask quickstart · Joblib docs · ONNX tutorials · Postman download",assessment:"Wrap sklearn model in Flask → test /predict with Postman → document API schema"},
+    {id:24,topic:"Docker + CI/CD Intro (GitHub Actions) + Cloud Overview (SageMaker / Vertex AI)",hrs:3,notes:"Full cloud deployment condensed to conceptual overview. Demo: containerise the Flask app.",resources:"Docker getting started · GitHub Actions docs · AWS SageMaker overview",assessment:"Write Dockerfile for Flask app → run locally → draw CI/CD pipeline diagram"},
+  ]},
+  {code:"Mod 8",name:"Capstone Project",hrs:6,color:"#7A0019",topics:[
+    {id:25,topic:"Sprint 1: Problem Framing, EDA & Baseline Modelling",hrs:2,notes:"Students choose domain (healthcare/retail/finance). Submit 1-page problem statement + EDA.",resources:"Kaggle Datasets · Google Dataset Search · UCI ML Repository",assessment:"Problem statement doc + EDA notebook + baseline model metrics"},
+    {id:26,topic:"Sprint 2: Feature Engineering, Model Selection & Tuning",hrs:2,notes:"Review Sprint 1. Guide advanced feature engineering. Students try ≥3 model families.",resources:"Feature Engineering for ML · sklearn feature engineering docs",assessment:"Updated notebook: engineered features + model comparison table (3+ models)"},
+    {id:27,topic:"Sprint 3: Evaluation, SHAP Explainability, API Deployment & Final Presentation",hrs:2,notes:"SHAP waterfall plot for individual predictions. Students demo Flask endpoint live.",resources:"SHAP library docs · SHAP Explainer tutorial · Flask deployment guide",assessment:"Final: GitHub repo + deployed API demo + 5-min presentation"},
+  ]},
+];
+
+const STATUS_CONFIG = {
+  pend:  { label:"Pending",       cls:"pend",  icon:"ti-clock" },
+  prog:  { label:"In Progress",   cls:"prog",  icon:"ti-player-play" },
+  done:  { label:"Completed",     cls:"done",  icon:"ti-check" },
+  delay: { label:"Delayed",       cls:"delay", icon:"ti-alert-triangle" },
+  skip:  { label:"Skipped",       cls:"skip",  icon:"ti-player-skip-forward" },
+};
+
+let state = {};
+MODULES.forEach(m => m.topics.forEach(t => {
+  state[t.id] = { status:"pend", scheduledDate:"", actualDate:"", hrsUsed:"", comment:t.notes };
+}));
+
+let currentFilter = "all";
+let openMenu = null;
+
+function buildTracker() {
+  const tbody = document.getElementById("tracker-body");
+  tbody.innerHTML = "";
+  MODULES.forEach(m => {
+    const mhdr = document.createElement("tr");
+    mhdr.className = "mod-hdr";
+    mhdr.innerHTML = `<td colspan="9" style="border-left:3px solid ${m.color}; padding-left:12px;">
+      <span style="color:#fff;font-weight:500;">${m.code}</span>
+      <span style="margin-left:6px;color:#a0c4e8;">${m.name}</span>
+      <span style="margin-left:8px;color:#5a82a0;">(${m.hrs} hrs)</span>
+    </td>`;
+    tbody.appendChild(mhdr);
+
+    m.topics.forEach(t => {
+      const s = state[t.id];
+      const row = document.createElement("tr");
+      row.className = "topic-row";
+      row.dataset.id = t.id;
+      row.dataset.statusCls = s.status;
+
+      const variance = (s.hrsUsed !== "" && !isNaN(s.hrsUsed))
+        ? (t.hrs - parseFloat(s.hrsUsed)).toFixed(1) : null;
+      const varHtml = variance !== null
+        ? `<span class="var-badge ${+variance > 0 ? 'var-green' : +variance < 0 ? 'var-red' : 'var-zero'}">${+variance > 0 ? '+'+variance : variance}</span>`
+        : `<span style="color:var(--color-text-secondary);font-size:11px;">—</span>`;
+
+      row.innerHTML = `
+        <td class="sno">${t.id}</td>
+        <td class="topic-cell">
+          <div class="topic-main">${t.topic}</div>
+          <div class="topic-meta"><i class="ti ti-books" aria-hidden="true" style="font-size:11px;"></i> ${t.resources}</div>
+        </td>
+        <td style="text-align:center;font-weight:500;color:var(--color-text-secondary)">${t.hrs}</td>
+        <td><input type="date" class="date-input" value="${s.scheduledDate}" onchange="updateDate(${t.id},'scheduledDate',this.value)"></td>
+        <td><input type="date" class="date-input" value="${s.actualDate}" onchange="updateDate(${t.id},'actualDate',this.value)"></td>
+        <td>
+          <div class="status-wrap" id="sw-${t.id}">
+            <div class="status-pill ${s.status}" onclick="toggleMenu(${t.id}, event)" id="pill-${t.id}">
+              <i class="ti ${STATUS_CONFIG[s.status].icon}" aria-hidden="true" style="font-size:11px;"></i>
+              ${STATUS_CONFIG[s.status].label}
+              <i class="ti ti-chevron-down" aria-hidden="true" style="font-size:9px;margin-left:2px;"></i>
+            </div>
+            <div class="status-menu" id="menu-${t.id}">
+              ${Object.entries(STATUS_CONFIG).map(([k,v])=>
+                `<div class="smenu-item" onclick="setStatus(${t.id},'${k}')">
+                  <span class="status-pill ${v.cls}" style="pointer-events:none">
+                    <i class="ti ${v.icon}" aria-hidden="true" style="font-size:10px;"></i>${v.label}
+                  </span>
+                </div>`
+              ).join("")}
+            </div>
+          </div>
+        </td>
+        <td><input type="number" class="hrs-input" value="${s.hrsUsed}" min="0" max="20" step="0.5" placeholder="—" onchange="updateHrs(${t.id},this.value)"></td>
+        <td>${varHtml}</td>
+        <td class="comment-cell">
+          <div class="comment-text" id="ctext-${t.id}">${s.comment}</div>
+          <button class="edit-btn" onclick="editComment(${t.id})"><i class="ti ti-pencil" aria-hidden="true" style="font-size:10px;"></i> edit</button>
+          <textarea class="note-input" id="note-${t.id}" onblur="saveComment(${t.id},this.value)">${s.comment}</textarea>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  });
+  applyFilter();
+  updateDashboard();
+}
+
+function toggleMenu(id, e) {
+  e.stopPropagation();
+  const menu = document.getElementById(`menu-${id}`);
+  if (openMenu && openMenu !== menu) openMenu.classList.remove("open");
+  menu.classList.toggle("open");
+  openMenu = menu.classList.contains("open") ? menu : null;
+}
+document.addEventListener("click", () => {
+  if (openMenu) { openMenu.classList.remove("open"); openMenu = null; }
+});
+
+function setStatus(id, val) {
+  state[id].status = val;
+  const pill = document.getElementById(`pill-${id}`);
+  const cfg = STATUS_CONFIG[val];
+  pill.className = `status-pill ${cfg.cls}`;
+  pill.innerHTML = `<i class="ti ${cfg.icon}" aria-hidden="true" style="font-size:11px;"></i>${cfg.label}<i class="ti ti-chevron-down" aria-hidden="true" style="font-size:9px;margin-left:2px;"></i>`;
+  const menu = document.getElementById(`menu-${id}`);
+  menu.classList.remove("open"); openMenu = null;
+  const row = document.querySelector(`tr[data-id="${id}"]`);
+  if (row) row.dataset.statusCls = val;
+  applyFilter();
+  updateDashboard();
+}
+
+function updateHrs(id, val) {
+  state[id].hrsUsed = val;
+  buildTracker();
+}
+function updateDate(id, field, val) { state[id][field] = val; }
+function editComment(id) {
+  document.getElementById(`ctext-${id}`).style.display = "none";
+  const ta = document.getElementById(`note-${id}`);
+  ta.style.display = "block"; ta.focus();
+}
+function saveComment(id, val) {
+  state[id].comment = val;
+  const ct = document.getElementById(`ctext-${id}`);
+  ct.textContent = val; ct.style.display = "";
+  document.getElementById(`note-${id}`).style.display = "none";
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll(".fbtn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  applyFilter();
+}
+function applyFilter() {
+  document.querySelectorAll("tr.topic-row").forEach(row => {
+    const s = row.dataset.statusCls;
+    const visible = currentFilter === "all" || s === currentFilter;
+    row.classList.toggle("filtered-out", !visible);
+  });
+}
+function doSearch(q) {
+  const lq = q.toLowerCase();
+  document.querySelectorAll("tr.topic-row").forEach(row => {
+    const text = row.querySelector(".topic-main").textContent.toLowerCase();
+    row.style.display = text.includes(lq) ? "" : "none";
+  });
+}
+
+function updateDashboard() {
+  const vals = Object.values(state);
+  const done  = vals.filter(v=>v.status==="done").length;
+  const prog  = vals.filter(v=>v.status==="prog").length;
+  const delay = vals.filter(v=>v.status==="delay").length;
+  document.getElementById("k-done").textContent  = done;
+  document.getElementById("k-prog").textContent  = prog;
+  document.getElementById("k-delay").textContent = delay;
+  const pct = Math.round(done/27*100);
+  document.getElementById("overall-fill").style.width = pct + "%";
+  document.getElementById("overall-done-lbl").textContent = `${done} of 27 topics completed`;
+  document.getElementById("overall-pct-lbl").textContent = pct + "%";
+
+  const modRows = document.getElementById("mod-rows");
+  modRows.innerHTML = "";
+  MODULES.forEach(m => {
+    const ids = m.topics.map(t=>t.id);
+    const mDone = ids.filter(id=>state[id].status==="done").length;
+    const mProg = ids.filter(id=>state[id].status==="prog").length;
+    const total = ids.length;
+    const mPct  = Math.round(mDone/total*100);
+    const isPart = mProg > 0 && mDone < total;
+    const isZero = mDone === 0;
+    const row = document.createElement("div");
+    row.className = "mod-row";
+    row.innerHTML = `
+      <div class="mod-name" title="${m.name}">${m.code} · ${m.name}</div>
+      <div class="bar-track">
+        <div class="bar-fill ${isPart?'partial':''} ${isZero?'zero':''}" style="width:${Math.max(mPct,0)}%"></div>
+      </div>
+      <div class="mod-pct">${mPct}%</div>
+      <div class="mod-done">${mDone}/${total}</div>
+    `;
+    modRows.appendChild(row);
+  });
+}
+
+function buildRationale() {
+  const container = document.getElementById("rationale-content");
+  const changes = [
+    ["merged","Python Basics + Collections → single 3h session","Tightly related; teaching together avoids redundancy and saves 2h."],
+    ["merged","NumPy + Pandas → single 3h session","A unified session shows natural complementarity; avoids boilerplate repetition."],
+    ["merged","Matplotlib + Seaborn → single 3h session","Side-by-side teaching reinforces when to use each chart type."],
+    ["merged","Model Evaluation + GridSearchCV → single 3h session","Evaluation metrics motivate why tuning is needed — natural pairing."],
+    ["removed","Scrapy & Selenium removed; BeautifulSoup retained","BS4 covers 80% of scraping use-cases; Scrapy/Selenium have heavy setup overhead."],
+    ["removed","SQLAlchemy ORM removed","ORM is a software-engineering concern; raw SQL sufficient for DS workflows."],
+    ["removed","Full ETL / Airflow / Prefect removed","Advanced DevOps territory; ETL concepts briefly introduced in SQL session."],
+    ["removed","SVM removed as standalone topic","Conceptually complex (kernel math) and rarely the first-choice algorithm today."],
+    ["removed","Association Rule Mining removed","Niche application — not a core DS skill at foundational level."],
+    ["removed","RNN/LSTM removed from Deep Learning","Requires substantial prerequisite depth; CNN + Transfer Learning provides strong DL intro in 6h."],
+    ["removed","Cloud deployment condensed to overview","Full cloud labs require billing accounts — impractical in class time."],
+    ["removed","7-Sprint Capstone → 3-Sprint","3-sprint still covers full end-to-end: EDA → Model → Deploy."],
+    ["sequencing","OOP placed immediately after Python basics","Students encounter OOP in sklearn — early introduction removes confusion."],
+    ["sequencing","EDA taught before ML","Students should understand distributions before choosing models."],
+    ["sequencing","Model Evaluation inside Supervised ML module","Metrics are meaningless without a model to evaluate; combining improves context."],
+    ["sequencing","Deployment taught before Capstone","Students should know how to serve a model before building their final one."],
+  ];
+  const badges = {
+    merged:     {bg:"#eaf3de",fg:"#27500a",bd:"#639922",label:"Merged"},
+    removed:    {bg:"#fcebeb",fg:"#791f1f",bd:"#e24b4a",label:"Removed"},
+    sequencing: {bg:"#faeeda",fg:"#633806",bd:"#ef9f27",label:"Resequenced"},
+  };
+  let html = `<div style="display:flex;flex-direction:column;gap:8px;">`;
+  changes.forEach(([type,change,reason]) => {
+    const b = badges[type];
+    html += `<div style="display:grid;grid-template-columns:100px 1fr 1fr;gap:10px;align-items:start;padding:8px 10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);">
+      <span style="background:${b.bg};color:${b.fg};border:0.5px solid ${b.bd};border-radius:20px;padding:2px 8px;font-size:10px;font-weight:500;text-align:center;align-self:start;">${b.label}</span>
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);">${change}</div>
+      <div style="font-size:11px;color:var(--color-text-secondary);font-style:italic;">${reason}</div>
+    </div>`;
+  });
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+function exportCSV() {
+  let rows = ["#,Module,Topic,Plan Hrs,Scheduled,Actual,Status,Hrs Used,Variance,Comments"];
+  MODULES.forEach(m => m.topics.forEach(t => {
+    const s = state[t.id];
+    const v = (s.hrsUsed!==""&&!isNaN(s.hrsUsed)) ? (t.hrs-parseFloat(s.hrsUsed)).toFixed(1) : "";
+    rows.push([t.id,m.name,`"${t.topic}"`,t.hrs,s.scheduledDate,s.actualDate,STATUS_CONFIG[s.status].label,s.hrsUsed,v,`"${s.comment.replace(/"/g,"''")}"`].join(","));
+  }));
+  const blob = new Blob([rows.join("\n")],{type:"text/csv"});
+  const a = document.createElement("a"); a.href=URL.createObjectURL(blob);
+  a.download="DS_LessonPlan.csv"; a.click();
+}
+
+function switchTab(name) {
+  ["dash","tracker","rationale"].forEach(t => {
+    document.getElementById(`tab-${t}`).style.display = t===name ? (t==="dash"?"flex":"flex") : "none";
+  });
+  document.querySelectorAll(".tab-btn").forEach((b,i) => {
+    b.classList.toggle("active", ["dash","tracker","rationale"][i]===name);
+  });
+  if(name==="dash") updateDashboard();
+  if(name==="rationale") buildRationale();
+}
+
+buildTracker();
+buildRationale();
+document.getElementById("tab-rationale").style.display="none";
+document.getElementById("tab-tracker").style.display="none";
+</script>
